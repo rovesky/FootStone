@@ -1,0 +1,9 @@
+/.vs
+/FootStone.Grains/bin
+/FootStone.Grains/obj
+/FootStone.GrainInterfaces/obj
+/FootStone.GrainInterfaces/bin
+/FootStone.GameServer/bin
+/FootStone.GameServer/obj
+/FootStone.FrontServer/bin
+/FootStone.FrontServer/obj
