@@ -14,7 +14,7 @@
     <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x86</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -196,12 +196,11 @@
   <ItemGroup>
     <Compile Include="Adventure.cs" />
     <Compile Include="Program.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="AdventureMap.json" />
-    <None Include="App.config" />
-    <None Include="packages.config" />
+    <None Include="AdventureMap.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FootStone.GrainInterfaces\FootStone.GrainInterfaces.csproj">
@@ -209,9 +208,12 @@
       <Name>FootStone.GrainInterfaces</Name>
     </ProjectReference>
     <ProjectReference Include="..\FootStone.Grains\FootStone.Grains.csproj">
-      <Project>{45ddb8f8-b351-4ed9-8b22-defb869d9214}</Project>
+      <Project>{cabc0dbc-e8b1-4948-ae50-ca3dd2fd2baa}</Project>
       <Name>FootStone.Grains</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
