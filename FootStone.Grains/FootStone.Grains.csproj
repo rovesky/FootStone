@@ -59,6 +59,7 @@
   <ItemGroup>
     <Compile Include="MonsterGrain.cs" />
     <Compile Include="PlayerGrain.cs" />
+    <Compile Include="PlayerMaser.cs" />
     <Compile Include="RoomGrain.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -66,12 +67,9 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FootStone.GrainInterfaces\FootStone.GrainInterfaces.csproj">
-      <Project>{42a9dc30-c688-4481-8e3e-bb1e0dd9622f}</Project>
+      <Project>{1aba1d1c-893b-4e66-b969-23eda6269f8e}</Project>
       <Name>FootStone.GrainInterfaces</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Orleans.OrleansCodeGenerator.Build.2.1.2\build\Microsoft.Orleans.OrleansCodeGenerator.Build.targets" Condition="Exists('..\packages\Microsoft.Orleans.OrleansCodeGenerator.Build.2.1.2\build\Microsoft.Orleans.OrleansCodeGenerator.Build.targets')" />

@@ -3,13 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28010.2036
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FootStone.GrainInterfaces", "FootStone.GrainInterfaces\FootStone.GrainInterfaces.csproj", "{42A9DC30-C688-4481-8E3E-BB1E0DD9622F}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FootStone.FrontServer", "FootStone.FrontServer\FootStone.FrontServer.csproj", "{60983B75-C7AD-497E-8231-91C212CB01AD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FootStone.GameServer", "FootStone.GameServer\FootStone.GameServer.csproj", "{7C7B2706-6E0B-4979-83D0-1BB7BF0189F0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FootStone.Grains", "FootStone.Grains\FootStone.Grains.csproj", "{CABC0DBC-E8B1-4948-AE50-CA3DD2FD2BAA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FootStone.GrainInterfaces", "FootStone.GrainInterfaces\FootStone.GrainInterfaces.csproj", "{1ABA1D1C-893B-4E66-B969-23EDA6269F8E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FootStone.client", "FootStone.client\FootStone.client.csproj", "{7E2E79C2-6949-4C7E-9C66-7ED772E2A866}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +19,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{42A9DC30-C688-4481-8E3E-BB1E0DD9622F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{42A9DC30-C688-4481-8E3E-BB1E0DD9622F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{42A9DC30-C688-4481-8E3E-BB1E0DD9622F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{42A9DC30-C688-4481-8E3E-BB1E0DD9622F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{60983B75-C7AD-497E-8231-91C212CB01AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{60983B75-C7AD-497E-8231-91C212CB01AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{60983B75-C7AD-497E-8231-91C212CB01AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -33,6 +31,14 @@ Global
 		{CABC0DBC-E8B1-4948-AE50-CA3DD2FD2BAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CABC0DBC-E8B1-4948-AE50-CA3DD2FD2BAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CABC0DBC-E8B1-4948-AE50-CA3DD2FD2BAA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1ABA1D1C-893B-4E66-B969-23EDA6269F8E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1ABA1D1C-893B-4E66-B969-23EDA6269F8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1ABA1D1C-893B-4E66-B969-23EDA6269F8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1ABA1D1C-893B-4E66-B969-23EDA6269F8E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E2E79C2-6949-4C7E-9C66-7ED772E2A866}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E2E79C2-6949-4C7E-9C66-7ED772E2A866}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E2E79C2-6949-4C7E-9C66-7ED772E2A866}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E2E79C2-6949-4C7E-9C66-7ED772E2A866}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

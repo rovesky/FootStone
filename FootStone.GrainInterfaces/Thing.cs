@@ -2,7 +2,7 @@ using Orleans.Concurrency;
 using System;
 using System.Collections.Generic;
 
-namespace AdventureGrainInterfaces
+namespace FootStone.GrainInterfaces
 {
     [Immutable]
     public class Thing

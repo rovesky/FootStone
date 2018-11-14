@@ -1,4 +1,4 @@
-using AdventureGrainInterfaces;
+using FootStone.GrainInterfaces;
 using Orleans;
 using System;
 using System.Collections.Generic;
@@ -6,249 +6,258 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AdventureGrains
+namespace FootStone.Grains
 {
     public class PlayerGrain : Orleans.Grain, IPlayerGrain
     {
-        IRoomGrain roomGrain; // Current room
-        List<Thing> things = new List<Thing>(); // Things that the player is carrying
 
-        bool killed = false;
-
-        PlayerInfo myInfo;
-
-        public override Task OnActivateAsync()
+        public Task<PlayerInfo> GatComponentMaster()
         {
-            this.myInfo = new PlayerInfo { Key = this.GetPrimaryKey(), Name = "nobody" };
-            return base.OnActivateAsync();
+            var playerInfo = new PlayerInfo();
+        //    playerInfo.Key = "p1";
+            playerInfo.Name = "name1";
+
+            return Task.FromResult(playerInfo);
         }
+        //    IRoomGrain roomGrain; // Current room
+        //    List<Thing> things = new List<Thing>(); // Things that the player is carrying
 
-        Task<string> IPlayerGrain.Name()
-        {
-            return Task.FromResult(myInfo.Name);
-        }
+        //    bool killed = false;
 
-        Task<IRoomGrain> IPlayerGrain.RoomGrain()
-        {
-            return Task.FromResult(roomGrain);
-        }
+        //    PlayerInfo myInfo;
 
+        //    public override Task OnActivateAsync()
+        //    {
+        //        this.myInfo = new PlayerInfo { Key = this.GetPrimaryKey(), Name = "nobody" };
+        //        return base.OnActivateAsync();
+        //    }
 
-        async Task IPlayerGrain.Die()
-        {
-            // Drop everything
-            var tasks = new List<Task<string>>();
-            foreach (var thing in new List<Thing>(things))
-            {
-                tasks.Add(this.Drop(thing));
-            }
-            await Task.WhenAll(tasks);
+        //    Task<string> IPlayerGrain.Name()
+        //    {
+        //        return Task.FromResult(myInfo.Name);
+        //    }
 
-            // Exit the game
-            if (this.roomGrain != null)
-            {
-                await this.roomGrain.Exit(myInfo);
-                this.roomGrain = null;
-                killed = true;
-            }
-        }
-
-        async Task<string> Drop(Thing thing)
-        {
-            if ( killed )
-                return await CheckAlive();
-
-            if (thing != null)
-            {
-                this.things.Remove(thing);
-                await this.roomGrain.Drop(thing);
-                return "Okay.";
-            }
-            else
-                return "I don't understand.";
-        }
-
-        async Task<string> Take(Thing thing)
-        {
-            if (killed)
-                return await CheckAlive();
-
-            if (thing != null)
-            {
-                this.things.Add(thing);
-                await this.roomGrain.Take(thing);
-                return "Okay.";
-            }
-            else
-                return "I don't understand.";
-        }
+        //    Task<IRoomGrain> IPlayerGrain.RoomGrain()
+        //    {
+        //        return Task.FromResult(roomGrain);
+        //    }
 
 
-        Task IPlayerGrain.SetName(string name)
-        {
-            this.myInfo.Name = name;
-            return Task.CompletedTask;
-        }
+        //    async Task IPlayerGrain.Die()
+        //    {
+        //        // Drop everything
+        //        var tasks = new List<Task<string>>();
+        //        foreach (var thing in new List<Thing>(things))
+        //        {
+        //            tasks.Add(this.Drop(thing));
+        //        }
+        //        await Task.WhenAll(tasks);
 
-        Task IPlayerGrain.SetRoomGrain(IRoomGrain room)
-        {
-            this.roomGrain = room;
-            return room.Enter(myInfo);
-        }
+        //        // Exit the game
+        //        if (this.roomGrain != null)
+        //        {
+        //            await this.roomGrain.Exit(myInfo);
+        //            this.roomGrain = null;
+        //            killed = true;
+        //        }
+        //    }
 
-        async Task<string> Go(string direction)
-        {
-            IRoomGrain destination = await this.roomGrain.ExitTo(direction);
+        //    async Task<string> Drop(Thing thing)
+        //    {
+        //        if ( killed )
+        //            return await CheckAlive();
 
-            StringBuilder description = new StringBuilder();
+        //        if (thing != null)
+        //        {
+        //            this.things.Remove(thing);
+        //            await this.roomGrain.Drop(thing);
+        //            return "Okay.";
+        //        }
+        //        else
+        //            return "I don't understand.";
+        //    }
 
-            if (destination != null)
-            {
-                await this.roomGrain.Exit(myInfo);
-                await destination.Enter(myInfo);
+        //    async Task<string> Take(Thing thing)
+        //    {
+        //        if (killed)
+        //            return await CheckAlive();
 
-                this.roomGrain = destination;
-                var desc = await destination.Description(myInfo);
+        //        if (thing != null)
+        //        {
+        //            this.things.Add(thing);
+        //            await this.roomGrain.Take(thing);
+        //            return "Okay.";
+        //        }
+        //        else
+        //            return "I don't understand.";
+        //    }
 
-                if (desc != null)
-                    description.Append(desc);
-            }
-            else
-            {
-                description.Append("You cannot go in that direction.");
-            }
 
-            if (things.Count > 0)
-            {
-                description.AppendLine("You are holding the following items:");
-                foreach (var thing in things)
-                {
-                    description.AppendLine(thing.Name);
-                }
-            }
+        //    Task IPlayerGrain.SetName(string name)
+        //    {
+        //        this.myInfo.Name = name;
+        //        return Task.CompletedTask;
+        //    }
 
-            return description.ToString();
-        }
+        //    Task IPlayerGrain.SetRoomGrain(IRoomGrain room)
+        //    {
+        //        this.roomGrain = room;
+        //        return room.Enter(myInfo);
+        //    }
 
-        async Task<string> CheckAlive()
-        {
-            if (!killed)
-                return null;
+        //    async Task<string> Go(string direction)
+        //    {
+        //        IRoomGrain destination = await this.roomGrain.ExitTo(direction);
 
-            // Go to room '-2', which is the place of no return.
-            var room = GrainFactory.GetGrain<IRoomGrain>(-2);
-            return await room.Description(myInfo);
-        }
+        //        StringBuilder description = new StringBuilder();
 
-        async Task<string> Kill(string target)
-        {
-            if (things.Count == 0)
-                return "With what? Your bare hands?";
+        //        if (destination != null)
+        //        {
+        //            await this.roomGrain.Exit(myInfo);
+        //            await destination.Enter(myInfo);
 
-            var player = await this.roomGrain.FindPlayer(target);
-            if (player != null)
-            {
-                var weapon = things.Where(t => t.Category == "weapon").FirstOrDefault();
-                if (weapon != null)
-                {
-                    await GrainFactory.GetGrain<IPlayerGrain>(player.Key).Die();
-                    return target + " is now dead.";
-                }
-                return "With what? Your bare hands?";
-            }
+        //            this.roomGrain = destination;
+        //            var desc = await destination.Description(myInfo);
 
-            var monster = await this.roomGrain.FindMonster(target);
-            if (monster != null)
-            {
-                var weapons = monster.KilledBy.Join(things, id => id, t => t.Id, (id, t) => t);
-                if (weapons.Count() > 0)
-                {
-                    await GrainFactory.GetGrain<IMonsterGrain>(monster.Id).Kill(this.roomGrain);
-                    return target + " is now dead.";
-                }
-                return "With what? Your bare hands?";
-            }
-            return "I can't see " + target + " here. Are you sure?";
-        }
+        //            if (desc != null)
+        //                description.Append(desc);
+        //        }
+        //        else
+        //        {
+        //            description.Append("You cannot go in that direction.");
+        //        }
 
-        private string RemoveStopWords(string s)
-        {
-            string[] stopwords = new string[] { " on ", " the ", " a " };
+        //        if (things.Count > 0)
+        //        {
+        //            description.AppendLine("You are holding the following items:");
+        //            foreach (var thing in things)
+        //            {
+        //                description.AppendLine(thing.Name);
+        //            }
+        //        }
 
-            StringBuilder sb = new StringBuilder(s);
-            foreach (string word in stopwords)
-            {
-                sb.Replace(word, " ");
-            }
+        //        return description.ToString();
+        //    }
 
-            return sb.ToString();
-        }
+        //    async Task<string> CheckAlive()
+        //    {
+        //        if (!killed)
+        //            return null;
 
-        private Thing FindMyThing(string name)
-        {
-            return things.Where(x => x.Name == name).FirstOrDefault();
-        }
+        //        // Go to room '-2', which is the place of no return.
+        //        var room = GrainFactory.GetGrain<IRoomGrain>(-2);
+        //        return await room.Description(myInfo);
+        //    }
 
-        private string Rest(string[] words)
-        {
-            StringBuilder sb = new StringBuilder();
+        //    async Task<string> Kill(string target)
+        //    {
+        //        if (things.Count == 0)
+        //            return "With what? Your bare hands?";
 
-            for (int i = 1; i < words.Length; i++)
-                sb.Append(words[i] + " ");
+        //        var player = await this.roomGrain.FindPlayer(target);
+        //        if (player != null)
+        //        {
+        //            var weapon = things.Where(t => t.Category == "weapon").FirstOrDefault();
+        //            if (weapon != null)
+        //            {
+        //                await GrainFactory.GetGrain<IPlayerGrain>(player.Key).Die();
+        //                return target + " is now dead.";
+        //            }
+        //            return "With what? Your bare hands?";
+        //        }
 
-            return sb.ToString().Trim().ToLower();
-        }
+        //        var monster = await this.roomGrain.FindMonster(target);
+        //        if (monster != null)
+        //        {
+        //            var weapons = monster.KilledBy.Join(things, id => id, t => t.Id, (id, t) => t);
+        //            if (weapons.Count() > 0)
+        //            {
+        //                await GrainFactory.GetGrain<IMonsterGrain>(monster.Id).Kill(this.roomGrain);
+        //                return target + " is now dead.";
+        //            }
+        //            return "With what? Your bare hands?";
+        //        }
+        //        return "I can't see " + target + " here. Are you sure?";
+        //    }
 
-        async Task<string> IPlayerGrain.Play(string command)
-        {
-            Thing thing;
-            command = RemoveStopWords(command);
+        //    private string RemoveStopWords(string s)
+        //    {
+        //        string[] stopwords = new string[] { " on ", " the ", " a " };
 
-            string[] words = command.Split(' ');
+        //        StringBuilder sb = new StringBuilder(s);
+        //        foreach (string word in stopwords)
+        //        {
+        //            sb.Replace(word, " ");
+        //        }
 
-            string verb = words[0].ToLower();
+        //        return sb.ToString();
+        //    }
 
-            if (killed && verb != "end")
-                return await CheckAlive();
+        //    private Thing FindMyThing(string name)
+        //    {
+        //        return things.Where(x => x.Name == name).FirstOrDefault();
+        //    }
 
-            switch (verb)
-            {
-                case "look":
-                    return await this.roomGrain.Description(myInfo);
+        //    private string Rest(string[] words)
+        //    {
+        //        StringBuilder sb = new StringBuilder();
 
-                case "go":
-                    if (words.Length == 1)
-                        return "Go where?";
-                    return await Go(words[1]);
+        //        for (int i = 1; i < words.Length; i++)
+        //            sb.Append(words[i] + " ");
 
-                case "north":
-                case "south":
-                case "east":
-                case "west":
-                    return await Go(verb);
+        //        return sb.ToString().Trim().ToLower();
+        //    }
 
-                case "kill":
-                    if (words.Length == 1)
-                        return "Kill what?";
-                    var target = command.Substring(verb.Length + 1);
-                    return await Kill(target);
+        //    async Task<string> IPlayerGrain.Play(string command)
+        //    {
+        //        Thing thing;
+        //        command = RemoveStopWords(command);
 
-                case "drop":
-                    thing = FindMyThing(Rest(words));
-                    return await Drop(thing);
+        //        string[] words = command.Split(' ');
 
-                case "take":
-                    thing = await roomGrain.FindThing(Rest(words));
-                    return await Take(thing);
+        //        string verb = words[0].ToLower();
 
-                case "inv":
-                case "inventory":
-                    return "You are carrying: " + string.Join(" ", things.Select(x => x.Name));
+        //        if (killed && verb != "end")
+        //            return await CheckAlive();
 
-                case "end":
-                    return "";
-            }
-            return "I don't understand.";
-        }
+        //        switch (verb)
+        //        {
+        //            case "look":
+        //                return await this.roomGrain.Description(myInfo);
+
+        //            case "go":
+        //                if (words.Length == 1)
+        //                    return "Go where?";
+        //                return await Go(words[1]);
+
+        //            case "north":
+        //            case "south":
+        //            case "east":
+        //            case "west":
+        //                return await Go(verb);
+
+        //            case "kill":
+        //                if (words.Length == 1)
+        //                    return "Kill what?";
+        //                var target = command.Substring(verb.Length + 1);
+        //                return await Kill(target);
+
+        //            case "drop":
+        //                thing = FindMyThing(Rest(words));
+        //                return await Drop(thing);
+
+        //            case "take":
+        //                thing = await roomGrain.FindThing(Rest(words));
+        //                return await Take(thing);
+
+        //            case "inv":
+        //            case "inventory":
+        //                return "You are carrying: " + string.Join(" ", things.Select(x => x.Name));
+
+        //            case "end":
+        //                return "";
+        //        }
+        //        return "I don't understand.";
+        //    }
     }
 }

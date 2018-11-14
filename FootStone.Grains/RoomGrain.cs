@@ -1,11 +1,11 @@
-using AdventureGrainInterfaces;
+using FootStone.GrainInterfaces;
 using Orleans;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AdventureGrains
+namespace FootStone.Grains
 {
     /// <summary>
     /// Orleans grain implementation class Grain1.

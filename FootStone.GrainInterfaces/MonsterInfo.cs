@@ -1,7 +1,7 @@
 using Orleans.Concurrency;
 using System.Collections.Generic;
 
-namespace AdventureGrainInterfaces
+namespace FootStone.GrainInterfaces
 {
     [Immutable]
     public class MonsterInfo

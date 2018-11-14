@@ -1,5 +1,5 @@
-using AdventureGrainInterfaces;
-using AdventureGrains;
+using FootStone.GrainInterfaces;
+using FootStone.Grains;
 using Microsoft.Extensions.Logging;
 using Orleans;
 using Orleans.Configuration;
@@ -47,7 +47,7 @@ namespace AdventureSetup
                 })
                 .Configure<EndpointOptions>(options => options.AdvertisedIPAddress = IPAddress.Loopback)
                 .ConfigureApplicationParts(parts => parts.AddApplicationPart(typeof(RoomGrain).Assembly).WithReferences())
-                .ConfigureLogging(logging => logging.ToString()/*logging.AddConsole()*/)
+                .ConfigureLogging(logging => logging.AddConsole())
                 .Build();
 
             var client = new ClientBuilder()
@@ -58,7 +58,7 @@ namespace AdventureSetup
                     options.ServiceId = "AdventureApp";
                 })
                 .ConfigureApplicationParts(parts => parts.AddApplicationPart(typeof(IRoomGrain).Assembly).WithReferences())
-                .ConfigureLogging(logging => logging.ToString()/*logging.AddConsole()*/)
+                .ConfigureLogging(logging => logging.AddConsole())
                 .Build();
 
             RunAsync(silo, client, mapFileName).Wait();

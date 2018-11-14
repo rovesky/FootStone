@@ -1,7 +1,7 @@
 using Orleans;
 using System.Threading.Tasks;
 
-namespace AdventureGrainInterfaces
+namespace FootStone.GrainInterfaces
 {
     public interface IMonsterGrain : IGrainWithIntegerKey
     {

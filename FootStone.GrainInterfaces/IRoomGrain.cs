@@ -1,7 +1,7 @@
 using Orleans;
 using System.Threading.Tasks;
 
-namespace AdventureGrainInterfaces
+namespace FootStone.GrainInterfaces
 {
     /// <summary>
     /// A room is any location in a game, including outdoor locations and

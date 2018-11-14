@@ -1,12 +1,12 @@
-using AdventureGrainInterfaces;
 using Orleans;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FootStone.GrainInterfaces;
 
-namespace AdventureGrains
+namespace FootStone.Grains
 {
     public class MonsterGrain : Orleans.Grain, IMonsterGrain
     {

@@ -1,12 +1,12 @@
-using Orleans.Concurrency;
-using System;
+//using Orleans.Concurrency;
+//using System;
 
-namespace AdventureGrainInterfaces
-{
-    [Immutable]
-    public class PlayerInfo
-    {
-        public Guid Key { get; set; }
-        public string Name { get; set; }
-    }
-}
+//namespace FootStone.GrainInterfaces
+//{
+//    [Immutable]
+//    public class PlayerInfo
+//    {
+//        public Guid Key { get; set; }
+//        public string Name { get; set; }
+//    }
+//}
