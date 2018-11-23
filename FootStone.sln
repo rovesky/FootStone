@@ -19,6 +19,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FootStone.Core.GrainInterfa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FootStone.Core.Grains", "FootStone.Core.Grains\FootStone.Core.Grains.csproj", "{C6D3BB2D-5BEB-43B3-9B97-7673E2924617}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FootStone.Core.Client", "FootStone.Core.Client\FootStone.Core.Client.csproj", "{B0F028D7-307B-4C9D-BB2E-069208EFE37C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,6 +59,10 @@ Global
 		{C6D3BB2D-5BEB-43B3-9B97-7673E2924617}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C6D3BB2D-5BEB-43B3-9B97-7673E2924617}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C6D3BB2D-5BEB-43B3-9B97-7673E2924617}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B0F028D7-307B-4C9D-BB2E-069208EFE37C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B0F028D7-307B-4C9D-BB2E-069208EFE37C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B0F028D7-307B-4C9D-BB2E-069208EFE37C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B0F028D7-307B-4C9D-BB2E-069208EFE37C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

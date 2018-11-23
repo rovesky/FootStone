@@ -10,3 +10,12 @@
 /packages
 /output
 /FootStone.client/obj
+/FootStone.Core.Client/obj
+/FootStone.Core.Client/bin
+/FootStone.Core.GameServer/obj
+/FootStone.Core.GameServer/bin
+/publish
+/FootStone.Core.Grains/obj
+/FootStone.Core.Grains/bin
+/FootStone.Core.GrainInterfaces/obj
+/FootStone.Core.GrainInterfaces/bin
