@@ -72,7 +72,7 @@ namespace AdventureSetup
                 .Build();
 
             Global.Instance.OrleansClient = client;
-        //    InitIce(args);
+            InitIce(args);
             RunAsync(silo, client, mapFileName).Wait();
 
             Console.ReadLine();
@@ -101,55 +101,55 @@ namespace AdventureSetup
             await silo.StopAsync();
         }
 
-        //static void InitIce(string[] args)
-        //{
-        //    Thread th = new Thread(new ThreadStart(() =>
-        //    {
+        static void InitIce(string[] args)
+        {
+            Thread th = new Thread(new ThreadStart(() =>
+            {
 
-        //        try
-        //        {
-        //            //
-        //            // using statement - communicator is automatically destroyed
-        //            // at the end of this statement
-        //            //
-        //            using (var communicator = Ice.Util.initialize(ref args, "config.server"))
-        //            {
-        //                if (args.Length > 0)
-        //                {
-        //                    Console.Error.WriteLine("too many arguments");
+                try
+                {
+                    //
+                    // using statement - communicator is automatically destroyed
+                    // at the end of this statement
+                    //
+                    using (var communicator = Ice.Util.initialize(ref args, "config.server"))
+                    {
+                        if (args.Length > 0)
+                        {
+                            Console.Error.WriteLine("too many arguments");
 
-        //                }
-        //                else
-        //                {
-        //                    //  var workQueue = new WorkQueue();
+                        }
+                        else
+                        {
+                            //  var workQueue = new WorkQueue();
 
-        //                    //
-        //                    // Shutdown the communicator and destroy the workqueue on Ctrl+C or Ctrl+Break
-        //                    // (shutdown always with Cancel = true)
-        //                    //                
-
-
-
-        //                    var adapter = communicator.createObjectAdapter("Player");
-        //                    adapter.add(new PlayerI(), Ice.Util.stringToIdentity("player"));
+                            //
+                            // Shutdown the communicator and destroy the workqueue on Ctrl+C or Ctrl+Break
+                            // (shutdown always with Cancel = true)
+                            //                
 
 
-        //                    adapter.activate();
-        //                    Console.WriteLine("ice inited!");
 
-        //                    communicator.waitForShutdown();
+                            var adapter = communicator.createObjectAdapter("Player");
+                            adapter.add(new PlayerI(), Ice.Util.stringToIdentity("player"));
 
-        //                }
-        //            }
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            Console.Error.WriteLine(ex);
 
-        //        }
+                            adapter.activate();
+                            Console.WriteLine("ice inited!");
 
-        //    })); //创建线程                     
-        //    th.Start(); //启动线程       
-        //}
+                            communicator.waitForShutdown();
+
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.Error.WriteLine(ex);
+
+                }
+
+            })); //创建线程                     
+            th.Start(); //启动线程       
+        }
     }
 }
