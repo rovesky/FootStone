@@ -11,13 +11,22 @@ namespace FootStone.Grains
     public class PlayerGrain : Orleans.Grain, IPlayerGrain
     {
 
-        public Task<PlayerInfo> GatComponentMaster()
+        private PlayerInfo createPlayer()
         {
-            var playerInfo = new PlayerInfo();
-        //    playerInfo.Key = "p1";
+            var playerInfo = new PlayerInfo();      
             playerInfo.Name = "name1";
+            playerInfo.items = new List<Item>();
+            playerInfo.items.Add(new Item("1", "item1", 1));
+            playerInfo.items.Add(new Item("2", "item2", 2));
+            playerInfo.playerMaster = new PlayerMaster(10, 20);
+            return playerInfo;
+        }
 
-            return Task.FromResult(playerInfo);
+        public Task<PlayerInfo> GetPlayerInfo()
+        {
+           
+
+            return Task.FromResult(createPlayer());
         }
         //    IRoomGrain roomGrain; // Current room
         //    List<Thing> things = new List<Thing>(); // Things that the player is carrying

@@ -1,4 +1,5 @@
 ﻿using FootStone.GrainInterfaces;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -110,8 +111,9 @@ namespace FootStone.client
         {
             try
             {
-               var playerInfo = await player.getPlayerInfoAsync("player1");
-                Console.WriteLine(playerInfo.Name);
+
+               var playerInfo = await player.getPlayerInfoAsync(Guid.NewGuid().ToString());
+                Console.WriteLine(JsonConvert.SerializeObject(playerInfo));
             }
             catch (PlayerNotExsit)
             {
