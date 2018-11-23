@@ -12,14 +12,14 @@ module FootStone
 	{
 		exception PlayerNotExsit
 		{
-		}
+		};
 
 		struct Item
 		{
 			string id;
 			string name;
 			int    type;
-		}
+		};
 
 		["clr:generic:List"]sequence<Item> ItemList;
 		
@@ -27,14 +27,14 @@ module FootStone
 		{
 			int hp;
 			int mp;
-		}
+		};
 		struct PlayerInfo
 		{
 			string Key;
 			string Name;
 			PlayerMaster  playerMaster;
 			ItemList items;
-		}
+		};
 
 
 		interface Player
@@ -43,6 +43,6 @@ module FootStone
 				throws PlayerNotExsit;
 
     
-		}
-	}
-}
+		};
+	};
+};

@@ -10,7 +10,52 @@ namespace FootStone.client
 {
     class Program
     {
+        static void Test()
+        {
+            try
+            {
+                Ice.InitializationData initData = new Ice.InitializationData();
+
+                initData.properties = Ice.Util.createProperties();
+                // initData.properties.setProperty("Ice.ACM.Client", "0");
+                // initData.properties.setProperty("Ice.RetryIntervals", "-1");
+                initData.properties.setProperty("Ice.FactoryAssemblies", "client");
+                initData.properties.setProperty("Ice.Trace.Network", "0");
+                initData.properties.setProperty("Player.Proxy", "player:tcp -h localhost -p 12000");
+
+                //
+                // using statement - communicator is automatically destroyed
+                // at the end of this statement
+                //
+                using (var communicator = Ice.Util.initialize(initData))
+                {
+                    var player = PlayerPrxHelper.checkedCast(communicator.propertyToProxy("Player.Proxy"));
+
+                    player.begin_getPlayerInfo(Guid.NewGuid().ToString()).whenCompleted(
+                                (playerInfo) => {
+                                    Console.Error.WriteLine(playerInfo.Name);
+                                },
+                                (Ice.Exception ex) => {
+
+                                });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine(ex);
+
+            }
+        }
         static void Main(string[] args)
+        {
+            Test();
+
+            var line = Console.In.ReadLine();
+
+        }
+
+        private static int Test1(string[] args)
         {
             int status = 0;
 
@@ -43,8 +88,7 @@ namespace FootStone.client
                 Console.Error.WriteLine(ex);
                 status = 1;
             }
-
-            
+            return status;
         }
 
         private static int run(Ice.Communicator communicator)
