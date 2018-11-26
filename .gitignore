@@ -19,3 +19,7 @@
 /FootStone.Core.Grains/bin
 /FootStone.Core.GrainInterfaces/obj
 /FootStone.Core.GrainInterfaces/bin
+/FootStone.Core.Client/Properties/PublishProfiles/*.pubxml
+/FootStone.Core.Client/Properties/PublishProfiles/*.user
+/FootStone.Core.GameServer/Properties/PublishProfiles/*.pubxml
+/FootStone.Core.GameServer/Properties/PublishProfiles/*.user
