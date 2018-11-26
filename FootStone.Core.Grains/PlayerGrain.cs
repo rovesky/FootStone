@@ -14,11 +14,12 @@ namespace FootStone.Grains
         private PlayerInfo createPlayer()
         {
             var playerInfo = new PlayerInfo();      
-            playerInfo.Name = "name1";
+            playerInfo.Name = "name"+IdentityString;
             playerInfo.items = new List<Item>();
             playerInfo.items.Add(new Item("1", "item1", 1));
             playerInfo.items.Add(new Item("2", "item2", 2));
             playerInfo.playerMaster = new PlayerMaster(10, 20);
+            Console.WriteLine("new player:" + playerInfo.Name);
             return playerInfo;
         }
 

@@ -21,7 +21,7 @@ namespace FootStone.client
                 // initData.properties.setProperty("Ice.RetryIntervals", "-1");
                 initData.properties.setProperty("Ice.FactoryAssemblies", "client");
                 initData.properties.setProperty("Ice.Trace.Network", "0");
-                initData.properties.setProperty("Player.Proxy", "player:tcp -h localhost -p 12000");
+                initData.properties.setProperty("Player.Proxy", "player:tcp -h 192.168.206.4 -p 12000");
 
                 //
                 // using statement - communicator is automatically destroyed
@@ -31,13 +31,19 @@ namespace FootStone.client
                 {
                     var player = PlayerPrxHelper.checkedCast(communicator.propertyToProxy("Player.Proxy"));
 
-                    player.begin_getPlayerInfo(Guid.NewGuid().ToString()).whenCompleted(
-                                (playerInfo) => {
-                                    Console.Error.WriteLine(playerInfo.Name);
-                                },
-                                (Ice.Exception ex) => {
-
-                                });
+                    for (int i = 0; i < 100; ++i)
+                    {
+                        player.begin_getPlayerInfo(Guid.NewGuid().ToString()).whenCompleted(
+                                    (playerInfo) =>
+                                    {
+                                        Console.Error.WriteLine(playerInfo.Name);
+                                    },
+                                    (Ice.Exception ex) =>
+                                    {
+                                        Console.Error.WriteLine(ex.Message);
+                                    });
+                    }
+                    communicator.waitForShutdown();
 
                 }
             }

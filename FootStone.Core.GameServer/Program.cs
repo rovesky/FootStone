@@ -10,6 +10,7 @@ using Orleans.Runtime;
 using System;
 using System.IO;
 using System.Net;
+using System.Net.Sockets;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,10 +19,29 @@ namespace AdventureSetup
 {
     class Program
     {
-        static int Main(string [] args)
+
+        static string IP_START = "192.168.206";
+        static string mysqlConnectStr = "server=192.168.3.14;user id=root;password=654321#;database=footstone";
+
+        public static string GetLocalIP()
+        {
+
+            string name = Dns.GetHostName();
+            IPAddress[] ipadrlist = Dns.GetHostAddresses(name);
+            foreach (IPAddress ipa in ipadrlist)
+            {
+                if (ipa.ToString().StartsWith(IP_START))
+                {
+                    return ipa.ToString();
+                }
+                 
+            }
+            return IPAddress.Loopback.ToString();
+        }
+        static int Main(string[] args)
         {
             var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            string mapFileName = Path.Combine (path, "AdventureMap.json");
+            string mapFileName = Path.Combine(path, "AdventureMap.json");
 
             switch (args.Length)
             {
@@ -41,14 +61,39 @@ namespace AdventureSetup
                 return -2;
             }
 
+            
+           // var primarySiloEndpoint = new IPEndPoint(IPAddress.Parse(PRIMARY_SILO), 11111);
+
             var silo = new SiloHostBuilder()
-                .UseLocalhostClustering()
+            //    .UseLocalhostClustering()
+            //    .UseDevelopmentClustering(primarySiloEndpoint)
+                .UseAdoNetClustering(options =>
+                {
+                    options.ConnectionString = mysqlConnectStr;
+                    options.Invariant = "MySql.Data.MySqlClient";
+                })
                 .Configure<ClusterOptions>(options =>
                 {
-                    options.ClusterId = "dev";
-                    options.ServiceId = "AdventureApp";
+                    options.ClusterId = "lsj";
+                    options.ServiceId = "FootStone";
                 })
-                .Configure<EndpointOptions>(options => options.AdvertisedIPAddress = IPAddress.Loopback)
+                .Configure<EndpointOptions>(options =>
+                {
+                    // Port to use for Silo-to-Silo
+                    options.SiloPort = 11111;
+                    // Port to use for the gateway
+                    options.GatewayPort = 30000;
+                    // IP Address to advertise in the cluster
+                    options.AdvertisedIPAddress = IPAddress.Parse(GetLocalIP());
+                    //options.AdvertisedIPAddress = IPAddress.Parse(Dns.GetHostName());
+                    //   options.AdvertisedIPAddress = IPAddress.;
+                    // The socket used for silo-to-silo will bind to this endpoint
+                    //options.GatewayListeningEndpoint = new IPEndPoint(IPAddress.Any, 40000);
+                    // The socket used by the gateway will bind to this endpoint
+                    // options.SiloListeningEndpoint = new IPEndPoint(IPAddress.Any, 50000);
+
+                })
+                //  .Configure<EndpointOptions>(options => options.AdvertisedIPAddress = IPAddress.Any)
                 .ConfigureApplicationParts(parts => parts.AddApplicationPart(typeof(RoomGrain).Assembly).WithReferences())
                 .ConfigureLogging(logging => logging.AddConsole())
                 .AddMemoryGrainStorage("memory1")
@@ -60,16 +105,28 @@ namespace AdventureSetup
                 //})
                 .Build();
 
+            //var gateways = new IPEndPoint[SILOS.Length];
+            //for (int i = 0; i < SILOS.Length; ++i)
+            //{
+            //    gateways[i] = new IPEndPoint(IPAddress.Parse(SILOS[i]), 30000);
+            //};
+
             var client = new ClientBuilder()
-                .UseLocalhostClustering()
-                .Configure<ClusterOptions>(options =>
-                {
-                    options.ClusterId = "dev";
-                    options.ServiceId = "AdventureApp";
-                })
-                .ConfigureApplicationParts(parts => parts.AddApplicationPart(typeof(IRoomGrain).Assembly).WithReferences())
-                .ConfigureLogging(logging => logging.AddConsole())
-                .Build();
+                    //.UseLocalhostClustering()
+                    // .UseStaticClustering(gateways)
+                    .UseAdoNetClustering(options =>
+                    {
+                        options.ConnectionString = mysqlConnectStr;
+                        options.Invariant = "MySql.Data.MySqlClient";
+                    })
+                    .Configure<ClusterOptions>(options =>
+                    {
+                        options.ClusterId = "lsj";
+                        options.ServiceId = "FootStone";
+                    })
+                    .ConfigureApplicationParts(parts => parts.AddApplicationPart(typeof(IRoomGrain).Assembly).WithReferences())
+                    .ConfigureLogging(logging => logging.AddConsole())
+                    .Build();
 
             Global.Instance.OrleansClient = client;
             InitIce(args);
@@ -112,7 +169,14 @@ namespace AdventureSetup
                     // using statement - communicator is automatically destroyed
                     // at the end of this statement
                     //
-                    using (var communicator = Ice.Util.initialize(ref args, "config.server"))
+                    Ice.InitializationData initData = new Ice.InitializationData();
+
+                    initData.properties = Ice.Util.createProperties();
+                    initData.properties.setProperty("Ice.Warn.Connections", "1");
+                    initData.properties.setProperty("Ice.Trace.Network", "1");
+                    initData.properties.setProperty("Player.Endpoints", "tcp -h "+GetLocalIP()+" -p 12000");
+
+                    using (var communicator = Ice.Util.initialize(initData))
                     {
                         if (args.Length > 0)
                         {

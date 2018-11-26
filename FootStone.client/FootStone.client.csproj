@@ -87,12 +87,6 @@
     </None>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\FootStone.GrainInterfaces\FootStone.GrainInterfaces.csproj">
-      <Project>{1aba1d1c-893b-4e66-b969-23eda6269f8e}</Project>
-      <Name>FootStone.GrainInterfaces</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

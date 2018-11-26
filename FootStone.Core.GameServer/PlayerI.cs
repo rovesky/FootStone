@@ -17,7 +17,7 @@ namespace FootStone.FrontServer
 
                 var player = Global.Instance.OrleansClient.GetGrain<IPlayerGrain>(Guid.Parse(playerId));
                 var playerInfo = await player.GetPlayerInfo();               
-                Console.WriteLine(playerInfo.Name);
+               // Console.WriteLine(playerInfo.Name);
                 return playerInfo;
             }
             catch (System.Exception ex)

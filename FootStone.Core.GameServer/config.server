@@ -3,7 +3,7 @@
 # "Player". The following line sets the endpoints for this
 # adapter.
 #
-Player.Endpoints=tcp -h localhost -p 12000
+Player.Endpoints=tcp -h 192.168.3.14 -p 12000
 
 #
 # Warn about connection exceptions
