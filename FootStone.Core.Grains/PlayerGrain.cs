@@ -1,5 +1,6 @@
 using FootStone.GrainInterfaces;
 using Orleans;
+using Orleans.Providers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,26 +9,45 @@ using System.Threading.Tasks;
 
 namespace FootStone.Grains
 {
-    public class PlayerGrain : Orleans.Grain, IPlayerGrain
+    //public class PlayerState
+    //{
+      
+    //   public string name;
+    //   public int level;        
+    //}
+    [StorageProvider(ProviderName="ado1")]
+    public class PlayerGrain : Orleans.Grain<PlayerInfo>, IPlayerGrain
     {
 
-        private PlayerInfo createPlayer()
+        private  void createPlayer()
         {
-            var playerInfo = new PlayerInfo();      
-            playerInfo.Name = "name"+IdentityString;
-            playerInfo.items = new List<Item>();
-            playerInfo.items.Add(new Item("1", "item1", 1));
-            playerInfo.items.Add(new Item("2", "item2", 2));
-            playerInfo.playerMaster = new PlayerMaster(10, 20);
-            Console.WriteLine("new player:" + playerInfo.Name);
-            return playerInfo;
+    
+            this.State.id = this.GetPrimaryKey().ToString();
+            this.State.name = "name";
+            this.State.items = new List<Item>();
+            this.State.items.Add(new Item("1", "item1", 1));
+            this.State.items.Add(new Item("2", "item2", 2));
+            this.State.playerMaster.hp = 10 ;
+            this.State.playerMaster.mp = 10;
+            Console.WriteLine("new player:" + this.State.name);
+           // return playerInfo;
         }
 
-        public Task<PlayerInfo> GetPlayerInfo()
+        public  Task<PlayerInfo> GetPlayerInfoAsync()
         {
-           
+            if(this.State.id.Equals(""))
+            {
+                 createPlayer();
+            }
 
-            return Task.FromResult(createPlayer());
+           // this.WriteStateAsync();
+            return Task.FromResult(this.State);
+        }
+
+        public async Task setPlayerName(string name)
+        {
+            this.State.name = name;
+            await WriteStateAsync();
         }
         //    IRoomGrain roomGrain; // Current room
         //    List<Thing> things = new List<Thing>(); // Things that the player is carrying

@@ -25,14 +25,14 @@ namespace FootStone.Grains
 
         Task IRoomGrain.Enter(PlayerInfo player)
         {
-            players.RemoveAll(x => x.Key == player.Key);
+          //  players.RemoveAll(x => x.Key == player.Key);
             players.Add(player);
             return Task.CompletedTask;
         }
 
         Task IRoomGrain.Exit(PlayerInfo player)
         {
-            players.RemoveAll(x => x.Key == player.Key);
+           // players.RemoveAll(x => x.Key == player.Key);
             return Task.CompletedTask;
         }
 
@@ -81,7 +81,7 @@ namespace FootStone.Grains
         Task<PlayerInfo> IRoomGrain.FindPlayer(string name)
         {
             name = name.ToLower();
-            return Task.FromResult(players.Where(x => x.Name.ToLower().Contains(name)).FirstOrDefault());
+            return Task.FromResult(players.Where(x => x.name.ToLower().Contains(name)).FirstOrDefault());
         }
 
         Task<MonsterInfo> IRoomGrain.FindMonster(string name)
@@ -105,22 +105,22 @@ namespace FootStone.Grains
                 }
             }
 
-            var others = players.Where(pi => pi.Key != whoisAsking.Key).ToArray();
+            //var others = players.Where(pi => pi.Key != whoisAsking.Key).ToArray();
 
-            if (others.Length > 0 || monsters.Count > 0)
-            {
-                sb.AppendLine("Beware! These guys are in the room with you:");
-                if (others.Length > 0)
-                    foreach (var player in others)
-                    {
-                        sb.Append("  ").AppendLine(player.Name);
-                    }
-                if (monsters.Count > 0)
-                    foreach (var monster in monsters)
-                    {
-                        sb.Append("  ").AppendLine(monster.Name);
-                    }
-            }
+            //if (others.Length > 0 || monsters.Count > 0)
+            //{
+            //    sb.AppendLine("Beware! These guys are in the room with you:");
+            //    if (others.Length > 0)
+            //        foreach (var player in others)
+            //        {
+            //            sb.Append("  ").AppendLine(player.Name);
+            //        }
+            //    if (monsters.Count > 0)
+            //        foreach (var monster in monsters)
+            //        {
+            //            sb.Append("  ").AppendLine(monster.Name);
+            //        }
+            //}
 
             return Task.FromResult(sb.ToString());
         }

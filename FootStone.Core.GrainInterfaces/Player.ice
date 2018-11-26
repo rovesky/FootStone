@@ -30,8 +30,9 @@ module FootStone
 		};
 		struct PlayerInfo
 		{
-			string Key;
-			string Name;
+			string id;
+			string name;
+			int    level;
 			PlayerMaster  playerMaster;
 			ItemList items;
 		};
@@ -42,6 +43,8 @@ module FootStone
 			["amd"] idempotent PlayerInfo getPlayerInfo(string playerId)
 				throws PlayerNotExsit;
 
+			["amd"] void setPlayerName(string playerId,string name)
+				throws PlayerNotExsit;
     
 		};
 	};

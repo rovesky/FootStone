@@ -457,10 +457,13 @@ namespace FootStone
             #region Slice data members
 
             [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-            public string Key;
+            public string id;
 
             [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-            public string Name;
+            public string name;
+
+            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
+            public int level;
 
             [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
             public PlayerMaster playerMaster;
@@ -477,17 +480,18 @@ namespace FootStone
             [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
             public PlayerInfo()
             {
-                this.Key = "";
-                this.Name = "";
+                this.id = "";
+                this.name = "";
                 this.playerMaster = new PlayerMaster();
                 ice_initialize();
             }
 
             [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-            public PlayerInfo(string Key, string Name, PlayerMaster playerMaster, _System.Collections.Generic.List<Item> items)
+            public PlayerInfo(string id, string name, int level, PlayerMaster playerMaster, _System.Collections.Generic.List<Item> items)
             {
-                this.Key = Key;
-                this.Name = Name;
+                this.id = id;
+                this.name = name;
+                this.level = level;
                 this.playerMaster = playerMaster;
                 this.items = items;
                 ice_initialize();
@@ -512,8 +516,9 @@ namespace FootStone
             {
                 int h_ = 5381;
                 IceInternal.HashUtil.hashAdd(ref h_, "::FootStone::GrainInterfaces::PlayerInfo");
-                IceInternal.HashUtil.hashAdd(ref h_, Key);
-                IceInternal.HashUtil.hashAdd(ref h_, Name);
+                IceInternal.HashUtil.hashAdd(ref h_, id);
+                IceInternal.HashUtil.hashAdd(ref h_, name);
+                IceInternal.HashUtil.hashAdd(ref h_, level);
                 IceInternal.HashUtil.hashAdd(ref h_, playerMaster);
                 IceInternal.HashUtil.hashAdd(ref h_, items);
                 return h_;
@@ -535,33 +540,37 @@ namespace FootStone
                     return false;
                 }
                 PlayerInfo o = (PlayerInfo)other;
-                if(this.Key == null)
+                if(this.id == null)
                 {
-                    if(o.Key != null)
+                    if(o.id != null)
                     {
                         return false;
                     }
                 }
                 else
                 {
-                    if(!this.Key.Equals(o.Key))
+                    if(!this.id.Equals(o.id))
                     {
                         return false;
                     }
                 }
-                if(this.Name == null)
+                if(this.name == null)
                 {
-                    if(o.Name != null)
+                    if(o.name != null)
                     {
                         return false;
                     }
                 }
                 else
                 {
-                    if(!this.Name.Equals(o.Name))
+                    if(!this.name.Equals(o.name))
                     {
                         return false;
                     }
+                }
+                if(!this.level.Equals(o.level))
+                {
+                    return false;
                 }
                 if(!this.playerMaster.Equals(o.playerMaster))
                 {
@@ -607,8 +616,9 @@ namespace FootStone
             [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
             public void ice_writeMembers(Ice.OutputStream ostr)
             {
-                ostr.writeString(this.Key);
-                ostr.writeString(this.Name);
+                ostr.writeString(this.id);
+                ostr.writeString(this.name);
+                ostr.writeInt(this.level);
                 this.playerMaster.ice_writeMembers(ostr);
                 ItemListHelper.write(ostr, this.items);
             }
@@ -616,8 +626,9 @@ namespace FootStone
             [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
             public void ice_readMembers(Ice.InputStream istr)
             {
-                this.Key = istr.readString();
-                this.Name = istr.readString();
+                this.id = istr.readString();
+                this.name = istr.readString();
+                this.level = istr.readInt();
                 this.playerMaster.ice_readMembers(istr);
                 this.items = ItemListHelper.read(istr);
             }
@@ -671,6 +682,9 @@ namespace FootStone
     {
         [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
         public delegate void Callback_Player_getPlayerInfo(PlayerInfo ret);
+
+        [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
+        public delegate void Callback_Player_setPlayerName();
     }
 }
 
@@ -692,6 +706,18 @@ namespace FootStone
             Ice.AsyncResult begin_getPlayerInfo(string playerId, Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie);
 
             PlayerInfo end_getPlayerInfo(Ice.AsyncResult asyncResult);
+
+            void setPlayerName(string playerId, string name, Ice.OptionalContext context = new Ice.OptionalContext());
+
+            _System.Threading.Tasks.Task setPlayerNameAsync(string playerId, string name, Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken());
+
+            Ice.AsyncResult<Callback_Player_setPlayerName> begin_setPlayerName(string playerId, string name, Ice.OptionalContext context = new Ice.OptionalContext());
+
+            Ice.AsyncResult begin_setPlayerName(string playerId, string name, Ice.AsyncCallback callback, object cookie);
+
+            Ice.AsyncResult begin_setPlayerName(string playerId, string name, Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie);
+
+            void end_setPlayerName(Ice.AsyncResult asyncResult);
         }
     }
 }
@@ -705,6 +731,9 @@ namespace FootStone
         {
             [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
             _System.Threading.Tasks.Task<PlayerInfo> getPlayerInfoAsync(string playerId, Ice.Current current = null);
+
+            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
+            _System.Threading.Tasks.Task setPlayerNameAsync(string playerId, string name, Ice.Current current = null);
         }
     }
 }
@@ -776,6 +805,18 @@ namespace FootStone
                 }
             }
 
+            public void setPlayerName(string playerId, string name, Ice.OptionalContext context = new Ice.OptionalContext())
+            {
+                try
+                {
+                    _iceI_setPlayerNameAsync(playerId, name, context, null, _System.Threading.CancellationToken.None, true).Wait();
+                }
+                catch(_System.AggregateException ex_)
+                {
+                    throw ex_.InnerException;
+                }
+            }
+
             #endregion
 
             #region Async Task operations
@@ -830,6 +871,51 @@ namespace FootStone
                     });
             }
 
+            public _System.Threading.Tasks.Task setPlayerNameAsync(string playerId, string name, Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken())
+            {
+                return _iceI_setPlayerNameAsync(playerId, name, context, progress, cancel, false);
+            }
+
+            private _System.Threading.Tasks.Task _iceI_setPlayerNameAsync(string iceP_playerId, string iceP_name, Ice.OptionalContext context, _System.IProgress<bool> progress, _System.Threading.CancellationToken cancel, bool synchronous)
+            {
+                iceCheckTwowayOnly(_setPlayerName_name);
+                var completed = new IceInternal.OperationTaskCompletionCallback<object>(progress, cancel);
+                _iceI_setPlayerName(iceP_playerId, iceP_name, context, synchronous, completed);
+                return completed.Task;
+            }
+
+            private const string _setPlayerName_name = "setPlayerName";
+
+            private void _iceI_setPlayerName(string iceP_playerId, string iceP_name, _System.Collections.Generic.Dictionary<string, string> context, bool synchronous, IceInternal.OutgoingAsyncCompletionCallback completed)
+            {
+                var outAsync = getOutgoingAsync<object>(completed);
+                outAsync.invoke(
+                    _setPlayerName_name,
+                    Ice.OperationMode.Normal,
+                    Ice.FormatType.DefaultFormat,
+                    context,
+                    synchronous,
+                    write: (Ice.OutputStream ostr) =>
+                    {
+                        ostr.writeString(iceP_playerId);
+                        ostr.writeString(iceP_name);
+                    },
+                    userException: (Ice.UserException ex) =>
+                    {
+                        try
+                        {
+                            throw ex;
+                        }
+                        catch(PlayerNotExsit)
+                        {
+                            throw;
+                        }
+                        catch(Ice.UserException)
+                        {
+                        }
+                    });
+            }
+
             #endregion
 
             #region Asynchronous operations
@@ -869,6 +955,43 @@ namespace FootStone
                     },
                     this, _getPlayerInfo_name, cookie, completedCallback);
                 _iceI_getPlayerInfo(iceP_playerId, context, synchronous, completed);
+                return completed;
+            }
+
+            public Ice.AsyncResult<Callback_Player_setPlayerName> begin_setPlayerName(string playerId, string name, Ice.OptionalContext context = new Ice.OptionalContext())
+            {
+                return begin_setPlayerName(playerId, name, context, null, null, false);
+            }
+
+            public Ice.AsyncResult begin_setPlayerName(string playerId, string name, Ice.AsyncCallback callback, object cookie)
+            {
+                return begin_setPlayerName(playerId, name, new Ice.OptionalContext(), callback, cookie, false);
+            }
+
+            public Ice.AsyncResult begin_setPlayerName(string playerId, string name, Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie)
+            {
+                return begin_setPlayerName(playerId, name, context, callback, cookie, false);
+            }
+
+            public void end_setPlayerName(Ice.AsyncResult asyncResult)
+            {
+                var resultI_ = IceInternal.AsyncResultI.check(asyncResult, this, _setPlayerName_name);
+                ((IceInternal.OutgoingAsyncT<object>)resultI_.OutgoingAsync).getResult(resultI_.wait());
+            }
+
+            private Ice.AsyncResult<Callback_Player_setPlayerName> begin_setPlayerName(string iceP_playerId, string iceP_name, _System.Collections.Generic.Dictionary<string, string> context, Ice.AsyncCallback completedCallback, object cookie, bool synchronous)
+            {
+                iceCheckAsyncTwowayOnly(_setPlayerName_name);
+                var completed = new IceInternal.OperationAsyncResultCompletionCallback<Callback_Player_setPlayerName, object>(
+                    (Callback_Player_setPlayerName cb, object ret) =>
+                    {
+                        if(cb != null)
+                        {
+                            cb.Invoke();
+                        }
+                    },
+                    this, _setPlayerName_name, cookie, completedCallback);
+                _iceI_setPlayerName(iceP_playerId, iceP_name, context, synchronous, completed);
                 return completed;
             }
 
@@ -1029,6 +1152,8 @@ namespace FootStone
 
             public abstract _System.Threading.Tasks.Task<PlayerInfo> getPlayerInfoAsync(string playerId, Ice.Current current = null);
 
+            public abstract _System.Threading.Tasks.Task setPlayerNameAsync(string playerId, string name, Ice.Current current = null);
+
             #endregion
 
             #region Slice type-related members
@@ -1079,13 +1204,28 @@ namespace FootStone
                     });
             }
 
+            [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011")]
+            public static _System.Threading.Tasks.Task<Ice.OutputStream>
+            iceD_setPlayerName(Player obj, IceInternal.Incoming inS, Ice.Current current)
+            {
+                Ice.ObjectImpl.iceCheckMode(Ice.OperationMode.Normal, current.mode);
+                var istr = inS.startReadParams();
+                string iceP_playerId;
+                string iceP_name;
+                iceP_playerId = istr.readString();
+                iceP_name = istr.readString();
+                inS.endReadParams();
+                return inS.setResultTask(obj.setPlayerNameAsync(iceP_playerId, iceP_name, current));
+            }
+
             private static readonly string[] _all =
             {
                 "getPlayerInfo",
                 "ice_id",
                 "ice_ids",
                 "ice_isA",
-                "ice_ping"
+                "ice_ping",
+                "setPlayerName"
             };
 
             public override _System.Threading.Tasks.Task<Ice.OutputStream>
@@ -1118,6 +1258,10 @@ namespace FootStone
                     case 4:
                     {
                         return Ice.ObjectImpl.iceD_ice_ping(this, inS, current);
+                    }
+                    case 5:
+                    {
+                        return iceD_setPlayerName(this, inS, current);
                     }
                 }
 

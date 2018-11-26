@@ -21,7 +21,7 @@ namespace FootStone.client
                 // initData.properties.setProperty("Ice.RetryIntervals", "-1");
                 initData.properties.setProperty("Ice.FactoryAssemblies", "client");
                 initData.properties.setProperty("Ice.Trace.Network", "0");
-                initData.properties.setProperty("Player.Proxy", "player:tcp -h 192.168.206.4 -p 12000");
+                initData.properties.setProperty("Player.Proxy", "player:tcp -h 192.168.206.1 -p 12000");
 
                 //
                 // using statement - communicator is automatically destroyed
@@ -31,12 +31,28 @@ namespace FootStone.client
                 {
                     var player = PlayerPrxHelper.checkedCast(communicator.propertyToProxy("Player.Proxy"));
 
-                    for (int i = 0; i < 100; ++i)
+                    for (int i = 0; i < 1; ++i)
                     {
                         player.begin_getPlayerInfo(Guid.NewGuid().ToString()).whenCompleted(
                                     (playerInfo) =>
                                     {
-                                        Console.Error.WriteLine(playerInfo.Name);
+                                        Console.Error.WriteLine(playerInfo.name);
+                                        player.begin_setPlayerName(playerInfo.id,playerInfo.name+"_y").whenCompleted(
+                                           () => {
+                                              player.begin_getPlayerInfo(playerInfo.id).whenCompleted(
+                                                  (playerInfo1) =>
+                                                  {
+                                                      Console.Error.WriteLine(playerInfo1.name);
+                                                  },
+                                                  (Ice.Exception ex) =>
+                                                           {
+                                                               Console.Error.WriteLine(ex.Message);
+                                                           });
+                                                 },
+                                           (Ice.Exception ex) =>
+                                           {
+                                               Console.Error.WriteLine(ex.Message);
+                                           });
                                     },
                                     (Ice.Exception ex) =>
                                     {

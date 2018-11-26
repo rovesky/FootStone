@@ -15,6 +15,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\FootStone.Core.GrainInterfaces\FootStone.Core.GrainInterfaces.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="config.client">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

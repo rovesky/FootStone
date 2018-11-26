@@ -22,6 +22,7 @@ namespace AdventureSetup
 
         static string IP_START = "192.168.206";
         static string mysqlConnectStr = "server=192.168.3.14;user id=root;password=654321#;database=footstone";
+        static string mysqlConnectStr1 = "server=192.168.3.14;user id=root;password=654321#;database=footstonestorage";
 
         public static string GetLocalIP()
         {
@@ -97,12 +98,13 @@ namespace AdventureSetup
                 .ConfigureApplicationParts(parts => parts.AddApplicationPart(typeof(RoomGrain).Assembly).WithReferences())
                 .ConfigureLogging(logging => logging.AddConsole())
                 .AddMemoryGrainStorage("memory1")
-                //.AddAdoNetGrainStorage("ado1",options=>
-                //{
-                //    options.ConnectionString = "";
-                //    options.UseJsonFormat = true;
-                //    options.Invariant = "MySql.Data.MySqlClient";
-                //})
+                .AddAdoNetGrainStorage("ado1", options =>
+                 {
+                  
+                     options.UseJsonFormat = true;
+                     options.ConnectionString = mysqlConnectStr1;
+                     options.Invariant = "MySql.Data.MySqlClient";
+                 })
                 .Build();
 
             //var gateways = new IPEndPoint[SILOS.Length];

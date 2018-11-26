@@ -21,8 +21,9 @@ namespace FootStone.GrainInterfaces
 
         //// A Player takes his turn by calling Play with a command
         //Task<string> Play(string command);
+        Task setPlayerName(string name);
 
-        Task<PlayerInfo> GetPlayerInfo();
+        Task<PlayerInfo> GetPlayerInfoAsync();
 
 
     }
