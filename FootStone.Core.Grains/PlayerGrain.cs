@@ -34,8 +34,8 @@ namespace FootStone.Grains
         }
 
         public  Task<PlayerInfo> GetPlayerInfoAsync()
-        {
-            if(this.State.id.Equals(""))
+        {         
+            if (this.State.id.Equals(""))
             {
                  createPlayer();
             }

@@ -1,4 +1,5 @@
-﻿using FootStone.GrainInterfaces;
+﻿using FootStone.FrontServer;
+using FootStone.GrainInterfaces;
 using Ice;
 using System;
 using System.Collections.Generic;
@@ -6,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FootStone.FrontServer
+namespace FootStone.Core.FrontServer
 {
     public class PlayerI : PlayerDisp_
     {
@@ -17,7 +18,7 @@ namespace FootStone.FrontServer
 
                 var player = Global.Instance.OrleansClient.GetGrain<IPlayerGrain>(Guid.Parse(playerId));
                 var playerInfo = await player.GetPlayerInfoAsync();               
-               // Console.WriteLine(playerInfo.Name);
+                Console.Error.WriteLine("----------------"+playerInfo.name+"---------------------");
                 return playerInfo;
             }
             catch (System.Exception ex)
@@ -34,7 +35,7 @@ namespace FootStone.FrontServer
 
                 var player = Global.Instance.OrleansClient.GetGrain<IPlayerGrain>(Guid.Parse(playerId));
                 // var playerInfo = await player.se
-                // Console.WriteLine(playerInfo.Name);
+              
                 await player.setPlayerName(name);
               }
             catch (System.Exception ex)

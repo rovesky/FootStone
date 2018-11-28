@@ -33,31 +33,33 @@ namespace FootStone.client
 
                     for (int i = 0; i < 1; ++i)
                     {
-                        player.begin_getPlayerInfo(Guid.NewGuid().ToString()).whenCompleted(
-                                    (playerInfo) =>
-                                    {
-                                        Console.Error.WriteLine(playerInfo.name);
-                                        player.begin_setPlayerName(playerInfo.id,playerInfo.name+"_y").whenCompleted(
-                                           () => {
-                                              player.begin_getPlayerInfo(playerInfo.id).whenCompleted(
-                                                  (playerInfo1) =>
-                                                  {
-                                                      Console.Error.WriteLine(playerInfo1.name);
-                                                  },
-                                                  (Ice.Exception ex) =>
-                                                           {
-                                                               Console.Error.WriteLine(ex.Message);
-                                                           });
-                                                 },
-                                           (Ice.Exception ex) =>
-                                           {
-                                               Console.Error.WriteLine(ex.Message);
-                                           });
-                                    },
-                                    (Ice.Exception ex) =>
-                                    {
-                                        Console.Error.WriteLine(ex.Message);
-                                    });
+                        doMethod(player);
+                       
+                        //player.begin_getPlayerInfo().whenCompleted(
+                        //            (playerInfo) =>
+                        //            {
+                        //                Console.Error.WriteLine(playerInfo.name);
+                        //                player.begin_setPlayerName(playerInfo.id,playerInfo.name+"_y").whenCompleted(
+                        //                   () => {
+                        //                      player.begin_getPlayerInfo(playerInfo.id).whenCompleted(
+                        //                          (playerInfo1) =>
+                        //                          {
+                        //                              Console.Error.WriteLine(playerInfo1.name);
+                        //                          },
+                        //                          (Ice.Exception ex) =>
+                        //                                   {
+                        //                                       Console.Error.WriteLine(ex.Message);
+                        //                                   });
+                        //                         },
+                        //                   (Ice.Exception ex) =>
+                        //                   {
+                        //                       Console.Error.WriteLine(ex.Message);
+                        //                   });
+                        //            },
+                        //            (Ice.Exception ex) =>
+                        //            {
+                        //                Console.Error.WriteLine(ex.Message);
+                        //            });
                     }
                     communicator.waitForShutdown();
 
@@ -67,6 +69,23 @@ namespace FootStone.client
             {
                 Console.Error.WriteLine(ex);
 
+            }
+        }
+
+        static async void doMethod(PlayerPrx player)
+        {
+            try
+            {
+                var playerInfo = await player.getPlayerInfoAsync(Guid.NewGuid().ToString());
+                Console.Error.WriteLine(playerInfo.name);
+                await player.setPlayerNameAsync(playerInfo.id, playerInfo.name + "_y");
+
+                playerInfo = await player.getPlayerInfoAsync(playerInfo.id);
+                Console.Error.WriteLine(playerInfo.name);
+            }
+            catch(Exception ex)
+            {
+                Console.Error.WriteLine(ex.Message);
             }
         }
         static void Main(string[] args)

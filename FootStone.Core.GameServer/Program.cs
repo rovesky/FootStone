@@ -1,4 +1,5 @@
 //using FootStone.FrontServer;
+using FootStone.Core.GameServer;
 using FootStone.FrontServer;
 using FootStone.GrainInterfaces;
 using FootStone.Grains;
@@ -176,7 +177,7 @@ namespace AdventureSetup
                     initData.properties = Ice.Util.createProperties();
                     initData.properties.setProperty("Ice.Warn.Connections", "1");
                     initData.properties.setProperty("Ice.Trace.Network", "1");
-                    initData.properties.setProperty("Player.Endpoints", "tcp -h "+GetLocalIP()+" -p 12000");
+                    initData.properties.setProperty("SessionFactory.Endpoints", "tcp -h "+GetLocalIP()+" -p 12000");
 
                     using (var communicator = Ice.Util.initialize(initData))
                     {
@@ -186,20 +187,13 @@ namespace AdventureSetup
 
                         }
                         else
-                        {
-                            //  var workQueue = new WorkQueue();
-
-                            //
-                            // Shutdown the communicator and destroy the workqueue on Ctrl+C or Ctrl+Break
-                            // (shutdown always with Cancel = true)
-                            //                
+                        {                  
 
 
-
-                            var adapter = communicator.createObjectAdapter("Player");
-                            adapter.add(new PlayerI(), Ice.Util.stringToIdentity("player"));
-
-
+                            //               var adapter = communicator.createObjectAdapter("Player");
+                            var adapter = communicator.createObjectAdapter("SessionFactory");
+                            adapter.add(new SessionFactoryI(), Ice.Util.stringToIdentity("SessionFactory"));
+                            
                             adapter.activate();
                             Console.WriteLine("ice inited!");
 

@@ -3,13 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28010.2036
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FootStone.Core.GameServer", "FootStone.Core.GameServer\FootStone.Core.GameServer.csproj", "{33D36C0F-4C80-4F6F-A1A0-6DE8A9FE0352}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FootStone.Core.GameServer", "FootStone.Core.GameServer\FootStone.Core.GameServer.csproj", "{33D36C0F-4C80-4F6F-A1A0-6DE8A9FE0352}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FootStone.Core.GrainInterfaces", "FootStone.Core.GrainInterfaces\FootStone.Core.GrainInterfaces.csproj", "{FB8DEC47-2E14-47B7-AC2A-C140E0B91C2F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FootStone.Core.Grains", "FootStone.Core.Grains\FootStone.Core.Grains.csproj", "{C6D3BB2D-5BEB-43B3-9B97-7673E2924617}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FootStone.Core.Client", "FootStone.Core.Client\FootStone.Core.Client.csproj", "{B0F028D7-307B-4C9D-BB2E-069208EFE37C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FootStone.Core.Client", "FootStone.Core.Client\FootStone.Core.Client.csproj", "{B0F028D7-307B-4C9D-BB2E-069208EFE37C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FootStoneProtocol", "..\FootStoneProtocol\FootStoneProtocol.csproj", "{F82B52F5-3B25-4639-9BA7-70322204BA56}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,12 +35,16 @@ Global
 		{B0F028D7-307B-4C9D-BB2E-069208EFE37C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B0F028D7-307B-4C9D-BB2E-069208EFE37C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B0F028D7-307B-4C9D-BB2E-069208EFE37C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F82B52F5-3B25-4639-9BA7-70322204BA56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F82B52F5-3B25-4639-9BA7-70322204BA56}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F82B52F5-3B25-4639-9BA7-70322204BA56}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F82B52F5-3B25-4639-9BA7-70322204BA56}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		EnterpriseLibraryConfigurationToolBinariesPathV6 = packages\EnterpriseLibrary.Common.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.Logging.6.0.1304.0\lib\NET45
 		SolutionGuid = {B32E5387-0FE4-4BD1-96BD-856703792BA1}
+		EnterpriseLibraryConfigurationToolBinariesPathV6 = packages\EnterpriseLibrary.Common.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.Logging.6.0.1304.0\lib\NET45
 	EndGlobalSection
 EndGlobal
