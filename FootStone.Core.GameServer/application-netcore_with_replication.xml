@@ -1,0 +1,39 @@
+<!--
+ **********************************************************************
+
+ Copyright (c) 2003-2017 ZeroC, Inc. All rights reserved.
+
+ **********************************************************************
+-->
+
+<icegrid>
+
+  <application name="FootStone">
+
+    <server-template id="FootStoneServer">
+      <parameter name="index"/>
+      <server id="FootStoneServer-${index}" exe="dotnet" activation="manual">
+        <option>FootStone.Core.GameServer.dll</option>
+        <adapter name="Player" endpoints="tcp -h 192.168.3.14" replica-group="ReplicatedPlayerAdapter"/>
+        <property name="Identity" value="player"/>
+        <property name="IceMX.Metrics.Debug.GroupBy" value="id"/>
+        <property name="IceMX.Metrics.Debug.Disabled" value="1"/>
+        <property name="IceMX.Metrics.ByParent.GroupBy" value="parent"/>
+        <property name="IceMX.Metrics.ByParent.Disabled" value="1"/>
+      </server>
+    </server-template>
+
+    <replica-group id="ReplicatedPlayerAdapter">
+      <load-balancing type="round-robin"/>
+      <object identity="player" type="::FootStone::GrainInterfaces::Player"/>
+    </replica-group>
+
+    <node name="node1">
+      <server-instance template="FootStoneServer" index="1"/>
+      <server-instance template="FootStoneServer" index="2"/>
+      <server-instance template="FootStoneServer" index="3"/>
+    </node>
+
+  </application>
+
+</icegrid>

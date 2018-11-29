@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Orleans;
 
-namespace FootStone.FrontServer
+namespace FootStone.Core.GameServer
 {
     public class Global
     {

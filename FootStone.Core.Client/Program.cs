@@ -14,14 +14,18 @@ namespace FootStone.client
         {
             try
             {
+                string IP = "192.168.3.14";
+                int port = 4061;
                 Ice.InitializationData initData = new Ice.InitializationData();
 
                 initData.properties = Ice.Util.createProperties();
                 // initData.properties.setProperty("Ice.ACM.Client", "0");
                 // initData.properties.setProperty("Ice.RetryIntervals", "-1");
-                initData.properties.setProperty("Ice.FactoryAssemblies", "client");
+                //initData.properties.setProperty("Ice.FactoryAssemblies", "client");
+                
                 initData.properties.setProperty("Ice.Trace.Network", "0");
-                initData.properties.setProperty("Player.Proxy", "player:tcp -h 192.168.206.1 -p 12000");
+               // initData.properties.setProperty("Player.Proxy", "player:tcp -h 192.168.206.1 -p 12000");
+                initData.properties.setProperty("Ice.Default.Locator", "FootStone/Locator:default -h " + IP + " -p " + port);
 
                 //
                 // using statement - communicator is automatically destroyed
@@ -29,11 +33,29 @@ namespace FootStone.client
                 //
                 using (var communicator = Ice.Util.initialize(initData))
                 {
-                    var player = PlayerPrxHelper.checkedCast(communicator.propertyToProxy("Player.Proxy"));
+                   // var player = PlayerPrxHelper.checkedCast(communicator.propertyToProxy("Player.Proxy"));
+
+                    PlayerPrx playerPrx = null;
+                    try
+                    {
+                        playerPrx = PlayerPrxHelper.checkedCast(communicator.stringToProxy("player"));
+                    }
+                    catch (Ice.NotRegisteredException)
+                    {
+                        var query =
+                            IceGrid.QueryPrxHelper.checkedCast(communicator.stringToProxy("FootStone/Query"));
+                        playerPrx = PlayerPrxHelper.checkedCast(query.findObjectByType("::FootStone::GrainInterfaces::Player"));
+                    }
+                    if (playerPrx == null)
+                    {
+                        Console.WriteLine("couldn't find a `::Player' object");
+                        return;
+                    }
+
 
                     for (int i = 0; i < 1; ++i)
                     {
-                        doMethod(player);
+                        doMethod(playerPrx);
                        
                         //player.begin_getPlayerInfo().whenCompleted(
                         //            (playerInfo) =>

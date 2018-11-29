@@ -1,6 +1,5 @@
 //using FootStone.FrontServer;
 using FootStone.Core.GameServer;
-using FootStone.FrontServer;
 using FootStone.GrainInterfaces;
 using FootStone.Grains;
 using Microsoft.Extensions.Logging;
@@ -45,17 +44,17 @@ namespace AdventureSetup
             var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             string mapFileName = Path.Combine(path, "AdventureMap.json");
 
-            switch (args.Length)
-            {
-                default:
-                    Console.WriteLine("*** Invalid command line arguments.");
-                    return -1;
-                case 0:
-                    break;
-                case 1:
-                    mapFileName = args[0];
-                    break;
-            }
+            //switch (args.Length)
+            //{
+            //    default:
+            //        Console.WriteLine("*** Invalid command line arguments.");
+            //        return -1;
+            //    case 0:
+            //        break;
+            //    case 1:
+            //        mapFileName = args[0];
+            //        break;
+            //}
 
             if (!File.Exists(mapFileName))
             {
@@ -132,7 +131,7 @@ namespace AdventureSetup
                     .Build();
 
             Global.Instance.OrleansClient = client;
-            InitIce(args);
+            InitGridIce(args);
             RunAsync(silo, client, mapFileName).Wait();
 
             Console.ReadLine();
@@ -194,6 +193,45 @@ namespace AdventureSetup
                             var adapter = communicator.createObjectAdapter("SessionFactory");
                             adapter.add(new SessionFactoryI(), Ice.Util.stringToIdentity("SessionFactory"));
                             
+                            adapter.activate();
+                            Console.WriteLine("ice inited!");
+
+                            communicator.waitForShutdown();
+
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.Error.WriteLine(ex);
+
+                }
+
+            })); //创建线程                     
+            th.Start(); //启动线程       
+        }
+
+        static void InitGridIce(string[] args)
+        {
+            Thread th = new Thread(new ThreadStart(() =>
+            {
+
+                try
+                {               
+                    using (var communicator = Ice.Util.initialize(ref args))
+                    {
+                        if (args.Length > 0)
+                        {
+                            Console.Error.WriteLine("too many arguments");
+
+                        }
+                        else
+                        {           
+                            var adapter = communicator.createObjectAdapter("Player");
+                            var properties = communicator.getProperties();
+                            var id = Ice.Util.stringToIdentity(properties.getProperty("Identity"));
+                            adapter.add(new PlayerI(properties.getProperty("Ice.ProgramName")),id);
+
                             adapter.activate();
                             Console.WriteLine("ice inited!");
 

@@ -1,6 +1,4 @@
-﻿using FootStone.Core.FrontServer;
-using FootStone.FrontServer;
-using FootStone.GrainInterfaces;
+﻿using FootStone.GrainInterfaces;
 using Ice;
 using System;
 using System.Collections.Generic;
@@ -29,9 +27,10 @@ namespace FootStone.Core.GameServer
                     throw new Ice.ObjectNotExistException();
                 }
 
-                var hello = PlayerPrxHelper.uncheckedCast(current.adapter.addWithUUID(new PlayerI()));
-                _objs.Add(hello);
-                return hello;
+                //    var hello = PlayerPrxHelper.uncheckedCast(current.adapter.addWithUUID(new PlayerI()));
+                //   _objs.Add(hello);
+                //    return hello;
+                return null;
             }
         }
 
