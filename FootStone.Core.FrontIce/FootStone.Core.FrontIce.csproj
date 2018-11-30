@@ -9,6 +9,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Grid\db\**" />
+    <EmbeddedResource Remove="Grid\db\**" />
+    <None Remove="Grid\db\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.Orleans.Client" Version="2.1.2" />
   </ItemGroup>
 
@@ -33,9 +39,6 @@
     <None Update="Grid\config.server">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Grid\config2">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="Grid\StartGrid.bat">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -45,11 +48,6 @@
     <None Update="Grid\UpdateGrid.bat">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Grid\db\registry\" />
-    <Folder Include="Grid\db\node\" />
   </ItemGroup>
 
 </Project>

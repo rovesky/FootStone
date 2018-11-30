@@ -29,16 +29,15 @@ namespace FootStone.Core.FrontIce
     }
 
     public class PlayerI : PlayerDisp_
-    {
-        private string serverName;
+    {       
 
         private Dictionary<string, PlayerObserver> _clients = new Dictionary<string, PlayerObserver>();
-        public PlayerI(string serverName)
+        public PlayerI()
         {
-            this.serverName = serverName;
+            
         }
 
-        public async override Task addPushAsync(string playerId, PlayerPushPrx playerPush, Current current = null)
+        public async override Task AddPushAsync(PlayerPushPrx playerPush, Current current = null)
         {
           
 
@@ -47,7 +46,7 @@ namespace FootStone.Core.FrontIce
             var watcher = new PlayerObserver(push);
             lock (this)
             {
-                _clients.Add(playerId, watcher);
+                _clients.Add(current.ctx["playerId"], watcher);
             }
             var player = Global.Instance.OrleansClient.GetGrain<IPlayerGrain>(Guid.Parse(current.ctx["playerId"]));
             await player.SubscribeForPlayerUpdates(
@@ -56,13 +55,13 @@ namespace FootStone.Core.FrontIce
 
         }
 
-        public async override Task<PlayerInfo> getPlayerInfoAsync(string playerId, Current current = null)
+        public async override Task<PlayerInfo> GetPlayerInfoAsync(Current current = null)
         {
             try
             {
                 var player = Global.Instance.OrleansClient.GetGrain<IPlayerGrain>(Guid.Parse(current.ctx["playerId"]));
-                var playerInfo = await player.GetPlayerInfoAsync();               
-                Console.Error.WriteLine("----------------" + serverName+"."+playerInfo.name+"---------------------");
+                var playerInfo = await player.GetPlayerInfo();               
+                Console.Error.WriteLine("----------------" +playerInfo.name+"---------------------");
                 return playerInfo;
             }
             catch (System.Exception ex)
@@ -72,14 +71,14 @@ namespace FootStone.Core.FrontIce
             }
         }
 
-        public async override Task setPlayerNameAsync(string playerId, string name, Current current = null)
+        public async override Task SetPlayerNameAsync(string name, Current current = null)
         {
             try
             {
 
                 var player = Global.Instance.OrleansClient.GetGrain<IPlayerGrain>(Guid.Parse(current.ctx["playerId"]));
              
-                await player.setPlayerName(name);
+                await player.SetPlayerName(name);
               }
             catch (System.Exception ex)
             {

@@ -16,7 +16,7 @@ namespace FootStone.Grains
     //   public string name;
     //   public int level;        
     //}
-    [StorageProvider(ProviderName="ado1")]
+    [StorageProvider(ProviderName= "memory1")]
     public class PlayerGrain : Grain<PlayerInfo>, IPlayerGrain
     {
         private ObserverSubscriptionManager<IPlayerObserver> subscribers;
@@ -30,40 +30,10 @@ namespace FootStone.Grains
 
         public override Task OnDeactivateAsync()
         {
-       //     subscribers.Clear();
+            subscribers.Clear();
             return Task.CompletedTask;
         }
-
-        private  void createPlayer()
-        {
-    
-            this.State.id = this.GetPrimaryKey().ToString();
-            this.State.name = "name";
-            this.State.items = new List<Item>();
-            this.State.items.Add(new Item("1", "item1", 1));
-            this.State.items.Add(new Item("2", "item2", 2));
-            this.State.playerMaster.hp = 10 ;
-            this.State.playerMaster.mp = 10;
-            Console.WriteLine("new player:" + this.State.name);
-           // return playerInfo;
-        }
-
-        public  Task<PlayerInfo> GetPlayerInfoAsync()
-        {         
-            if (this.State.id.Equals(""))
-            {
-                 createPlayer();
-            }
-
-           // this.WriteStateAsync();
-            return Task.FromResult(this.State);
-        }
-
-        public async Task setPlayerName(string name)
-        {
-            this.State.name = name;
-            await WriteStateAsync();
-        }
+             
 
         public Task SubscribeForPlayerUpdates(IPlayerObserver subscriber)
         {
@@ -93,6 +63,31 @@ namespace FootStone.Grains
                 subscribers.Unsubscribe(subscriber);
             }
             return Task.CompletedTask;
+        }
+
+        public Task<PlayerInfo> GetPlayerInfo()
+        {
+            return Task.FromResult(this.State);
+        }
+
+        public async Task CreatePlayer(string name, int serverId)
+        {
+            this.State.id = this.GetPrimaryKey().ToString();
+            this.State.name = name;
+            this.State.serverId = serverId;
+            this.State.items = new List<Item>();
+            this.State.items.Add(new Item("1", "item1", 1));
+            this.State.items.Add(new Item("2", "item2", 2));
+            this.State.playerMaster.hp = 10;
+            this.State.playerMaster.mp = 10;
+            Console.WriteLine("create player:" + this.State.name);
+            await WriteStateAsync();
+        }
+
+        public async Task SetPlayerName(string name)
+        {
+            this.State.name = name;
+            await WriteStateAsync();
         }
     }
 }

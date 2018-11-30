@@ -1,15 +1,15 @@
-# Configuration file (11/29/18 18:13:13.149)
+# Configuration file (12/01/18 03:50:55.180)
 
 # Server configuration
 Ice.Admin.ServerId=FootStoneServer-1
 Ice.Admin.Endpoints=tcp -h localhost
 Ice.ProgramName=FootStoneServer-1
-# Object adapter Player
-Player.Endpoints=tcp -h 192.168.3.14
-Player.AdapterId=FootStoneServer-1.Player
-Player.ReplicaGroupId=ReplicatedPlayerAdapter
+# Object adapter Session
+Session.Endpoints=tcp -h 192.168.3.14
+Session.AdapterId=FootStoneServer-1.Session
+Session.ReplicaGroupId=ReplicatedPlayerAdapter
 # Server descriptor properties
-Identity=player
+Identity=session
 IceMX.Metrics.Debug.GroupBy=id
 IceMX.Metrics.Debug.Disabled=1
 IceMX.Metrics.ByParent.GroupBy=parent

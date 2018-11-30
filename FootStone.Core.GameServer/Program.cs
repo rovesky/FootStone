@@ -1,4 +1,3 @@
-using AdventureSetup;
 using FootStone.Core.FrontIce;
 using FootStone.Core.GrainInterfaces;
 using FootStone.GrainInterfaces;
@@ -22,9 +21,9 @@ namespace FootStone.Core.GameServer
     class Program
     {
 
-        static string IP_START = "192.168.206";
-        static string mysqlConnectCluster = "server=192.168.3.14;user id=root;password=654321#;database=footstone";
-        static string mysqlConnectStorage = "server=192.168.3.14;user id=root;password=654321#;database=footstonestorage";
+        static string IP_START = "192.168.3";
+        static string mysqlConnectCluster = "server=192.168.3.14;user id=root;password=198292;database=footstone_cluster";
+        static string mysqlConnectStorage = "server=192.168.3.14;user id=root;password=198292;database=footstone_storage";
 
         public static string GetLocalIP()
         {
@@ -44,77 +43,33 @@ namespace FootStone.Core.GameServer
 
         static int Main(string[] args)
         {
-            var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            string mapFileName = Path.Combine(path, "AdventureMap.json");
-
-            //switch (args.Length)
-            //{
-            //    default:
-            //        Console.WriteLine("*** Invalid command line arguments.");
-            //        return -1;
-            //    case 0:
-            //        break;
-            //    case 1:
-            //        mapFileName = args[0];
-            //        break;
-            //}
-
-            if (!File.Exists(mapFileName))
+            try
             {
-                Console.WriteLine("*** File not found: {0}", mapFileName);
-                return -2;
-            }
-            Global.Instance.MainArgs = args;
+                var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                string mapFileName = Path.Combine(path, "AdventureMap.json");
 
-            var silo = new SiloHostBuilder()
-            //    .UseLocalhostClustering()
-            //    .UseDevelopmentClustering(primarySiloEndpoint)
-                .UseAdoNetClustering(options =>
-                {
-                    options.ConnectionString = mysqlConnectCluster;
-                    options.Invariant = "MySql.Data.MySqlClient";
-                })
-                .Configure<ClusterOptions>(options =>
-                {
-                    options.ClusterId = "lsj";
-                    options.ServiceId = "FootStone";
-                })
-                .Configure<EndpointOptions>(options =>
-                {
-                    // Port to use for Silo-to-Silo
-                    options.SiloPort = 11111;
-                    // Port to use for the gateway
-                    options.GatewayPort = 30000;
-                    // IP Address to advertise in the cluster
-                    options.AdvertisedIPAddress = IPAddress.Parse(GetLocalIP());
-                })
-                //  .Configure<EndpointOptions>(options => options.AdvertisedIPAddress = IPAddress.Any)
-                .ConfigureApplicationParts(parts => parts.AddApplicationPart(typeof(RoomGrain).Assembly).WithReferences())
-                .ConfigureLogging(logging =>
-                {
-                    logging.AddConsole();
-                    logging.SetMinimumLevel(LogLevel.Warning);
-                })
-                .AddMemoryGrainStorage("memory1")
-                .AddAdoNetGrainStorage("ado1", options =>
-                 {
+                //switch (args.Length)
+                //{
+                //    default:
+                //        Console.WriteLine("*** Invalid command line arguments.");
+                //        return -1;
+                //    case 0:
+                //        break;
+                //    case 1:
+                //        mapFileName = args[0];
+                //        break;
+                //}
 
-                     options.UseJsonFormat = true;
-                     options.ConnectionString = mysqlConnectStorage;
-                     options.Invariant = "MySql.Data.MySqlClient";
-                 })
-                .AddGrainService<IceService>()
-                .ConfigureServices(s =>
+                if (!File.Exists(mapFileName))
                 {
-                    // Register Client of GrainService
-                    s.AddSingleton<IIceService, IceServiceClient>();
-                })
-                .Build();
-  
+                    Console.WriteLine("*** File not found: {0}", mapFileName);
+                    return -2;
+                }
+                Global.Instance.MainArgs = args;
 
-            var client = new ClientBuilder()
-                    //.UseLocalhostClustering()
-                    // .UseStaticClustering(gateways)
+                var silo = new SiloHostBuilder()
+                    //    .UseLocalhostClustering()
+                    //    .UseDevelopmentClustering(primarySiloEndpoint)
                     .UseAdoNetClustering(options =>
                     {
                         options.ConnectionString = mysqlConnectCluster;
@@ -125,18 +80,70 @@ namespace FootStone.Core.GameServer
                         options.ClusterId = "lsj";
                         options.ServiceId = "FootStone";
                     })
-                    .ConfigureApplicationParts(parts => parts.AddApplicationPart(typeof(IRoomGrain).Assembly).WithReferences())
-                    .ConfigureLogging(logging => logging.AddConsole())
+                    .Configure<EndpointOptions>(options =>
+                    {
+                    // Port to use for Silo-to-Silo
+                    options.SiloPort = 11111;
+                    // Port to use for the gateway
+                    options.GatewayPort = 30000;
+                    // IP Address to advertise in the cluster
+                    options.AdvertisedIPAddress = IPAddress.Parse(GetLocalIP());
+                    })
+                    //  .Configure<EndpointOptions>(options => options.AdvertisedIPAddress = IPAddress.Any)
+                    //.ConfigureApplicationParts(parts => parts.AddApplicationPart(typeof(RoomGrain).Assembly).WithReferences())
+                    .ConfigureLogging(logging =>
+                    {
+                        logging.AddConsole();
+                        logging.SetMinimumLevel(LogLevel.Warning);
+                    })
+                    .AddMemoryGrainStorage("memory1")
+                    //.AddAdoNetGrainStorage("ado1", options =>
+                    // {
+
+                    //     options.UseJsonFormat = true;
+                    //     options.ConnectionString = mysqlConnectStorage;
+                    //     options.Invariant = "MySql.Data.MySqlClient";
+                    // })
+                    .AddGrainService<IceService>()
+                    .ConfigureServices(s =>
+                    {
+                    // Register Client of GrainService
+                    s.AddSingleton<IIceService, IceServiceClient>();
+                    })
                     .Build();
 
-            Global.Instance.OrleansClient = client;
-          //  InitGridIce(args);
-            RunAsync(silo, client, mapFileName).Wait();
 
-            Console.ReadLine();
+                var client = new ClientBuilder()
+                        //.UseLocalhostClustering()
+                        // .UseStaticClustering(gateways)
+                        .UseAdoNetClustering(options =>
+                        {
+                            options.ConnectionString = mysqlConnectCluster;
+                            options.Invariant = "MySql.Data.MySqlClient";
+                        })
+                        .Configure<ClusterOptions>(options =>
+                        {
+                            options.ClusterId = "lsj";
+                            options.ServiceId = "FootStone";
+                        })
+                    //    .ConfigureApplicationParts(parts => parts.AddApplicationPart(typeof(IRoomGrain).Assembly).WithReferences())
+                        .ConfigureLogging(logging => logging.AddConsole())
+                        .Build();
 
-            StopAsync(silo, client).Wait();
+                Global.Instance.OrleansClient = client;
+                //  InitGridIce(args);
+                RunAsync(silo, client, mapFileName).Wait();
 
+                Console.ReadLine();
+
+                StopAsync(silo, client).Wait();
+
+                
+            }
+            catch(Exception ex)
+            {
+                Console.Error.WriteLine(ex.Message);
+            }
             return 0;
         }
 
@@ -146,11 +153,11 @@ namespace FootStone.Core.GameServer
             await client.Connect();
             
 
-            Console.WriteLine("Map file name is '{0}'.", mapFileName);
-            Console.WriteLine("Setting up Adventure, please wait ...");
-            Adventure adventure = new Adventure(client);
-            adventure.Configure(mapFileName).Wait();
-            Console.WriteLine("Adventure setup completed.");
+            //Console.WriteLine("Map file name is '{0}'.", mapFileName);
+            //Console.WriteLine("Setting up Adventure, please wait ...");
+            //Adventure adventure = new Adventure(client);
+            //adventure.Configure(mapFileName).Wait();
+            Console.WriteLine("FootStone setup completed.");
         }
 
         static async Task StopAsync(ISiloHost silo, IClusterClient client)

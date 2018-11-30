@@ -14,8 +14,8 @@
       <parameter name="index"/>
       <server id="FootStoneServer-${index}" exe="dotnet" activation="manual">
         <!--<option>FootStone.Core.GameServer.dll</option>-->
-        <adapter name="Player" endpoints="tcp -h 192.168.3.14" replica-group="ReplicatedPlayerAdapter"/>
-        <property name="Identity" value="player"/>
+        <adapter name="Session" endpoints="tcp -h 192.168.3.14" replica-group="ReplicatedPlayerAdapter"/>
+        <property name="Identity" value="session"/>
         <property name="IceMX.Metrics.Debug.GroupBy" value="id"/>
         <property name="IceMX.Metrics.Debug.Disabled" value="1"/>
         <property name="IceMX.Metrics.ByParent.GroupBy" value="parent"/>
@@ -25,7 +25,7 @@
 
     <replica-group id="ReplicatedPlayerAdapter">
       <load-balancing type="round-robin"/>
-      <object identity="player" type="::FootStone::GrainInterfaces::Player"/>
+      <object identity="session" type="::FootStone::GrainInterfaces::Session"/>
     </replica-group>
 
     <node name="node1">
