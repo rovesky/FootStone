@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Orleans;
 
-namespace FootStone.Core.GameServer
+namespace FootStone.Core.FrontIce
 {
     public class Global
     {
@@ -44,6 +44,12 @@ namespace FootStone.Core.GameServer
                 orleansClient = value;
             }
         }
+
+        public string[] MainArgs { get => mainArgs; set => mainArgs = value; }
+
+        private string[] mainArgs;
+
+
     }
     
 }

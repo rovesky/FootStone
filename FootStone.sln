@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FootStone.Core.Grains", "Fo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FootStone.Core.Client", "FootStone.Core.Client\FootStone.Core.Client.csproj", "{B0F028D7-307B-4C9D-BB2E-069208EFE37C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FootStoneProtocol", "..\FootStoneProtocol\FootStoneProtocol.csproj", "{F82B52F5-3B25-4639-9BA7-70322204BA56}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FootStone.Protocol", "..\FootStone.Protocol\FootStone.Protocol.csproj", "{E4267C88-B5EF-4684-A001-97F1878B9A18}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FootStone.Core.FrontIce", "FootStone.Core.FrontIce\FootStone.Core.FrontIce.csproj", "{92892749-801B-4FC0-AFF9-D4913CD76688}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,16 +37,20 @@ Global
 		{B0F028D7-307B-4C9D-BB2E-069208EFE37C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B0F028D7-307B-4C9D-BB2E-069208EFE37C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B0F028D7-307B-4C9D-BB2E-069208EFE37C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F82B52F5-3B25-4639-9BA7-70322204BA56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F82B52F5-3B25-4639-9BA7-70322204BA56}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F82B52F5-3B25-4639-9BA7-70322204BA56}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F82B52F5-3B25-4639-9BA7-70322204BA56}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E4267C88-B5EF-4684-A001-97F1878B9A18}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E4267C88-B5EF-4684-A001-97F1878B9A18}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E4267C88-B5EF-4684-A001-97F1878B9A18}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E4267C88-B5EF-4684-A001-97F1878B9A18}.Release|Any CPU.Build.0 = Release|Any CPU
+		{92892749-801B-4FC0-AFF9-D4913CD76688}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{92892749-801B-4FC0-AFF9-D4913CD76688}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{92892749-801B-4FC0-AFF9-D4913CD76688}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{92892749-801B-4FC0-AFF9-D4913CD76688}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {B32E5387-0FE4-4BD1-96BD-856703792BA1}
 		EnterpriseLibraryConfigurationToolBinariesPathV6 = packages\EnterpriseLibrary.Common.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.Logging.6.0.1304.0\lib\NET45
+		SolutionGuid = {B32E5387-0FE4-4BD1-96BD-856703792BA1}
 	EndGlobalSection
 EndGlobal

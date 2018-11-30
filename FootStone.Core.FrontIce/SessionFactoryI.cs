@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace FootStone.Core.GameServer
+namespace FootStone.Core.FrontIce
 {
     public class SessionFactoryI : SessionFactoryDisp_
     {

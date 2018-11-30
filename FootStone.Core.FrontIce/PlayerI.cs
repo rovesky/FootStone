@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FootStone.Core.GameServer
+namespace FootStone.Core.FrontIce
 {
     public class PlayerI : PlayerDisp_
     {

@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\FootStoneProtocol\FootStoneProtocol.csproj" />
+    <ProjectReference Include="..\..\FootStone.Protocol\FootStone.Protocol.csproj" />
   </ItemGroup>
 
 </Project>

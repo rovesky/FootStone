@@ -1,7 +1,9 @@
-//using FootStone.FrontServer;
-using FootStone.Core.GameServer;
+using AdventureSetup;
+using FootStone.Core.FrontIce;
+using FootStone.Core.GrainInterfaces;
 using FootStone.GrainInterfaces;
 using FootStone.Grains;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Orleans;
 using Orleans.Configuration;
@@ -15,14 +17,14 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace AdventureSetup
+namespace FootStone.Core.GameServer
 {
     class Program
     {
 
         static string IP_START = "192.168.206";
-        static string mysqlConnectStr = "server=192.168.3.14;user id=root;password=654321#;database=footstone";
-        static string mysqlConnectStr1 = "server=192.168.3.14;user id=root;password=654321#;database=footstonestorage";
+        static string mysqlConnectCluster = "server=192.168.3.14;user id=root;password=654321#;database=footstone";
+        static string mysqlConnectStorage = "server=192.168.3.14;user id=root;password=654321#;database=footstonestorage";
 
         public static string GetLocalIP()
         {
@@ -39,6 +41,7 @@ namespace AdventureSetup
             }
             return IPAddress.Loopback.ToString();
         }
+
         static int Main(string[] args)
         {
             var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
@@ -61,16 +64,14 @@ namespace AdventureSetup
                 Console.WriteLine("*** File not found: {0}", mapFileName);
                 return -2;
             }
-
-            
-           // var primarySiloEndpoint = new IPEndPoint(IPAddress.Parse(PRIMARY_SILO), 11111);
+            Global.Instance.MainArgs = args;
 
             var silo = new SiloHostBuilder()
             //    .UseLocalhostClustering()
             //    .UseDevelopmentClustering(primarySiloEndpoint)
                 .UseAdoNetClustering(options =>
                 {
-                    options.ConnectionString = mysqlConnectStr;
+                    options.ConnectionString = mysqlConnectCluster;
                     options.Invariant = "MySql.Data.MySqlClient";
                 })
                 .Configure<ClusterOptions>(options =>
@@ -86,13 +87,6 @@ namespace AdventureSetup
                     options.GatewayPort = 30000;
                     // IP Address to advertise in the cluster
                     options.AdvertisedIPAddress = IPAddress.Parse(GetLocalIP());
-                    //options.AdvertisedIPAddress = IPAddress.Parse(Dns.GetHostName());
-                    //   options.AdvertisedIPAddress = IPAddress.;
-                    // The socket used for silo-to-silo will bind to this endpoint
-                    //options.GatewayListeningEndpoint = new IPEndPoint(IPAddress.Any, 40000);
-                    // The socket used by the gateway will bind to this endpoint
-                    // options.SiloListeningEndpoint = new IPEndPoint(IPAddress.Any, 50000);
-
                 })
                 //  .Configure<EndpointOptions>(options => options.AdvertisedIPAddress = IPAddress.Any)
                 .ConfigureApplicationParts(parts => parts.AddApplicationPart(typeof(RoomGrain).Assembly).WithReferences())
@@ -100,25 +94,26 @@ namespace AdventureSetup
                 .AddMemoryGrainStorage("memory1")
                 .AddAdoNetGrainStorage("ado1", options =>
                  {
-                  
+
                      options.UseJsonFormat = true;
-                     options.ConnectionString = mysqlConnectStr1;
+                     options.ConnectionString = mysqlConnectStorage;
                      options.Invariant = "MySql.Data.MySqlClient";
                  })
+                .AddGrainService<IceService>()
+                .ConfigureServices(s =>
+                {
+                    // Register Client of GrainService
+                    s.AddSingleton<IIceService, IceServiceClient>();
+                })
                 .Build();
-
-            //var gateways = new IPEndPoint[SILOS.Length];
-            //for (int i = 0; i < SILOS.Length; ++i)
-            //{
-            //    gateways[i] = new IPEndPoint(IPAddress.Parse(SILOS[i]), 30000);
-            //};
+  
 
             var client = new ClientBuilder()
                     //.UseLocalhostClustering()
                     // .UseStaticClustering(gateways)
                     .UseAdoNetClustering(options =>
                     {
-                        options.ConnectionString = mysqlConnectStr;
+                        options.ConnectionString = mysqlConnectCluster;
                         options.Invariant = "MySql.Data.MySqlClient";
                     })
                     .Configure<ClusterOptions>(options =>
@@ -131,7 +126,7 @@ namespace AdventureSetup
                     .Build();
 
             Global.Instance.OrleansClient = client;
-            InitGridIce(args);
+          //  InitGridIce(args);
             RunAsync(silo, client, mapFileName).Wait();
 
             Console.ReadLine();
@@ -159,95 +154,6 @@ namespace AdventureSetup
             await client.Close();
             await silo.StopAsync();
         }
-
-        static void InitIce(string[] args)
-        {
-            Thread th = new Thread(new ThreadStart(() =>
-            {
-
-                try
-                {
-                    //
-                    // using statement - communicator is automatically destroyed
-                    // at the end of this statement
-                    //
-                    Ice.InitializationData initData = new Ice.InitializationData();
-
-                    initData.properties = Ice.Util.createProperties();
-                    initData.properties.setProperty("Ice.Warn.Connections", "1");
-                    initData.properties.setProperty("Ice.Trace.Network", "1");
-                    initData.properties.setProperty("SessionFactory.Endpoints", "tcp -h "+GetLocalIP()+" -p 12000");
-
-                    using (var communicator = Ice.Util.initialize(initData))
-                    {
-                        if (args.Length > 0)
-                        {
-                            Console.Error.WriteLine("too many arguments");
-
-                        }
-                        else
-                        {                  
-
-
-                            //               var adapter = communicator.createObjectAdapter("Player");
-                            var adapter = communicator.createObjectAdapter("SessionFactory");
-                            adapter.add(new SessionFactoryI(), Ice.Util.stringToIdentity("SessionFactory"));
-                            
-                            adapter.activate();
-                            Console.WriteLine("ice inited!");
-
-                            communicator.waitForShutdown();
-
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Console.Error.WriteLine(ex);
-
-                }
-
-            })); //创建线程                     
-            th.Start(); //启动线程       
-        }
-
-        static void InitGridIce(string[] args)
-        {
-            Thread th = new Thread(new ThreadStart(() =>
-            {
-
-                try
-                {               
-                    using (var communicator = Ice.Util.initialize(ref args))
-                    {
-                        if (args.Length > 0)
-                        {
-                            Console.Error.WriteLine("too many arguments");
-
-                        }
-                        else
-                        {           
-                            var adapter = communicator.createObjectAdapter("Player");
-                            var properties = communicator.getProperties();
-                            var id = Ice.Util.stringToIdentity(properties.getProperty("Identity"));
-                            adapter.add(new PlayerI(properties.getProperty("Ice.ProgramName")),id);
-
-                            adapter.activate();
-                            Console.WriteLine("ice inited!");
-
-                            communicator.waitForShutdown();
-
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Console.Error.WriteLine(ex);
-
-                }
-
-            })); //创建线程                     
-            th.Start(); //启动线程       
-        }
+       
     }
 }

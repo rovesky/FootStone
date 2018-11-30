@@ -23,3 +23,5 @@
 /FootStone.Core.Client/Properties/PublishProfiles/*.user
 /FootStone.Core.GameServer/Properties/PublishProfiles/*.pubxml
 /FootStone.Core.GameServer/Properties/PublishProfiles/*.user
+/FootStone.Core.FrontIce/obj
+/FootStone.Core.FrontIce/bin
