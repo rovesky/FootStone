@@ -1,0 +1,17 @@
+# Configuration file (11/29/18 18:13:13.149)
+
+# Server configuration
+Ice.Admin.ServerId=FootStoneServer-2
+Ice.Admin.Endpoints=tcp -h localhost
+Ice.ProgramName=FootStoneServer-2
+# Object adapter Player
+Player.Endpoints=tcp -h 192.168.3.14
+Player.AdapterId=FootStoneServer-2.Player
+Player.ReplicaGroupId=ReplicatedPlayerAdapter
+# Server descriptor properties
+Identity=player
+IceMX.Metrics.Debug.GroupBy=id
+IceMX.Metrics.Debug.Disabled=1
+IceMX.Metrics.ByParent.GroupBy=parent
+IceMX.Metrics.ByParent.Disabled=1
+Ice.Default.Locator=FootStone/Locator:default -h 192.168.3.14 -p 4061

@@ -40,6 +40,7 @@ namespace FootStone.Core.FrontIce
 
         public async override Task addPushAsync(string playerId, PlayerPushPrx playerPush, Current current = null)
         {
+          
 
             Console.Out.WriteLine("adding client '" + Ice.Util.identityToString(playerPush.ice_getIdentity()) + "'");
             PlayerPushPrx push = (PlayerPushPrx)playerPush.ice_fixed(current.con).ice_oneway();
@@ -48,7 +49,7 @@ namespace FootStone.Core.FrontIce
             {
                 _clients.Add(playerId, watcher);
             }
-            var player = Global.Instance.OrleansClient.GetGrain<IPlayerGrain>(Guid.Parse(playerId));
+            var player = Global.Instance.OrleansClient.GetGrain<IPlayerGrain>(Guid.Parse(current.ctx["playerId"]));
             await player.SubscribeForPlayerUpdates(
                 await Global.Instance.OrleansClient.CreateObjectReference<IPlayerObserver>(watcher)
             );
@@ -59,7 +60,7 @@ namespace FootStone.Core.FrontIce
         {
             try
             {
-                var player = Global.Instance.OrleansClient.GetGrain<IPlayerGrain>(Guid.Parse(playerId));
+                var player = Global.Instance.OrleansClient.GetGrain<IPlayerGrain>(Guid.Parse(current.ctx["playerId"]));
                 var playerInfo = await player.GetPlayerInfoAsync();               
                 Console.Error.WriteLine("----------------" + serverName+"."+playerInfo.name+"---------------------");
                 return playerInfo;
@@ -76,7 +77,7 @@ namespace FootStone.Core.FrontIce
             try
             {
 
-                var player = Global.Instance.OrleansClient.GetGrain<IPlayerGrain>(Guid.Parse(playerId));
+                var player = Global.Instance.OrleansClient.GetGrain<IPlayerGrain>(Guid.Parse(current.ctx["playerId"]));
              
                 await player.setPlayerName(name);
               }

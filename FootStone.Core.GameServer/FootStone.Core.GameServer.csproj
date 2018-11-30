@@ -41,6 +41,9 @@
     <None Update="application-netcore_with_replication.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="config.client">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

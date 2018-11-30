@@ -1,1 +1,2 @@
-﻿dotnet FootStone.Core.GameServer.dll
+dotnet FootStone.Core.GameServer.dll --Ice.Config=config
+pause

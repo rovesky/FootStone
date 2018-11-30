@@ -13,7 +13,7 @@
     <server-template id="FootStoneServer">
       <parameter name="index"/>
       <server id="FootStoneServer-${index}" exe="dotnet" activation="manual">
-        <option>FootStone.Core.GameServer.dll</option>
+        <!--<option>FootStone.Core.GameServer.dll</option>-->
         <adapter name="Player" endpoints="tcp -h 192.168.3.14" replica-group="ReplicatedPlayerAdapter"/>
         <property name="Identity" value="player"/>
         <property name="IceMX.Metrics.Debug.GroupBy" value="id"/>

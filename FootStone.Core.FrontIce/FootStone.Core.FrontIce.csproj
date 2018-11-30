@@ -4,6 +4,10 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputPath>..\output</OutputPath>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Microsoft.Orleans.Client" Version="2.1.2" />
   </ItemGroup>
@@ -14,27 +18,38 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="application-netcore.xml">
+    <None Update="Grid\application-netcore.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="application-netcore_with_replication.xml">
+    <None Update="Grid\application-netcore_with_replication.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="config.client">
+    <None Update="Grid\config.client">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="config.grid">
+    <None Update="Grid\config.grid">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="config.server">
+    <None Update="Grid\config.server">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="grid.bat">
+    <None Update="Grid\config2">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="start.bat">
+    <None Update="Grid\StartGrid.bat">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Grid\AddGrid.bat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Grid\UpdateGrid.bat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Grid\db\registry\" />
+    <Folder Include="Grid\db\node\" />
   </ItemGroup>
 
 </Project>
