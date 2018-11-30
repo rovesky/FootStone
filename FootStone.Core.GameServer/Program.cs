@@ -90,7 +90,11 @@ namespace FootStone.Core.GameServer
                 })
                 //  .Configure<EndpointOptions>(options => options.AdvertisedIPAddress = IPAddress.Any)
                 .ConfigureApplicationParts(parts => parts.AddApplicationPart(typeof(RoomGrain).Assembly).WithReferences())
-                .ConfigureLogging(logging => logging.AddConsole())
+                .ConfigureLogging(logging =>
+                {
+                    logging.AddConsole();
+                    logging.SetMinimumLevel(LogLevel.Warning);
+                })
                 .AddMemoryGrainStorage("memory1")
                 .AddAdoNetGrainStorage("ado1", options =>
                  {
@@ -99,12 +103,12 @@ namespace FootStone.Core.GameServer
                      options.ConnectionString = mysqlConnectStorage;
                      options.Invariant = "MySql.Data.MySqlClient";
                  })
-                //.AddGrainService<IceService>()
-                //.ConfigureServices(s =>
-                //{
-                //    // Register Client of GrainService
-                //    s.AddSingleton<IIceService, IceServiceClient>();
-                //})
+                .AddGrainService<IceService>()
+                .ConfigureServices(s =>
+                {
+                    // Register Client of GrainService
+                    s.AddSingleton<IIceService, IceServiceClient>();
+                })
                 .Build();
   
 

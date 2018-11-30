@@ -17,11 +17,7 @@ namespace FootStone.Core.FrontServer
         {
             try
             {
-                // Console.WriteLine("Hello World!");
-                var network = new NetworkIce();
-
-                network.Init(args);
-
+          
                 var client = new ClientBuilder()
                       //.UseLocalhostClustering()
                       // .UseStaticClustering(gateways)
@@ -41,6 +37,8 @@ namespace FootStone.Core.FrontServer
 
                 Global.Instance.OrleansClient = client;
 
+                var network = new NetworkIce();
+                network.Init(args);
 
                 RunAsync(client, network).Wait();
 

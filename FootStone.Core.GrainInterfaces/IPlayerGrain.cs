@@ -1,3 +1,4 @@
+using FootStone.Core.GrainInterfaces;
 using Orleans;
 using System.Threading.Tasks;
 
@@ -25,6 +26,7 @@ namespace FootStone.GrainInterfaces
 
         Task<PlayerInfo> GetPlayerInfoAsync();
 
-
+        Task SubscribeForPlayerUpdates(IPlayerObserver subscriber);
+        Task UnsubscribeForPlayerUpdates(IPlayerObserver subscriber);
     }
 }
