@@ -1,0 +1,1 @@
+﻿dotnet FootStone.Core.GameServer.dll

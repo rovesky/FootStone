@@ -99,12 +99,12 @@ namespace FootStone.Core.GameServer
                      options.ConnectionString = mysqlConnectStorage;
                      options.Invariant = "MySql.Data.MySqlClient";
                  })
-                .AddGrainService<IceService>()
-                .ConfigureServices(s =>
-                {
-                    // Register Client of GrainService
-                    s.AddSingleton<IIceService, IceServiceClient>();
-                })
+                //.AddGrainService<IceService>()
+                //.ConfigureServices(s =>
+                //{
+                //    // Register Client of GrainService
+                //    s.AddSingleton<IIceService, IceServiceClient>();
+                //})
                 .Build();
   
 

@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "FootStone.Core.FrontServer": {
+      "commandName": "Project",
+      "commandLineArgs": "--Ice.Config=config"
+    }
+  }
+}

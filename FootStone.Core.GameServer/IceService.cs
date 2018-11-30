@@ -21,8 +21,7 @@ namespace FootStone.Core.GameServer
         private NetworkIce network = new NetworkIce();
 
         public IceService(IServiceProvider services, IGrainIdentity id, Silo silo, ILoggerFactory loggerFactory, IGrainFactory grainFactory) : base(id, silo, loggerFactory)
-        {
-           // silo.SiloAddress.
+        {         
             GrainFactory = grainFactory;
         }
         public override Task Init(IServiceProvider serviceProvider)

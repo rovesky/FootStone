@@ -85,8 +85,6 @@ namespace FootStone.Core.FrontIce
 
                     adapter.activate();
                     Console.WriteLine("ice inited!");
-
-
                 }
 
             }

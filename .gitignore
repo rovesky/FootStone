@@ -25,3 +25,5 @@
 /FootStone.Core.GameServer/Properties/PublishProfiles/*.user
 /FootStone.Core.FrontIce/obj
 /FootStone.Core.FrontIce/bin
+/FootStone.Core.FrontServer/bin
+/FootStone.Core.FrontServer/obj
