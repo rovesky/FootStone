@@ -29,13 +29,11 @@ namespace FootStone.Core.FrontIce
                 }
                 else
                 {
-                    var adapter = communicator.createObjectAdapter("Session");
+                    var adapter = communicator.createObjectAdapter("SessionFactory");
                     var properties = communicator.getProperties();
                     var id = Ice.Util.stringToIdentity(properties.getProperty("Identity"));
                     var serverName = properties.getProperty("Ice.ProgramName");
-                    adapter.add(new SessionI(serverName), id);
-                    adapter.addFacet(new AccountI(), id, "account");
-                    adapter.addFacet(new PlayerI(), id, "player");
+                    adapter.add(new  SessionFactoryI(serverName), id);               
 
                     adapter.activate();
                     Console.WriteLine("ice inited!");

@@ -10,44 +10,68 @@ namespace FootStone.Core.FrontIce
 {
     public class SessionI : SessionDisp_
     {
-
-        private Dictionary<string, PlayerObserver> _clients = new Dictionary<string, PlayerObserver>();
-
-
-        public SessionI(string name)
+         public SessionI(string name)
         {
-            _name = name;
-            //_nextId = 0;
-            //_destroy = false;
-            //_objs = new List<PlayerPrx>();
-
-            Console.Out.WriteLine("The session  is now created in server:"+name);
+            this.Name = name;  
+            _destroy = false;
+         //   this.Id = Guid.NewGuid().ToString();
+        //    Console.Out.WriteLine("The session  is now created in server:" + name);
         }
 
-        public override Task PingAsync(Current current = null)
+        public override Task AddPushAsync(SessionPushPrx sessionPush, Current current = null)
         {
-            throw new NotImplementedException();
-        }
+            SessionPushPrx = (SessionPushPrx)sessionPush.ice_fixed(current.con);
+            return Task.CompletedTask;
 
-        public async override Task AddPushAsync(SessionPushPrx sessionPush, Current current = null)
+        } 
+
+        public override void Destroy(Current current = null)
         {
-            SessionPushPrx sessionPushPrx = (SessionPushPrx)sessionPush.ice_fixed(current.con).ice_oneway();
-            var PlayerPushPrx = PlayerPushPrxHelper.uncheckedCast(sessionPushPrx, "playerPush");
-            var watcher = new PlayerObserver(PlayerPushPrx);
             lock (this)
             {
-                _clients.Add(current.ctx["playerId"], watcher);
+                if (_destroy)
+                {
+                    throw new Ice.ObjectNotExistException();
+                }
+
+                _destroy = true;
+
+                Console.Out.WriteLine("The session " + Id + " is now destroyed.");
+                try
+                {
+                    current.adapter.remove(current.id);
+
+                    var allFacets = current.adapter.findAllFacets(current.id);
+                    foreach(Ice.Object e in allFacets.Values)
+                    {
+                        IDisposable dis = (IDisposable)e;
+                        dis.Dispose();                      
+                    }
+                    current.adapter.removeAllFacets(current.id);
+
+                }
+                catch (Ice.ObjectAdapterDeactivatedException)
+                {
+                    // This method is called on shutdown of the server, in which
+                    // case this exception is expected.
+                }
             }
-            var player = Global.Instance.OrleansClient.GetGrain<IPlayerGrain>(Guid.Parse(current.ctx["playerId"]));
-            await player.SubscribeForPlayerUpdates(
-                await Global.Instance.OrleansClient.CreateObjectReference<IPlayerObserver>(watcher)
-            );
         }
 
-        private string _name;
-        //private int _nextId; // The per-session id of the next hello object. This is used for tracing purposes.
-        //private List<PlayerPrx> _objs; // List of per-session allocated hello objects.
-        //private bool _destroy;
+        private bool _destroy;
+
+        public string Id
+        {
+            get
+            {
+                return SessionPushPrx.ice_getIdentity().name;
+            }
+        }
+        public string Name { get; private set; }
+        public SessionPushPrx SessionPushPrx { get; private set; }
+        public Guid PlayerId { get; internal set; }
+        public string Account { get; internal set; }
+      
     }
 
        

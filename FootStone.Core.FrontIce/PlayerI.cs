@@ -28,40 +28,39 @@ namespace FootStone.Core.FrontIce
         
     }
 
-    public class PlayerI : PlayerDisp_
-    {       
+    public class PlayerI : PlayerDisp_,IDisposable
+    {
+        private SessionI sessionI;
+        private IPlayerObserver playerObserver;
 
-        private Dictionary<string, PlayerObserver> _clients = new Dictionary<string, PlayerObserver>();
-        public PlayerI()
+        public PlayerI(SessionI session)
         {
-            
+            this.sessionI = session;           
         }
 
-        public async override Task AddPushAsync(PlayerPushPrx playerPush, Current current = null)
+
+        private async Task AddObserver()
         {
-          
-
-            Console.Out.WriteLine("adding client '" + Ice.Util.identityToString(playerPush.ice_getIdentity()) + "'");
-            PlayerPushPrx push = (PlayerPushPrx)playerPush.ice_fixed(current.con).ice_oneway();
-            var watcher = new PlayerObserver(push);
-            lock (this)
-            {
-                _clients.Add(current.ctx["playerId"], watcher);
-            }
-            var player = Global.Instance.OrleansClient.GetGrain<IPlayerGrain>(Guid.Parse(current.ctx["playerId"]));
-            await player.SubscribeForPlayerUpdates(
-                await Global.Instance.OrleansClient.CreateObjectReference<IPlayerObserver>(watcher)
-            );
-
+            Console.Out.WriteLine("adding playerPush:" + sessionI.Name);
+            PlayerPushPrx push = (PlayerPushPrx)PlayerPushPrxHelper.uncheckedCast(sessionI.SessionPushPrx, "playerPush").ice_oneway();
+            playerObserver = await Global.Instance.OrleansClient.CreateObjectReference<IPlayerObserver>(new PlayerObserver(push));
+            var player = Global.Instance.OrleansClient.GetGrain<IPlayerGrain>(sessionI.PlayerId);
+            await player.SubscribeForPlayerUpdates(playerObserver );
         }
 
         public async override Task<PlayerInfo> GetPlayerInfoAsync(Current current = null)
         {
             try
             {
-                var player = Global.Instance.OrleansClient.GetGrain<IPlayerGrain>(Guid.Parse(current.ctx["playerId"]));
-                var playerInfo = await player.GetPlayerInfo();               
-                Console.Error.WriteLine("----------------" +playerInfo.name+"---------------------");
+                if(sessionI.PlayerId == null)
+                {
+                    throw new PlayerNotExsit();
+                }
+
+                var player = Global.Instance.OrleansClient.GetGrain<IPlayerGrain>(sessionI.PlayerId);
+                var playerInfo = await player.GetPlayerInfo();
+                await AddObserver();
+                Console.Out.WriteLine("----------------GetPlayerInfo:" + playerInfo.name+"---------------------");
                 return playerInfo;
             }
             catch (System.Exception ex)
@@ -85,6 +84,18 @@ namespace FootStone.Core.FrontIce
                 Console.Error.WriteLine(ex.Message);
                 throw ex;
             }
+        }
+
+        public void Dispose()
+        {
+            if (playerObserver !=null)
+            {
+                Console.Out.WriteLine("playerObserver Unsubscribe");
+                var player = Global.Instance.OrleansClient.GetGrain<IPlayerGrain>(sessionI.PlayerId);
+                player.UnsubscribeForPlayerUpdates(playerObserver);
+                playerObserver = null;
+            }
+            
         }
     }
 }

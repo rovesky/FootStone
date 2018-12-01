@@ -20,7 +20,42 @@ namespace FootStone.Core.Grains
     [StorageProvider(ProviderName = "memory1")]
     public class AccountGrain : Grain<AccountState>, IAccountGrain
     {
-        public Task LoginRequest(LoginInfo info)
+        private ObserverSubscriptionManager<IAccountObserver> subscribers;
+
+        public override Task OnActivateAsync()
+        {
+            subscribers = new ObserverSubscriptionManager<IAccountObserver>();
+
+            return Task.CompletedTask;
+        }
+
+        public override Task OnDeactivateAsync()
+        {
+            subscribers.Clear();
+            return Task.CompletedTask;
+        }
+
+        public Task SubscribeForAccount(IAccountObserver subscriber)
+        {
+            if (!subscribers.IsSubscribed(subscriber))
+            {
+                subscribers.Subscribe(subscriber);              
+            }
+            return Task.CompletedTask;
+        }
+
+        public Task UnsubscribeForAccount(IAccountObserver subscriber)
+        {
+            if (subscribers.IsSubscribed(subscriber))
+            {
+                Console.Out.WriteLine("accountObserver Unsubscribe end");
+                subscribers.Unsubscribe(subscriber);
+            }
+            return Task.CompletedTask;
+        }
+
+
+        public Task LoginRequest(string sessionId,LoginInfo info)
         {
             if(State.account == null)
             {
@@ -32,11 +67,18 @@ namespace FootStone.Core.Grains
                 throw new AccountException("account or password is not  valid!");
             }
             State.token = Guid.NewGuid().ToString();
+
+            //通知所有session已经登录成功
+            subscribers.Notify((s) =>
+            {
+                s.AccountLogined(sessionId);
+            });
             return WriteStateAsync();
         }
 
         public Task RegisterRequest(RegisterInfo info)
         {
+            Console.WriteLine("Begin RegisterRequest:"+ info.account);
             if (State.account != null)
             {
                 throw new AccountException("account is registered!");

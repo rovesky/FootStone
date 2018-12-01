@@ -12,26 +12,31 @@
 
     <server-template id="FootStoneServer">
       <parameter name="index"/>
+      <parameter name="endpoints"/>
       <server id="FootStoneServer-${index}" exe="dotnet" activation="manual">
         <!--<option>FootStone.Core.GameServer.dll</option>-->
-        <adapter name="Session" endpoints="tcp -h 192.168.3.14" replica-group="ReplicatedPlayerAdapter"/>
-        <property name="Identity" value="session"/>
+        <adapter name="SessionFactory" endpoints="${endpoints}" replica-group="ReplicatedPlayerAdapter"/>
+        <property name="Identity" value="sessionFactory"/>
         <property name="IceMX.Metrics.Debug.GroupBy" value="id"/>
         <property name="IceMX.Metrics.Debug.Disabled" value="1"/>
         <property name="IceMX.Metrics.ByParent.GroupBy" value="parent"/>
         <property name="IceMX.Metrics.ByParent.Disabled" value="1"/>
+        <property name="Ice.Trace.Locator" value="1"/>
+        <property name="Ice.Trace.Network" value="3"/>
+        <property name="Ice.Trace.Retry" value="2"/>
+        <property name="Ice.Trace.Protocol" value="0"/>
       </server>
     </server-template>
 
     <replica-group id="ReplicatedPlayerAdapter">
       <load-balancing type="round-robin"/>
-      <object identity="session" type="::FootStone::GrainInterfaces::Session"/>
+      <object identity="sessionFactory" type="::FootStone::GrainInterfaces::SessionFactory"/>
     </replica-group>
 
     <node name="node1">
-      <server-instance template="FootStoneServer" index="1"/>
-      <server-instance template="FootStoneServer" index="2"/>
-      <server-instance template="FootStoneServer" index="3"/>
+      <server-instance template="FootStoneServer" index="1" endpoints="tcp -h 192.168.3.14 -p 12000"/>
+      <server-instance template="FootStoneServer" index="2" endpoints="tcp -h 192.168.3.14 -p 12010"/>
+      <server-instance template="FootStoneServer" index="3" endpoints="tcp -h 192.168.3.14 -p 12020"/>
     </node>
 
   </application>

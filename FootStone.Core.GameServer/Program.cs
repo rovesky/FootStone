@@ -127,7 +127,10 @@ namespace FootStone.Core.GameServer
                             options.ServiceId = "FootStone";
                         })
                     //    .ConfigureApplicationParts(parts => parts.AddApplicationPart(typeof(IRoomGrain).Assembly).WithReferences())
-                        .ConfigureLogging(logging => logging.AddConsole())
+                        .ConfigureLogging(logging => {
+                            logging.AddConsole();
+                            logging.SetMinimumLevel(LogLevel.Warning);
+                        })
                         .Build();
 
                 Global.Instance.OrleansClient = client;
