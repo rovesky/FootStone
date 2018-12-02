@@ -74,11 +74,10 @@ namespace FootStone.Core.FrontIce
         {
             try
             {
+                var player = Global.Instance.OrleansClient.GetGrain<IPlayerGrain>(sessionI.PlayerId);
 
-                var player = Global.Instance.OrleansClient.GetGrain<IPlayerGrain>(Guid.Parse(current.ctx["playerId"]));
-             
                 await player.SetPlayerName(name);
-              }
+            }
             catch (System.Exception ex)
             {
                 Console.Error.WriteLine(ex.Message);
