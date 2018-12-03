@@ -22,8 +22,8 @@ namespace FootStone.Core.GameServer
     {
 
         static string IP_START = "192.168.3";
-        static string mysqlConnectCluster = "server=192.168.3.14;user id=root;password=198292;database=footstone_cluster";
-        static string mysqlConnectStorage = "server=192.168.3.14;user id=root;password=198292;database=footstone_storage";
+        static string mysqlConnectCluster = "server=192.168.3.14;user id=root;password=654321#;database=footstone";
+        static string mysqlConnectStorage = "server=192.168.3.14;user id=root;password=654321#;database=footstone_storage";
 
         public static string GetLocalIP()
         {
