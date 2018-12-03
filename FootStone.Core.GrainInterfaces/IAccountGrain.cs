@@ -13,6 +13,10 @@ namespace FootStone.Core.GrainInterfaces
 
         Task RegisterRequest(RegisterInfo info);
 
+      //  Task<string> GetPlayerList();
+
+        Task<string> CreatePlayer(string name, int serverId);
+
         Task SubscribeForAccount(IAccountObserver subscriber);
 
         Task UnsubscribeForAccount(IAccountObserver subscriber);

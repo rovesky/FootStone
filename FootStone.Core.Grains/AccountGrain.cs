@@ -9,12 +9,24 @@ using System.Threading.Tasks;
 
 namespace FootStone.Core.Grains
 {
+    public class AccountPlayerInfo
+    {
+        public string playerId;
+        public string name;
+
+        public AccountPlayerInfo(string playerId, string name)
+        {
+            this.playerId = playerId;
+            this.name = name;
+        }
+    }
     public class AccountState
     {
         public string account;
         public string password;
         public string token;
-       // public List<>
+        public Dictionary<int,List<AccountPlayerInfo>> players;
+      
     }
 
     [StorageProvider(ProviderName = "memory1")]
@@ -88,6 +100,25 @@ namespace FootStone.Core.Grains
             State.password = info.password;
 
             return WriteStateAsync();
+        }
+
+        public async Task<string> CreatePlayer(string name, int serverId)
+        {
+            var playerId = Guid.NewGuid();
+            var playerGrain = GrainFactory.GetGrain<IPlayerGrain>(playerId);
+            await playerGrain.InitPlayer(name, serverId);
+
+            if(State.players == null)
+            {
+                State.players = new Dictionary<int, List<AccountPlayerInfo>>();               
+            }
+            if (!State.players.ContainsKey(serverId))
+            {                
+                State.players.Add(serverId, new List<AccountPlayerInfo>());
+            }
+            State.players[serverId].Add(new AccountPlayerInfo(playerId.ToString(), name));
+
+            return playerId.ToString();
         }
     }
 }

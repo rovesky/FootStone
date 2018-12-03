@@ -60,6 +60,7 @@ namespace FootStone.Grains
         {
             if (subscribers.IsSubscribed(subscriber))
             {
+                Console.Out.WriteLine("playerObserver Unsubscribe end");
                 subscribers.Unsubscribe(subscriber);
             }
             return Task.CompletedTask;
@@ -70,7 +71,7 @@ namespace FootStone.Grains
             return Task.FromResult(this.State);
         }
 
-        public async Task CreatePlayer(string name, int serverId)
+        public async Task InitPlayer(string name, int serverId)
         {
             this.State.id = this.GetPrimaryKey().ToString();
             this.State.name = name;

@@ -28,7 +28,7 @@ namespace FootStone.Core.FrontIce
         
     }
 
-    public class PlayerI : PlayerDisp_,IDisposable
+    public class PlayerI : PlayerDisp_, IServantBase
     {
         private SessionI sessionI;
         private IPlayerObserver playerObserver;
@@ -39,13 +39,16 @@ namespace FootStone.Core.FrontIce
         }
 
 
-        private async Task AddObserver()
+        public async Task AddObserver()
         {
-            Console.Out.WriteLine("adding playerPush:" + sessionI.Name);
-            PlayerPushPrx push = (PlayerPushPrx)PlayerPushPrxHelper.uncheckedCast(sessionI.SessionPushPrx, "playerPush").ice_oneway();
-            playerObserver = await Global.Instance.OrleansClient.CreateObjectReference<IPlayerObserver>(new PlayerObserver(push));
-            var player = Global.Instance.OrleansClient.GetGrain<IPlayerGrain>(sessionI.PlayerId);
-            await player.SubscribeForPlayerUpdates(playerObserver );
+            if (playerObserver == null)
+            {
+                Console.Out.WriteLine("add playerPush:" + sessionI.Account);
+                PlayerPushPrx push = (PlayerPushPrx)PlayerPushPrxHelper.uncheckedCast(sessionI.SessionPushPrx, "playerPush").ice_oneway();
+                playerObserver = await Global.Instance.OrleansClient.CreateObjectReference<IPlayerObserver>(new PlayerObserver(push));
+                var player = Global.Instance.OrleansClient.GetGrain<IPlayerGrain>(sessionI.PlayerId);
+                await player.SubscribeForPlayerUpdates(playerObserver);
+            }
         }
 
         public async override Task<PlayerInfo> GetPlayerInfoAsync(Current current = null)
@@ -59,7 +62,7 @@ namespace FootStone.Core.FrontIce
 
                 var player = Global.Instance.OrleansClient.GetGrain<IPlayerGrain>(sessionI.PlayerId);
                 var playerInfo = await player.GetPlayerInfo();
-                await AddObserver();
+             //   await AddObserver();
                 Console.Out.WriteLine("----------------GetPlayerInfo:" + playerInfo.name+"---------------------");
                 return playerInfo;
             }
@@ -96,5 +99,7 @@ namespace FootStone.Core.FrontIce
             }
             
         }
+
+     
     }
 }

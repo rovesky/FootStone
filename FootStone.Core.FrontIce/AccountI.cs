@@ -31,7 +31,7 @@ namespace FootStone.Core.FrontIce
         }
     }
 
-    public class AccountI : AccountDisp_,IDisposable
+    public class AccountI : AccountDisp_, IServantBase
     {
         private SessionI sessionI;
         private IAccountObserver accountObserver;
@@ -40,23 +40,16 @@ namespace FootStone.Core.FrontIce
         {
             this.sessionI = sessionI;           
         }
-              
 
-        public async override Task<string> CreatePlayerAsync(string name, int serverId, Current current = null)
+        private async Task AddObserver(IAccountGrain accountGrain)
         {
-
-            try
+           
+            if (accountObserver == null)
             {
-                var id = Guid.NewGuid();
-                var player = Global.Instance.OrleansClient.GetGrain<IPlayerGrain>(id);
-                await player.CreatePlayer(name, serverId);
-                sessionI.PlayerId = id;
-                return id.ToString();
-            }
-            catch (System.Exception ex)
-            {
-                Console.Error.WriteLine(ex);
-                throw ex;
+                Console.Out.WriteLine("add AccountPush:" + sessionI.Account);
+                accountObserver = await Global.Instance.OrleansClient.
+                    CreateObjectReference<IAccountObserver>(new AccountObserver(sessionI));
+                await accountGrain.SubscribeForAccount(accountObserver);
             }
         }
 
@@ -71,16 +64,34 @@ namespace FootStone.Core.FrontIce
             }
         }
 
+        public async override Task<string> CreatePlayerAsync(string name, int serverId, Current current = null)
+        {
+            try
+            {               
+                var accountGrain = Global.Instance.OrleansClient.GetGrain<IAccountGrain>(sessionI.Account);
+                var playerId = await accountGrain.CreatePlayer(name, serverId);
+                sessionI.PlayerId = Guid.Parse(playerId);
+                PlayerI playerI = (PlayerI)current.adapter.findFacet(current.id, "player");
+                await playerI.AddObserver();
+                return playerId;
+            }
+            catch (System.Exception ex)
+            {
+                Console.Error.WriteLine(ex);
+                throw ex;
+            }
+        }
+
+     
+
         public async override Task LoginRequestAsync(LoginInfo info, Current current = null)
         {
 
             try
-            {
+            {             
                 var accountGrain = Global.Instance.OrleansClient.GetGrain<IAccountGrain>(info.account);
 
-                accountObserver = await Global.Instance.OrleansClient.
-                    CreateObjectReference<IAccountObserver>(new AccountObserver(sessionI));
-                await accountGrain.SubscribeForAccount(accountObserver );
+                await AddObserver(accountGrain);
 
                 await accountGrain.LoginRequest(sessionI.Id, info);
                 sessionI.Account = info.account;

@@ -8,20 +8,24 @@ using System.Threading.Tasks;
 
 namespace FootStone.Core.FrontIce
 {
-    public class SessionI : SessionDisp_
+    public class SessionI : SessionDisp_,IServantBase
     {
-         public SessionI(string name)
+         public SessionI(string account)
         {
-            this.Name = name;  
-            _destroy = false;
-         //   this.Id = Guid.NewGuid().ToString();
-        //    Console.Out.WriteLine("The session  is now created in server:" + name);
+            this.Account = account;  
+            _destroy = false;       
         }
 
-        public override Task AddPushAsync(SessionPushPrx sessionPush, Current current = null)
+        public  override Task AddPushAsync(SessionPushPrx sessionPush, Current current = null)
         {
             SessionPushPrx = (SessionPushPrx)sessionPush.ice_fixed(current.con);
             return Task.CompletedTask;
+            //var allFacets = current.adapter.findAllFacets(current.id);
+            //foreach (Ice.Object e in allFacets.Values)
+            //{
+            //    IServantBase servant = (IServantBase)e;               
+            //    await servant.AddObserver();
+            //}            
 
         } 
 
@@ -58,6 +62,17 @@ namespace FootStone.Core.FrontIce
             }
         }
 
+        //public Task AddObserver()
+        //{
+        //    return Task.CompletedTask;
+        //  //  throw new NotImplementedException();
+        //}
+
+        public void Dispose()
+        {
+            
+        }
+
         private bool _destroy;
 
         public string Id
@@ -67,7 +82,7 @@ namespace FootStone.Core.FrontIce
                 return SessionPushPrx.ice_getIdentity().name;
             }
         }
-        public string Name { get; private set; }
+      //  public string Name { get; private set; }
         public SessionPushPrx SessionPushPrx { get; private set; }
         public Guid PlayerId { get; internal set; }
         public string Account { get; internal set; }

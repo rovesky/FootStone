@@ -71,7 +71,7 @@ namespace Network
             }
         }
 
-        public async void Init(string IP,int port)
+        public  void Init(string IP,int port)
         {
             try
             {

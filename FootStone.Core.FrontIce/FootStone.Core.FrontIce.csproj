@@ -30,16 +30,25 @@
     <None Update="Grid\application-netcore_with_replication.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Grid\config.grid.node2">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Grid\config.client">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Grid\config.grid">
+    <None Update="Grid\config.grid.registry">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Grid\config.server">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Grid\StartGrid.bat">
+    <None Update="Grid\StartGridNode2.sh">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Grid\StartGridNode2.bat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Grid\StartGridRegistry.bat">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Grid\AddGrid.bat">
