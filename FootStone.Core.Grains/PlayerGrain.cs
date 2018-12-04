@@ -16,7 +16,7 @@ namespace FootStone.Grains
     //   public string name;
     //   public int level;        
     //}
-    [StorageProvider(ProviderName= "memory1")]
+    [StorageProvider(ProviderName= "ado1")]
     public class PlayerGrain : Grain<PlayerInfo>, IPlayerGrain
     {
         private ObserverSubscriptionManager<IPlayerObserver> subscribers;

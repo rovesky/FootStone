@@ -9,11 +9,15 @@ namespace FootStone.Core.GrainInterfaces
 {
     public interface IAccountGrain : IGrainWithStringKey
     {
-        Task LoginRequest(string sessionId, LoginInfo info);
+        Task Login(string sessionId, LoginInfo info);
 
-        Task RegisterRequest(RegisterInfo info);
+        Task Register(RegisterInfo info);
 
-      //  Task<string> GetPlayerList();
+        Task<List<ServerInfo>> GetServerList();
+
+        Task<List<PlayerShortInfo>> GetPlayerInfoShortList(int serverId);
+
+        Task  SelectPlayer(string playerId);
 
         Task<string> CreatePlayer(string name, int serverId);
 

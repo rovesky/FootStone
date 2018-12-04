@@ -9,27 +9,18 @@ using System.Threading.Tasks;
 
 namespace FootStone.Core.Grains
 {
-    public class AccountPlayerInfo
-    {
-        public string playerId;
-        public string name;
-
-        public AccountPlayerInfo(string playerId, string name)
-        {
-            this.playerId = playerId;
-            this.name = name;
-        }
-    }
+    
     public class AccountState
     {
         public string account;
         public string password;
+        public string curPlayerId;
         public string token;
-        public Dictionary<int,List<AccountPlayerInfo>> players;
+        public Dictionary<int,List<PlayerShortInfo>> players;
       
     }
 
-    [StorageProvider(ProviderName = "memory1")]
+    [StorageProvider(ProviderName = "ado1")]
     public class AccountGrain : Grain<AccountState>, IAccountGrain
     {
         private ObserverSubscriptionManager<IAccountObserver> subscribers;
@@ -67,7 +58,7 @@ namespace FootStone.Core.Grains
         }
 
 
-        public Task LoginRequest(string sessionId,LoginInfo info)
+        public Task Login(string sessionId,LoginInfo info)
         {
             if(State.account == null)
             {
@@ -88,7 +79,7 @@ namespace FootStone.Core.Grains
             return WriteStateAsync();
         }
 
-        public Task RegisterRequest(RegisterInfo info)
+        public Task Register(RegisterInfo info)
         {
             Console.WriteLine("Begin RegisterRequest:"+ info.account);
             if (State.account != null)
@@ -110,15 +101,38 @@ namespace FootStone.Core.Grains
 
             if(State.players == null)
             {
-                State.players = new Dictionary<int, List<AccountPlayerInfo>>();               
+                State.players = new Dictionary<int, List<PlayerShortInfo>>();               
             }
             if (!State.players.ContainsKey(serverId))
             {                
-                State.players.Add(serverId, new List<AccountPlayerInfo>());
+                State.players.Add(serverId, new List<PlayerShortInfo>());
             }
-            State.players[serverId].Add(new AccountPlayerInfo(playerId.ToString(), name));
+            State.players[serverId].Add(new PlayerShortInfo(playerId.ToString(), name,0,0));
 
             return playerId.ToString();
+        }
+
+        public Task<List<ServerInfo>> GetServerList()
+        {
+            var serveList = new List<ServerInfo>();
+            serveList.Add(new ServerInfo(1, "server1", 0));
+            return Task.FromResult(serveList);
+
+        }
+
+        public Task<List<PlayerShortInfo>> GetPlayerInfoShortList(int serverId)
+        {
+            if (State.players == null || !State.players.ContainsKey(serverId))
+            {
+                return Task.FromResult(new List<PlayerShortInfo>());
+            }
+            return Task.FromResult(State.players[serverId]);
+        }
+
+        public Task SelectPlayer(string playerId)
+        {
+            State.curPlayerId = playerId;
+            return Task.CompletedTask;
         }
     }
 }

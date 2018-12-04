@@ -131,8 +131,7 @@ namespace FootStone.client
             var account = "a1";
             var password = "111111";
             var playerName = "player1";
-            var serverId = 1;
-
+         
             var sessionPrx = await NetworkIce.Instance.CreateSession("");
             Console.Error.WriteLine("NetworkIce.Instance.CreateSession ok!");
 
@@ -151,11 +150,28 @@ namespace FootStone.client
             await accountPrx.LoginRequestAsync(new LoginInfo(account, password));
             Console.Error.WriteLine("LoginRequest ok:" + account);
 
-            var playerId = await accountPrx.CreatePlayerAsync(playerName, serverId);
+            List<ServerInfo> servers = await accountPrx.GetServerListRequestAsync();
+
+            if(servers.Count == 0)
+            {
+                Console.Error.WriteLine("server list is empty!");
+                return ;
+            }
+
+            var serverId = servers[0].id;
+
+            List<PlayerShortInfo> players = await accountPrx.GetPlayerListRequestAsync(serverId);
+            if (players.Count == 0)
+            {
+                var playerId = await accountPrx.CreatePlayerRequestAsync(playerName, serverId);
+                players = await accountPrx.GetPlayerListRequestAsync(serverId);         
+            }
+
+            await accountPrx.SelectPlayerRequestAsync(players[0].playerId);
+
             var playerPrx = PlayerPrxHelper.uncheckedCast(sessionPrx, "player");
             var playerInfo = await playerPrx.GetPlayerInfoAsync();
             Console.Error.WriteLine("playerInfo:" + JsonConvert.SerializeObject(playerInfo));
-
 
         }
 

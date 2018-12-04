@@ -23,7 +23,7 @@ namespace FootStone.Core.GameServer
 
         static string IP_START = "192.168.3";
         static string mysqlConnectCluster = "server=192.168.3.14;user id=root;password=654321#;database=footstone";
-        static string mysqlConnectStorage = "server=192.168.3.14;user id=root;password=654321#;database=footstone_storage";
+        static string mysqlConnectStorage = "server=192.168.3.14;user id=root;password=654321#;database=footstonestorage";
 
         public static string GetLocalIP()
         {
@@ -82,12 +82,12 @@ namespace FootStone.Core.GameServer
                     })
                     .Configure<EndpointOptions>(options =>
                     {
-                    // Port to use for Silo-to-Silo
-                    options.SiloPort = 11111;
-                    // Port to use for the gateway
-                    options.GatewayPort = 30000;
-                    // IP Address to advertise in the cluster
-                    options.AdvertisedIPAddress = IPAddress.Parse(GetLocalIP());
+                        // Port to use for Silo-to-Silo
+                        options.SiloPort = 11111;
+                        // Port to use for the gateway
+                        options.GatewayPort = 30000;
+                        // IP Address to advertise in the cluster
+                        options.AdvertisedIPAddress = IPAddress.Parse(GetLocalIP());
                     })
                     //  .Configure<EndpointOptions>(options => options.AdvertisedIPAddress = IPAddress.Any)
                     //.ConfigureApplicationParts(parts => parts.AddApplicationPart(typeof(RoomGrain).Assembly).WithReferences())
@@ -97,44 +97,45 @@ namespace FootStone.Core.GameServer
                         logging.SetMinimumLevel(LogLevel.Warning);
                     })
                     .AddMemoryGrainStorage("memory1")
-                    //.AddAdoNetGrainStorage("ado1", options =>
-                    // {
+                    .AddAdoNetGrainStorage("ado1", options =>
+                     {
 
-                    //     options.UseJsonFormat = true;
-                    //     options.ConnectionString = mysqlConnectStorage;
-                    //     options.Invariant = "MySql.Data.MySqlClient";
-                    // })
+                         options.UseJsonFormat = true;
+                         options.ConnectionString = mysqlConnectStorage;
+                         options.Invariant = "MySql.Data.MySqlClient";
+                     })
                     .AddGrainService<IceService>()
                     .ConfigureServices(s =>
                     {
-                    // Register Client of GrainService
-                    s.AddSingleton<IIceService, IceServiceClient>();
+                        // Register Client of GrainService
+                        s.AddSingleton<IIceService, IceServiceClient>();
                     })
+                    .EnableDirectClient()
                     .Build();
 
 
-                var client = new ClientBuilder()
-                        //.UseLocalhostClustering()
-                        // .UseStaticClustering(gateways)
-                        .UseAdoNetClustering(options =>
-                        {
-                            options.ConnectionString = mysqlConnectCluster;
-                            options.Invariant = "MySql.Data.MySqlClient";
-                        })
-                        .Configure<ClusterOptions>(options =>
-                        {
-                            options.ClusterId = "lsj";
-                            options.ServiceId = "FootStone";
-                        })
-                    //    .ConfigureApplicationParts(parts => parts.AddApplicationPart(typeof(IRoomGrain).Assembly).WithReferences())
-                        .ConfigureLogging(logging => {
-                            logging.AddConsole();
-                            logging.SetMinimumLevel(LogLevel.Warning);
-                        })
-                        .Build();
-
-                Global.Instance.OrleansClient = client;
-                //  InitGridIce(args);
+                //var client = new ClientBuilder()
+                //        //.UseLocalhostClustering()
+                //        // .UseStaticClustering(gateways)
+                //        .UseAdoNetClustering(options =>
+                //        {
+                //            options.ConnectionString = mysqlConnectCluster;
+                //            options.Invariant = "MySql.Data.MySqlClient";
+                //        })
+                //        .Configure<ClusterOptions>(options =>
+                //        {
+                //            options.ClusterId = "lsj";
+                //            options.ServiceId = "FootStone";
+                //        })
+                //        //    .ConfigureApplicationParts(parts => parts.AddApplicationPart(typeof(IRoomGrain).Assembly).WithReferences())
+                //        .ConfigureLogging(logging =>
+                //        {
+                //            logging.AddConsole();
+                //            logging.SetMinimumLevel(LogLevel.Warning);
+                //        })
+                //        .Build();
+                var client = silo.Services.GetRequiredService<IClusterClient>();
+                Global.Instance.OrleansClient = client;               
                 RunAsync(silo, client, mapFileName).Wait();
 
                 Console.ReadLine();
@@ -153,19 +154,19 @@ namespace FootStone.Core.GameServer
         static async Task RunAsync(ISiloHost silo, IClusterClient client, string mapFileName)
         {
             await silo.StartAsync();
-            await client.Connect();
+         //   await client.Connect();
             
 
             //Console.WriteLine("Map file name is '{0}'.", mapFileName);
             //Console.WriteLine("Setting up Adventure, please wait ...");
             //Adventure adventure = new Adventure(client);
             //adventure.Configure(mapFileName).Wait();
-            Console.WriteLine("FootStone setup completed.");
+            Console.WriteLine("FootStone Start completed.");
         }
 
         static async Task StopAsync(ISiloHost silo, IClusterClient client)
         {
-            await client.Close();
+          //  await client.Close();
             await silo.StopAsync();
         }
        
