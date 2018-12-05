@@ -2,6 +2,7 @@ using FootStone.Core.GrainInterfaces;
 using FootStone.GrainInterfaces;
 using Orleans;
 using Orleans.Providers;
+using Orleans.Runtime;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,6 +21,16 @@ namespace FootStone.Grains
     public class PlayerGrain : Grain<PlayerInfo>, IPlayerGrain
     {
         private ObserverSubscriptionManager<IPlayerObserver> subscribers;
+
+        readonly IIceServiceClient IceServiceClient;
+
+        public PlayerGrain(IGrainActivationContext grainActivationContext, IIceServiceClient iceServiceClient)
+        {
+            IceServiceClient = iceServiceClient;
+        }
+
+
+
 
         public override Task OnActivateAsync()
         {
@@ -47,7 +58,8 @@ namespace FootStone.Grains
                     {
                         t.HpChanged(State.playerMaster.hp);
                     });
-                    return Task.CompletedTask;
+                    //    return Task.CompletedTask;
+                    return WriteStateAsync();
                 }
                 , null
                 , TimeSpan.FromSeconds(10)
@@ -68,6 +80,8 @@ namespace FootStone.Grains
 
         public Task<PlayerInfo> GetPlayerInfo()
         {
+         
+       //     IceServiceClient.AddOptionTime(1);
             return Task.FromResult(this.State);
         }
 
@@ -85,10 +99,12 @@ namespace FootStone.Grains
             await WriteStateAsync();
         }
 
-        public async Task SetPlayerName(string name)
+        public  Task SetPlayerName(string name)
         {
             this.State.name = name;
-            await WriteStateAsync();
+         //   IceServiceClient.AddOptionTime(1);
+            return Task.CompletedTask;
+           // await WriteStateAsync();
         }
     }
 }

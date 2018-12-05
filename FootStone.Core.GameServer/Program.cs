@@ -22,8 +22,8 @@ namespace FootStone.Core.GameServer
     {
 
         static string IP_START = "192.168.3";
-        static string mysqlConnectCluster = "server=192.168.3.14;user id=root;password=654321#;database=footstone";
-        static string mysqlConnectStorage = "server=192.168.3.14;user id=root;password=654321#;database=footstonestorage";
+        static string mysqlConnectCluster = "server=192.168.3.14;user id=root;password=654321#;database=footstone;MaximumPoolsize=50";
+        static string mysqlConnectStorage = "server=192.168.3.14;user id=root;password=654321#;database=footstonestorage;MaximumPoolsize=50";
 
         public static string GetLocalIP()
         {
@@ -101,15 +101,20 @@ namespace FootStone.Core.GameServer
                      {
 
                          options.UseJsonFormat = true;
-                         options.ConnectionString = mysqlConnectStorage;
+                         options.ConnectionString = mysqlConnectStorage;           
                          options.Invariant = "MySql.Data.MySqlClient";
                      })
                     .AddGrainService<IceService>()
                     .ConfigureServices(s =>
                     {
                         // Register Client of GrainService
-                        s.AddSingleton<IIceService, IceServiceClient>();
+                        s.AddSingleton<IIceServiceClient, IceServiceClient>();
                     })
+                    //.ConfigureServices(s =>
+                    //{
+                    //    // Register Client of GrainService
+                    //    s.AddSingleton<IIceService, IceService>();
+                    //})
                     .EnableDirectClient()
                     .Build();
 

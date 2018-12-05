@@ -10,9 +10,9 @@ namespace FootStone.Core.FrontIce
 {
     public class SessionI : SessionDisp_,IServantBase
     {
-         public SessionI(string account)
+         public SessionI(string name)
         {
-            this.Account = account;  
+            this.Name = name;  
             _destroy = false;       
         }
 
@@ -20,13 +20,6 @@ namespace FootStone.Core.FrontIce
         {
             SessionPushPrx = (SessionPushPrx)sessionPush.ice_fixed(current.con);
             return Task.CompletedTask;
-            //var allFacets = current.adapter.findAllFacets(current.id);
-            //foreach (Ice.Object e in allFacets.Values)
-            //{
-            //    IServantBase servant = (IServantBase)e;               
-            //    await servant.AddObserver();
-            //}            
-
         } 
 
         public override void Destroy(Current current = null)
@@ -62,18 +55,14 @@ namespace FootStone.Core.FrontIce
             }
         }
 
-        //public Task AddObserver()
-        //{
-        //    return Task.CompletedTask;
-        //  //  throw new NotImplementedException();
-        //}
+    
 
         public void Dispose()
         {
             
         }
 
-        private bool _destroy;
+  
 
         public string Id
         {
@@ -82,11 +71,13 @@ namespace FootStone.Core.FrontIce
                 return SessionPushPrx.ice_getIdentity().name;
             }
         }
-      //  public string Name { get; private set; }
         public SessionPushPrx SessionPushPrx { get; private set; }
         public Guid PlayerId { get; internal set; }
         public string Account { get; internal set; }
-      
+
+        public string Name { get; }
+        private bool _destroy;
+
     }
 
        

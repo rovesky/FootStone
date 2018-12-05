@@ -36,21 +36,23 @@ namespace FootStone.Core.FrontIce
     {
         private SessionI sessionI;
         private IAccountObserver accountObserver;
+        private IAccountObserver accountObserverRef;
 
         public AccountI(SessionI sessionI)
         {
             this.sessionI = sessionI;           
         }
 
-        private async Task AddObserver(IAccountGrain accountGrain)
+        private async Task AddObserver(IAccountGrain accountGrain,string account)
         {
            
             if (accountObserver == null)
             {
-                Console.Out.WriteLine("add AccountPush:" + sessionI.Account);
-                accountObserver = await Global.Instance.OrleansClient.
-                    CreateObjectReference<IAccountObserver>(new AccountObserver(sessionI));
-                await accountGrain.SubscribeForAccount(accountObserver);
+                Console.Out.WriteLine("add AccountPush:" + account);
+                accountObserver = new AccountObserver(sessionI);
+                accountObserverRef = await Global.Instance.OrleansClient.
+                    CreateObjectReference<IAccountObserver>(accountObserver);            
+                await accountGrain.SubscribeForAccount(accountObserverRef);
             }
         }
 
@@ -60,7 +62,7 @@ namespace FootStone.Core.FrontIce
             {
                 Console.Out.WriteLine("accountObserver Unsubscribe begin");
                 var account = Global.Instance.OrleansClient.GetGrain<IAccountGrain>(sessionI.Account);
-                account.UnsubscribeForAccount(accountObserver);
+                account.UnsubscribeForAccount(accountObserverRef);
                 accountObserver = null;
             }
         }
@@ -84,12 +86,11 @@ namespace FootStone.Core.FrontIce
 
         public async override Task LoginRequestAsync(LoginInfo info, Current current = null)
         {
-
             try
             {             
                 var accountGrain = Global.Instance.OrleansClient.GetGrain<IAccountGrain>(info.account);
 
-                await AddObserver(accountGrain);
+                await AddObserver(accountGrain, info.account);
 
                 await accountGrain.Login(sessionI.Id, info);
                 sessionI.Account = info.account;

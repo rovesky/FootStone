@@ -23,7 +23,16 @@ namespace FootStone.Core.FrontIce
         }
         public void HpChanged(int hp)
         {
-            playerPush.begin_hpChanged(hp);
+            try
+            {
+             //   Console.Out.WriteLine("hp changed:"+hp);
+                playerPush.begin_hpChanged(hp);
+            }
+            catch(Ice.Exception e)
+            {
+                Console.Error.WriteLine(e.Message);
+            }
+         
         }
         
     }
@@ -32,6 +41,7 @@ namespace FootStone.Core.FrontIce
     {
         private SessionI sessionI;
         private IPlayerObserver playerObserver;
+        private IPlayerObserver playerObserverRef;
 
         public PlayerI(SessionI session)
         {
@@ -45,9 +55,10 @@ namespace FootStone.Core.FrontIce
             {
                 Console.Out.WriteLine("add playerPush:" + sessionI.Account);
                 PlayerPushPrx push = (PlayerPushPrx)PlayerPushPrxHelper.uncheckedCast(sessionI.SessionPushPrx, "playerPush").ice_oneway();
-                playerObserver = await Global.Instance.OrleansClient.CreateObjectReference<IPlayerObserver>(new PlayerObserver(push));
-                var player = Global.Instance.OrleansClient.GetGrain<IPlayerGrain>(sessionI.PlayerId);
-                await player.SubscribeForPlayerUpdates(playerObserver);
+                playerObserver = new PlayerObserver(push);
+                playerObserverRef = await Global.Instance.OrleansClient.CreateObjectReference<IPlayerObserver>(playerObserver);
+                var playerGrain = Global.Instance.OrleansClient.GetGrain<IPlayerGrain>(sessionI.PlayerId);
+                await playerGrain.SubscribeForPlayerUpdates(playerObserverRef);
             }
         }
 
@@ -62,8 +73,8 @@ namespace FootStone.Core.FrontIce
 
                 var player = Global.Instance.OrleansClient.GetGrain<IPlayerGrain>(sessionI.PlayerId);
                 var playerInfo = await player.GetPlayerInfo();
-             //   await AddObserver();
-                Console.Out.WriteLine("----------------GetPlayerInfo:" + playerInfo.name+"---------------------");
+       
+           //     Console.Out.WriteLine("----------------GetPlayerInfo:" + playerInfo.name+"---------------------");
                 return playerInfo;
             }
             catch (System.Exception ex)
@@ -94,7 +105,7 @@ namespace FootStone.Core.FrontIce
             {
                 Console.Out.WriteLine("playerObserver Unsubscribe");
                 var player = Global.Instance.OrleansClient.GetGrain<IPlayerGrain>(sessionI.PlayerId);
-                player.UnsubscribeForPlayerUpdates(playerObserver);
+                player.UnsubscribeForPlayerUpdates(playerObserverRef);
                 playerObserver = null;
             }
             

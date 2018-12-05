@@ -14,16 +14,25 @@ using System.Threading.Tasks;
 namespace FootStone.Core.GameServer
 {
     [Reentrant]
-    public class IceService : GrainService,IIceService
+    public class IceService : GrainService,IIceServiceClient
     {
         readonly IGrainFactory GrainFactory;
 
         private NetworkIce network = new NetworkIce();
+        private int operationTimes = 0;
 
-        public IceService(IServiceProvider services, IGrainIdentity id, Silo silo, ILoggerFactory loggerFactory, IGrainFactory grainFactory) : base(id, silo, loggerFactory)
+        public IceService(IServiceProvider services, IGrainIdentity id, Silo silo, ILoggerFactory loggerFactory, IGrainFactory grainFactory) 
+            : base(id, silo, loggerFactory)
         {         
             GrainFactory = grainFactory;
         }
+
+        public Task AddOptionTime(int time)
+        {
+            operationTimes += time;
+            return Task.CompletedTask;
+        }
+
         public override Task Init(IServiceProvider serviceProvider)
         {
             Console.WriteLine("----------IceService Init!");
@@ -36,6 +45,14 @@ namespace FootStone.Core.GameServer
         {
             Console.WriteLine("-----------IceService Start!");
             network.Start();
+            RegisterTimer((s) =>
+            {
+                Console.Out.WriteLine("operation times:" + operationTimes);
+                return Task.CompletedTask;
+            }
+              , null
+              , TimeSpan.FromSeconds(10)
+              , TimeSpan.FromSeconds(10));
             await base.Start();
         }
 

@@ -11,114 +11,14 @@ namespace FootStone.client
 {
     class Program
     {
-        //static void Test()
-        //{
-        //    try
-        //    {
-        //        string IP = "192.168.3.14";
-        //        int port = 4061;
-        //        Ice.InitializationData initData = new Ice.InitializationData();
-
-        //        initData.properties = Ice.Util.createProperties();
-        //        // initData.properties.setProperty("Ice.ACM.Client", "0");
-        //        // initData.properties.setProperty("Ice.RetryIntervals", "-1");
-        //        //initData.properties.setProperty("Ice.FactoryAssemblies", "client");
-
-        //        initData.properties.setProperty("Ice.Trace.Network", "0");
-        //       // initData.properties.setProperty("Player.Proxy", "player:tcp -h 192.168.206.1 -p 12000");
-        //        initData.properties.setProperty("Ice.Default.Locator", "FootStone/Locator:default -h " + IP + " -p " + port);
-
-        //        //
-        //        // using statement - communicator is automatically destroyed
-        //        // at the end of this statement
-        //        //
-        //        using (var communicator = Ice.Util.initialize(initData))
-        //        {
-        //           // var player = PlayerPrxHelper.checkedCast(communicator.propertyToProxy("Player.Proxy"));
-
-        //            PlayerPrx playerPrx = null;
-        //            try
-        //            {
-        //                playerPrx = PlayerPrxHelper.checkedCast(communicator.stringToProxy("player"));
-        //            }
-        //            catch (Ice.NotRegisteredException)
-        //            {
-        //                var query =
-        //                    IceGrid.QueryPrxHelper.checkedCast(communicator.stringToProxy("FootStone/Query"));
-        //                playerPrx = PlayerPrxHelper.checkedCast(query.findObjectByType("::FootStone::GrainInterfaces::Player"));
-        //            }
-        //            if (playerPrx == null)
-        //            {
-        //                Console.WriteLine("couldn't find a `::Player' object");
-        //                return;
-        //            }
-
-
-        //            for (int i = 0; i < 1; ++i)
-        //            {
-        //                doMethod(playerPrx);
-
-        //                //player.begin_getPlayerInfo().whenCompleted(
-        //                //            (playerInfo) =>
-        //                //            {
-        //                //                Console.Error.WriteLine(playerInfo.name);
-        //                //                player.begin_setPlayerName(playerInfo.id,playerInfo.name+"_y").whenCompleted(
-        //                //                   () => {
-        //                //                      player.begin_getPlayerInfo(playerInfo.id).whenCompleted(
-        //                //                          (playerInfo1) =>
-        //                //                          {
-        //                //                              Console.Error.WriteLine(playerInfo1.name);
-        //                //                          },
-        //                //                          (Ice.Exception ex) =>
-        //                //                                   {
-        //                //                                       Console.Error.WriteLine(ex.Message);
-        //                //                                   });
-        //                //                         },
-        //                //                   (Ice.Exception ex) =>
-        //                //                   {
-        //                //                       Console.Error.WriteLine(ex.Message);
-        //                //                   });
-        //                //            },
-        //                //            (Ice.Exception ex) =>
-        //                //            {
-        //                //                Console.Error.WriteLine(ex.Message);
-        //                //            });
-        //            }
-        //            communicator.waitForShutdown();
-
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.Error.WriteLine(ex);
-
-        //    }
-        //}
-
-        //static async void doMethod(PlayerPrx player)
-        //{
-        //    try
-        //    {
-        //        var playerInfo = await player.getPlayerInfoAsync(Guid.NewGuid().ToString());
-        //        Console.Error.WriteLine(playerInfo.name);
-        //        await player.setPlayerNameAsync(playerInfo.id, playerInfo.name + "_y");
-
-        //        playerInfo = await player.getPlayerInfoAsync(playerInfo.id);
-        //        Console.Error.WriteLine(playerInfo.name);
-        //    }
-        //    catch(Exception ex)
-        //    {
-        //        Console.Error.WriteLine(ex.Message);
-        //    }
-        //}
+      
+   
         static void Main(string[] args)
         {
             //  Test();
             try
             {
-
-                NetworkIce.Instance.Init("192.168.3.14", 4061);
-                run1(NetworkIce.Instance.Communicator).Wait();
+                Test(5000).Wait();
             }
             catch(Exception ex)
             {
@@ -126,29 +26,41 @@ namespace FootStone.client
             }
         }
 
-        private static async Task run1(Ice.Communicator communicator)
+        private static async Task Test(int count)
         {
-            var account = "a1";
+            NetworkIce.Instance.Init("192.168.3.14", 4061);
+            for (int i = 0; i < count; ++i)
+            {
+                runTest(i, 1000);
+                await Task.Delay(20);
+            }
+            Console.Out.WriteLine("all session created:" + count);
+        }
+
+        private static async Task runTest(int index,int count)
+        {
+            var sessionId = "session" + index;
+            var account = "account"+index;
             var password = "111111";
-            var playerName = "player1";
+            var playerName = "player"+index;
          
-            var sessionPrx = await NetworkIce.Instance.CreateSession("");
-            Console.Error.WriteLine("NetworkIce.Instance.CreateSession ok!");
+            var sessionPrx = await NetworkIce.Instance.CreateSession(sessionId);
+          //  Console.Out.WriteLine("NetworkIce.Instance.CreateSession ok:"+ account);
 
             var accountPrx = AccountPrxHelper.uncheckedCast(sessionPrx, "account");
             try
             {
                 await accountPrx.RegisterRequestAsync(new RegisterInfo(account, password));
-                Console.Error.WriteLine("RegisterRequest ok:" + account);
+                Console.Out.WriteLine("RegisterRequest ok:" + account);
             }
             catch(Exception ex)
             {
-                Console.Error.WriteLine("RegisterRequest fail:" + ex.Message);
+                Console.Out.WriteLine("RegisterRequest fail:" + ex.Message);
             }
          
 
             await accountPrx.LoginRequestAsync(new LoginInfo(account, password));
-            Console.Error.WriteLine("LoginRequest ok:" + account);
+            Console.Out.WriteLine("LoginRequest ok:" + account);
 
             List<ServerInfo> servers = await accountPrx.GetServerListRequestAsync();
 
@@ -170,12 +82,20 @@ namespace FootStone.client
             await accountPrx.SelectPlayerRequestAsync(players[0].playerId);
 
             var playerPrx = PlayerPrxHelper.uncheckedCast(sessionPrx, "player");
+
             var playerInfo = await playerPrx.GetPlayerInfoAsync();
-            Console.Error.WriteLine("playerInfo:" + JsonConvert.SerializeObject(playerInfo));
+            for (int i = 0; i < count; ++i)
+            {              
+                await playerPrx.SetPlayerNameAsync(playerName + "_" + i);
+                playerInfo = await playerPrx.GetPlayerInfoAsync();
+        
+                await Task.Delay(2000);
+            }
+            Console.Out.WriteLine("playerInfo:" + JsonConvert.SerializeObject(playerInfo));
 
         }
 
-        private static async Task<int> run(Ice.Communicator communicator)
+        private static async Task<int> run()
         {
             string name;
             do
@@ -277,7 +197,7 @@ namespace FootStone.client
             }
             if (shutdown)
             {
-                NetworkIce.Instance.SessionFactoryPrx.Shutdown();
+            //    NetworkIce.Instance.SessionFactoryPrx.Shutdown();
             }
             return 0;
         }

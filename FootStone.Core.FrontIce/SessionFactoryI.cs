@@ -21,22 +21,17 @@ namespace FootStone.Core.FrontIce
         }
         public override SessionPrx CreateSession(string name, string password, Ice.Current current)
         {
-            var session = new SessionI(name);
-            var proxy = SessionPrxHelper.uncheckedCast(current.adapter.addWithUUID(session));
-            current.adapter.addFacet(new AccountI(session), proxy.ice_getIdentity(), "account");
-            current.adapter.addFacet(new PlayerI(session), proxy.ice_getIdentity(), "player");
+            var sessionI = new SessionI(name);
+            var proxy = SessionPrxHelper.uncheckedCast(current.adapter.addWithUUID(sessionI));
+            current.adapter.addFacet(new AccountI(sessionI), proxy.ice_getIdentity(), "account");
+            current.adapter.addFacet(new PlayerI(sessionI), proxy.ice_getIdentity(), "player");
 
-
-            //
             // Remove endpoints to ensure that calls are collocated-only
             // This way, if we invoke on the proxy during shutdown, the invocation fails immediately
             // without attempting to establish any connection
-            //
             var collocProxy = SessionPrxHelper.uncheckedCast(proxy.ice_endpoints(new Ice.Endpoint[0]));
 
-            //
             // Never close this connection from the client and turn on heartbeats with a timeout of 30s
-            //
             current.con.setACM(30, Ice.ACMClose.CloseOff, Ice.ACMHeartbeat.HeartbeatAlways);
             current.con.setCloseCallback(_ =>
                 {
@@ -50,9 +45,10 @@ namespace FootStone.Core.FrontIce
                         // The client already destroyed this session, or the server is shutting down
                     }
                 });
+            Console.Out.WriteLine("create session :" + current.con.getInfo().connectionId);
             return proxy;
         }
-      
+
 
         public override void Shutdown(Ice.Current current)
         {
