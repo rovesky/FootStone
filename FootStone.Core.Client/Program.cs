@@ -18,7 +18,7 @@ namespace FootStone.client
             //  Test();
             try
             {
-                Test(5000).Wait();
+                Test(1).Wait();
             }
             catch(Exception ex)
             {

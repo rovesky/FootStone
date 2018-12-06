@@ -68,6 +68,8 @@ namespace FootStone.Core.FrontIce
         {
             get
             {
+                if (SessionPushPrx == null)
+                    return "";
                 return SessionPushPrx.ice_getIdentity().name;
             }
         }
