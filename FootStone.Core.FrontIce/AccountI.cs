@@ -50,28 +50,30 @@ namespace FootStone.Core.FrontIce
             {
                 Console.Out.WriteLine("add AccountPush:" + account);
                 accountObserver = new AccountObserver(sessionI);
-                accountObserverRef = await Global.Instance.OrleansClient.
+                accountObserverRef = await Global.OrleansClient.
                     CreateObjectReference<IAccountObserver>(accountObserver);            
                 await accountGrain.SubscribeForAccount(accountObserverRef);
             }
         }
 
-        public void Dispose()
+        public void Destroy()
         {
             if (accountObserver != null)
             {
                 Console.Out.WriteLine("accountObserver Unsubscribe begin");
-                var account = Global.Instance.OrleansClient.GetGrain<IAccountGrain>(sessionI.Account);
-                account.UnsubscribeForAccount(accountObserverRef);
+                var accountGrain = Global.OrleansClient.GetGrain<IAccountGrain>(sessionI.Account);
+                accountGrain.UnsubscribeForAccount(accountObserverRef);
                 accountObserver = null;
+                accountObserverRef = null;
             }
         }
+      
 
         public async override Task<string> CreatePlayerRequestAsync(string name, int serverId, Current current = null)
         {
             try
             {               
-                var accountGrain = Global.Instance.OrleansClient.GetGrain<IAccountGrain>(sessionI.Account);
+                var accountGrain = Global.OrleansClient.GetGrain<IAccountGrain>(sessionI.Account);
                 var playerId = await accountGrain.CreatePlayer(name, serverId);           
                 return playerId;
             }
@@ -87,13 +89,14 @@ namespace FootStone.Core.FrontIce
         public async override Task LoginRequestAsync(LoginInfo info, Current current = null)
         {
             try
-            {             
-                var accountGrain = Global.Instance.OrleansClient.GetGrain<IAccountGrain>(info.account);
+            {
+                sessionI.Account = info.account;
+                var accountGrain = Global.OrleansClient.GetGrain<IAccountGrain>(info.account);
 
                 await AddObserver(accountGrain, info.account);
 
                 await accountGrain.Login(sessionI.Id, info);
-                sessionI.Account = info.account;
+                
             }
             catch (System.Exception ex)
             {
@@ -106,7 +109,7 @@ namespace FootStone.Core.FrontIce
         {
             try
             {
-                var accountGrain = Global.Instance.OrleansClient.GetGrain<IAccountGrain>(info.account);
+                var accountGrain = Global.OrleansClient.GetGrain<IAccountGrain>(info.account);
           //      Console.WriteLine("------"+serverName+ ":Register Account="+info.account);
                 await accountGrain.Register(info);               
             }
@@ -121,7 +124,7 @@ namespace FootStone.Core.FrontIce
         {
             try
             {
-                var accountGrain = Global.Instance.OrleansClient.GetGrain<IAccountGrain>(sessionI.Account);
+                var accountGrain = Global.OrleansClient.GetGrain<IAccountGrain>(sessionI.Account);
                 return await accountGrain.GetServerList();
             }
             catch (System.Exception ex)
@@ -135,7 +138,7 @@ namespace FootStone.Core.FrontIce
         {
             try
             {
-                var accountGrain = Global.Instance.OrleansClient.GetGrain<IAccountGrain>(sessionI.Account);
+                var accountGrain = Global.OrleansClient.GetGrain<IAccountGrain>(sessionI.Account);
                 return await accountGrain.GetPlayerInfoShortList(serverId);
             }
             catch (System.Exception ex)
@@ -149,7 +152,7 @@ namespace FootStone.Core.FrontIce
         {
             try
             {
-                var accountGrain = Global.Instance.OrleansClient.GetGrain<IAccountGrain>(sessionI.Account);
+                var accountGrain = Global.OrleansClient.GetGrain<IAccountGrain>(sessionI.Account);
                 await accountGrain.SelectPlayer(PlayerId);
 
                 sessionI.PlayerId = Guid.Parse(PlayerId);
@@ -163,5 +166,7 @@ namespace FootStone.Core.FrontIce
                 throw ex;
             }
         }
+
+      
     }
 }

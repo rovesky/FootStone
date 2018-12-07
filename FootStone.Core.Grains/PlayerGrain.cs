@@ -12,11 +12,12 @@ using System.Threading.Tasks;
 namespace FootStone.Grains
 {
 
-    [StorageProvider(ProviderName= "ado1")]
+    [StorageProvider(ProviderName= "memory1")]
     public partial class PlayerGrain : Grain<PlayerInfo>, IPlayerGrain
     {
         private ObserverSubscriptionManager<IPlayerObserver> subscribers;
-
+        private IZoneGrain zoneGrain;
+        private bool isOnline;
         readonly IIceServiceClient IceServiceClient;
 
         public PlayerGrain(IGrainActivationContext grainActivationContext, IIceServiceClient iceServiceClient)
@@ -24,14 +25,24 @@ namespace FootStone.Grains
             IceServiceClient = iceServiceClient;
         }
 
-
-
-
-        public override Task OnActivateAsync()
+        public override async Task OnActivateAsync()
         {
             subscribers = new ObserverSubscriptionManager<IPlayerObserver>();
-       
-            return Task.CompletedTask;
+        
+            try
+            {
+                zoneGrain = this.GrainFactory.GetGrain<IZoneGrain>(Guid.NewGuid());
+               
+                await zoneGrain.PlayerEnter(this.GetPrimaryKey());
+                await IceServiceClient.AddPlayer(this.GetPrimaryKey());
+            }
+            catch (Exception e)
+            {
+                Console.Error.WriteLine(e.Message);
+            }
+
+
+            //   return Task.CompletedTask;
         }
 
         public override Task OnDeactivateAsync()
@@ -60,6 +71,7 @@ namespace FootStone.Grains
                 , TimeSpan.FromSeconds(10)
                 , TimeSpan.FromSeconds(10));
             }
+            isOnline = true;
             return Task.CompletedTask;
         }
 
@@ -70,14 +82,16 @@ namespace FootStone.Grains
                 Console.Out.WriteLine("playerObserver Unsubscribe end");
                 subscribers.Unsubscribe(subscriber);
             }
+            isOnline = false;
             return Task.CompletedTask;
         }
 
-        public Task<PlayerInfo> GetPlayerInfo()
+        public async Task<PlayerInfo> GetPlayerInfo()
         {
-         
-       //     IceServiceClient.AddOptionTime(1);
-            return Task.FromResult(this.State);
+          
+            //     IceServiceClient.AddOptionTime(1);
+            return this.State;
+         //   return Task.FromResult(this.State);
         }
 
         public async Task InitPlayer(string name, int serverId)

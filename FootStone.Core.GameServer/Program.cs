@@ -22,8 +22,8 @@ namespace FootStone.Core.GameServer
     {
 
         static string IP_START = "192.168.3";
-        static string mysqlConnectCluster = "server=192.168.3.14;user id=root;password=654321#;database=footstone;MaximumPoolsize=50";
-        static string mysqlConnectStorage = "server=192.168.3.14;user id=root;password=654321#;database=footstonestorage;MaximumPoolsize=50";
+        static string mysqlConnectCluster = "server=192.168.3.14;user id=root;password=198292;database=footstone_cluster;MaximumPoolsize=50";
+        static string mysqlConnectStorage = "server=192.168.3.14;user id=root;password=198292;database=footstone_storage;MaximumPoolsize=50";
 
         public static string GetLocalIP()
         {
@@ -45,27 +45,27 @@ namespace FootStone.Core.GameServer
         {
             try
             {
-                var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-                string mapFileName = Path.Combine(path, "AdventureMap.json");
+                //var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                //string mapFileName = Path.Combine(path, "AdventureMap.json");
 
-                //switch (args.Length)
+                ////switch (args.Length)
+                ////{
+                ////    default:
+                ////        Console.WriteLine("*** Invalid command line arguments.");
+                ////        return -1;
+                ////    case 0:
+                ////        break;
+                ////    case 1:
+                ////        mapFileName = args[0];
+                ////        break;
+                ////}
+
+                //if (!File.Exists(mapFileName))
                 //{
-                //    default:
-                //        Console.WriteLine("*** Invalid command line arguments.");
-                //        return -1;
-                //    case 0:
-                //        break;
-                //    case 1:
-                //        mapFileName = args[0];
-                //        break;
+                //    Console.WriteLine("*** File not found: {0}", mapFileName);
+                //    return -2;
                 //}
-
-                if (!File.Exists(mapFileName))
-                {
-                    Console.WriteLine("*** File not found: {0}", mapFileName);
-                    return -2;
-                }
-                Global.Instance.MainArgs = args;
+                Global.MainArgs = args;
 
                 var silo = new SiloHostBuilder()
                     //    .UseLocalhostClustering()
@@ -97,19 +97,21 @@ namespace FootStone.Core.GameServer
                         logging.SetMinimumLevel(LogLevel.Warning);
                     })
                     .AddMemoryGrainStorage("memory1")
-                    .AddAdoNetGrainStorage("ado1", options =>
-                     {
+                    //.AddAdoNetGrainStorage("ado1", options =>
+                    // {
 
-                         options.UseJsonFormat = true;
-                         options.ConnectionString = mysqlConnectStorage;           
-                         options.Invariant = "MySql.Data.MySqlClient";
-                     })
+                    //     options.UseJsonFormat = true;
+                    //     options.ConnectionString = mysqlConnectStorage;           
+                    //     options.Invariant = "MySql.Data.MySqlClient";
+                    // })
                     .AddGrainService<IceService>()
                     .ConfigureServices(s =>
                     {
                         // Register Client of GrainService
                         s.AddSingleton<IIceServiceClient, IceServiceClient>();
                     })
+                    .AddMemoryGrainStorage("PubSubStore")
+                    .AddSimpleMessageStreamProvider("Zone")
                     //.ConfigureServices(s =>
                     //{
                     //    // Register Client of GrainService
@@ -140,8 +142,8 @@ namespace FootStone.Core.GameServer
                 //        })
                 //        .Build();
                 var client = silo.Services.GetRequiredService<IClusterClient>();
-                Global.Instance.OrleansClient = client;               
-                RunAsync(silo, client, mapFileName).Wait();
+                Global.OrleansClient = client;               
+                RunAsync(silo, client).Wait();
 
                 Console.ReadLine();
 
@@ -156,7 +158,7 @@ namespace FootStone.Core.GameServer
             return 0;
         }
 
-        static async Task RunAsync(ISiloHost silo, IClusterClient client, string mapFileName)
+        static async Task RunAsync(ISiloHost silo, IClusterClient client)
         {
             await silo.StartAsync();
          //   await client.Connect();

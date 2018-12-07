@@ -5,8 +5,9 @@ using System.Threading.Tasks;
 
 namespace FootStone.Core.FrontIce
 {
-    public interface IServantBase : IDisposable
+    public interface IServantBase 
     {
-       //  Task  AddObserver();
+        void Destroy();
+      
     }
 }

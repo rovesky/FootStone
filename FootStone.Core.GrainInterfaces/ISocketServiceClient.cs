@@ -2,14 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace FootStone.Core.GrainInterfaces
 {
-    public interface IIceService : IGrainService
+    public interface ISocketServiceClient : IGrainServiceClient<ISocketService>, ISocketService
     {
-        Task AddOptionTime(int time);
-
-        Task AddPlayer(Guid id);
     }
 }

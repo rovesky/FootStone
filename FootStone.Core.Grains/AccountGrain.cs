@@ -20,7 +20,7 @@ namespace FootStone.Core.Grains
       
     }
 
-    [StorageProvider(ProviderName = "ado1")]
+    [StorageProvider(ProviderName = "memory1")]
     public class AccountGrain : Grain<AccountState>, IAccountGrain
     {
         private ObserverSubscriptionManager<IAccountObserver> subscribers;

@@ -16,7 +16,7 @@ namespace FootStone.Core.FrontIce
             this.sessionI = session;
         }
 
-        public void Dispose()
+        public void Destroy()
         {
            
         }
@@ -25,7 +25,7 @@ namespace FootStone.Core.FrontIce
         {
             try
             {
-                var playerMaster = Global.Instance.OrleansClient.GetGrain<IRoleMasterGrain>(sessionI.PlayerId);
+                var playerMaster = Global.OrleansClient.GetGrain<IRoleMasterGrain>(sessionI.PlayerId);
 
                 return await playerMaster.GetProperty();
             }
@@ -40,7 +40,7 @@ namespace FootStone.Core.FrontIce
         {
             try
             {
-                var playerMaster = Global.Instance.OrleansClient.GetGrain<IRoleMasterGrain>(sessionI.PlayerId);
+                var playerMaster = Global.OrleansClient.GetGrain<IRoleMasterGrain>(sessionI.PlayerId);
 
                 await playerMaster.SetProperty(property);
             }

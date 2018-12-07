@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace FootStone.Core.GrainInterfaces
 {
-    public interface IIceService : IGrainService
+    public interface ISocketService : IGrainService
     {
         Task AddOptionTime(int time);
-
-        Task AddPlayer(Guid id);
     }
 }

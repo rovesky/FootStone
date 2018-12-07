@@ -7,15 +7,15 @@ using System.Threading.Tasks;
 
 namespace FootStone.Core.GameServer
 {
-    public class IceServiceClient : GrainServiceClient<IIceServiceClient>, IIceServiceClient
+    public class SocketServiceClient : GrainServiceClient<ISocketServiceClient>, ISocketServiceClient
     {
-        public IceServiceClient(IServiceProvider serviceProvider) : base(serviceProvider)
+        public SocketServiceClient(IServiceProvider serviceProvider) : base(serviceProvider)
         {
         }
 
 
         public Task AddOptionTime(int time) =>  GrainService.AddOptionTime(time);
 
-        public Task AddPlayer(Guid id) => GrainService.AddPlayer(id);
+       
     }
 }

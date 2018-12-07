@@ -6,6 +6,7 @@ using Orleans.Concurrency;
 using Orleans.Core;
 using Orleans.Runtime;
 using Orleans.Services;
+using Orleans.Streams;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -20,6 +21,7 @@ namespace FootStone.Core.GameServer
 
         private NetworkIce network = new NetworkIce();
         private int operationTimes = 0;
+        private IStreamProvider streamProvider;
 
         public IceService(IServiceProvider services, IGrainIdentity id, Silo silo, ILoggerFactory loggerFactory, IGrainFactory grainFactory) 
             : base(id, silo, loggerFactory)
@@ -33,17 +35,37 @@ namespace FootStone.Core.GameServer
             return Task.CompletedTask;
         }
 
+        public async Task AddPlayer(Guid id)
+        {
+            try
+            {
+                var t1=Task.Run( async()=>{
+                    streamProvider = Global.OrleansClient.GetStreamProvider("Zone");
+                    var stream = streamProvider.GetStream<byte[]>(id, "ZonePlayer");
+                    await stream.SubscribeAsync(new StreamObserver(id));
+                });
+                await t1;
+            }
+            catch(Exception e)
+            {
+                Console.Error.WriteLine("AddPlayer:"+e.Message);
+            }
+        //    return Task.CompletedTask;
+
+        }
+
         public override Task Init(IServiceProvider serviceProvider)
         {
             Console.WriteLine("----------IceService Init!");
            
-            network.Init(Global.Instance.MainArgs);
+            network.Init(Global.MainArgs);
             return base.Init(serviceProvider);
         }
 
         public override async Task Start()
         {
             Console.WriteLine("-----------IceService Start!");
+          
             network.Start();
             RegisterTimer((s) =>
             {
@@ -60,6 +82,34 @@ namespace FootStone.Core.GameServer
         {
             network.Stop();
             return base.Stop();
+        }
+    }
+
+    internal class StreamObserver : IAsyncObserver<byte[]>
+    {
+        private Guid id;
+
+        public StreamObserver(Guid id)
+        {
+            this.id = id;
+        }
+
+        public Task OnCompletedAsync()
+        {
+            Console.Out.WriteLine(id + " receive completed");
+            return Task.CompletedTask;
+        }
+
+        public Task OnErrorAsync(Exception ex)
+        {
+            Console.Out.WriteLine(id + " receive error:" + ex.Message);
+            return Task.CompletedTask;
+        }
+
+        public Task OnNextAsync(byte[] item, StreamSequenceToken token = null)
+        {
+            Console.Out.WriteLine(id + " receive bytes:"+item.Length);
+            return Task.CompletedTask;
         }
     }
 }

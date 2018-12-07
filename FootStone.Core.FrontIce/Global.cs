@@ -7,49 +7,14 @@ using Orleans;
 
 namespace FootStone.Core.FrontIce
 {
-    public class Global
+    public static class Global
     {
-
-        private static Global _instance;
-
-        /// <summary>
-        /// 私有化构造函数，使得类不可通过new来创建实例
-        /// </summary>
-        private Global() {}
-
-      
-        public static Global Instance
+        static public IClusterClient OrleansClient
         {
-            get
-            {
-                if (_instance == null)
-                {
-                    _instance = new Global();
-                }
-                return _instance;
-            }
+            get;
+            set;
         }
-
-        private  IClusterClient orleansClient;
-
-        public IClusterClient OrleansClient
-        {
-            get
-            {
-                return orleansClient;
-            }
-
-            set
-            {
-                orleansClient = value;
-            }
-        }
-
-        public string[] MainArgs { get => mainArgs; set => mainArgs = value; }
-
-        private string[] mainArgs;
-
-
+        public static string[] MainArgs { get; set; }
     }
     
 }

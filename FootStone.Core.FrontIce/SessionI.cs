@@ -41,8 +41,8 @@ namespace FootStone.Core.FrontIce
                     var allFacets = current.adapter.findAllFacets(current.id);
                     foreach(Ice.Object e in allFacets.Values)
                     {
-                        IDisposable dis = (IDisposable)e;
-                        dis.Dispose();                      
+                        IServantBase dis = (IServantBase)e;
+                        dis.Destroy();                      
                     }
                     current.adapter.removeAllFacets(current.id);
 
@@ -55,14 +55,10 @@ namespace FootStone.Core.FrontIce
             }
         }
 
-    
-
-        public void Dispose()
+        public void Destroy()
         {
-            
+          
         }
-
-  
 
         public string Id
         {
