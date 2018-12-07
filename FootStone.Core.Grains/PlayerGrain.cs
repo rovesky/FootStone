@@ -11,12 +11,7 @@ using System.Threading.Tasks;
 
 namespace FootStone.Grains
 {
-    //public class PlayerState
-    //{
-      
-    //   public string name;
-    //   public int level;        
-    //}
+
     [StorageProvider(ProviderName= "ado1")]
     public partial class PlayerGrain : Grain<PlayerInfo>, IPlayerGrain
     {

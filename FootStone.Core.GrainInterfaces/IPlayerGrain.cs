@@ -11,8 +11,10 @@ namespace FootStone.GrainInterfaces
     {     
 
         Task SetPlayerName(string name);
-
         Task<PlayerInfo> GetPlayerInfo();
+
+
+
         Task InitPlayer(string name,int serverId);
 
         Task SubscribeForPlayerUpdates(IPlayerObserver subscriber);
