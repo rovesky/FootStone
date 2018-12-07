@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace FootStone.Core.FrontIce
 {
-    public class SessionI : SessionDisp_,IServantBase
+    public class SessionI : ISessionDisp_,IServantBase
     {
          public SessionI(string name)
         {
@@ -16,9 +16,9 @@ namespace FootStone.Core.FrontIce
             _destroy = false;       
         }
 
-        public  override Task AddPushAsync(SessionPushPrx sessionPush, Current current = null)
+        public  override Task AddPushAsync(ISessionPushPrx sessionPush, Current current = null)
         {
-            SessionPushPrx = (SessionPushPrx)sessionPush.ice_fixed(current.con);
+            SessionPushPrx = (ISessionPushPrx)sessionPush.ice_fixed(current.con);
             return Task.CompletedTask;
         } 
 
@@ -73,7 +73,7 @@ namespace FootStone.Core.FrontIce
                 return SessionPushPrx.ice_getIdentity().name;
             }
         }
-        public SessionPushPrx SessionPushPrx { get; private set; }
+        public ISessionPushPrx SessionPushPrx { get; private set; }
         public Guid PlayerId { get; internal set; }
         public string Account { get; internal set; }
 

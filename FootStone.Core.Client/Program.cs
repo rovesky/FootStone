@@ -81,12 +81,16 @@ namespace FootStone.client
 
             await accountPrx.SelectPlayerRequestAsync(players[0].playerId);
 
-            var playerPrx = PlayerPrxHelper.uncheckedCast(sessionPrx, "player");
+            var playerPrx = IPlayerPrxHelper.uncheckedCast(sessionPrx, "player");
+            var roleMasterPrx = IRoleMasterPrxHelper.uncheckedCast(sessionPrx, "roleMaster");
 
             var playerInfo = await playerPrx.GetPlayerInfoAsync();
+            MasterProperty property;
             for (int i = 0; i < count; ++i)
             {              
                 await playerPrx.SetPlayerNameAsync(playerName + "_" + i);
+                property = await roleMasterPrx.GetPropertyAsync();
+                Console.Out.WriteLine("property" + JsonConvert.SerializeObject(property));
                 playerInfo = await playerPrx.GetPlayerInfoAsync();
         
                 await Task.Delay(2000);
@@ -155,7 +159,7 @@ namespace FootStone.client
                     }
                     else if (line.Equals("player"))
                     {
-                        var playerPrx = PlayerPrxHelper.uncheckedCast(sessionPrx, "player");
+                        var playerPrx = IPlayerPrxHelper.uncheckedCast(sessionPrx, "player");
                         await playerPrx.GetPlayerInfoAsync();
                         //hellos.Add(session.createHello());
                         Console.Out.WriteLine("GetPlayerInfoAsync ok: " + name);

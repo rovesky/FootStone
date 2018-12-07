@@ -115,14 +115,14 @@ namespace Network
             }
         }
              
-        public async Task<SessionPrx> CreateSession(string name)
+        public async Task<ISessionPrx> CreateSession(string name)
         {
-            var sessionFactoryPrx = (SessionFactoryPrx)SessionFactoryPrxHelper
+            var sessionFactoryPrx = (ISessionFactoryPrx)ISessionFactoryPrxHelper
                 .uncheckedCast(communicator.stringToProxy("sessionFactory"))
                 .ice_connectionId(name)
                 ;
             await sessionFactoryPrx.ice_getConnectionAsync();
-            var sessionPrx = (SessionPrx)(await sessionFactoryPrx
+            var sessionPrx = (ISessionPrx)(await sessionFactoryPrx
                 .CreateSessionAsync(name, "")).ice_connectionId(name);
           
             Connection connection = await sessionPrx.ice_getConnectionAsync();
@@ -134,7 +134,7 @@ namespace Network
           
             // Register the callback receiver servant with the object adapter     
             
-            var proxy = SessionPushPrxHelper.uncheckedCast(Adapter.addWithUUID(new SessionPushI()));
+            var proxy = ISessionPushPrxHelper.uncheckedCast(Adapter.addWithUUID(new SessionPushI()));
             Adapter.addFacet(new PlayerPushI(name), proxy.ice_getIdentity(), "playerPush");
             // Associate the object adapter with the bidirectional connection.
             connection.setAdapter(Adapter);
@@ -147,7 +147,7 @@ namespace Network
 
     }
 
-    internal class PlayerPushI : PlayerPushDisp_
+    internal class PlayerPushI : IPlayerPushDisp_
     {
         private string name;
 
@@ -162,7 +162,7 @@ namespace Network
         }
     }
 
-    internal class SessionPushI : SessionPushDisp_
+    internal class SessionPushI : ISessionPushDisp_
     {
         public override void SessionDestroyed(Current current = null)
         {

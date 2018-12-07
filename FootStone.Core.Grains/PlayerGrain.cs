@@ -18,7 +18,7 @@ namespace FootStone.Grains
     //   public int level;        
     //}
     [StorageProvider(ProviderName= "ado1")]
-    public class PlayerGrain : Grain<PlayerInfo>, IPlayerGrain
+    public partial class PlayerGrain : Grain<PlayerInfo>, IPlayerGrain
     {
         private ObserverSubscriptionManager<IPlayerObserver> subscribers;
 
@@ -53,10 +53,10 @@ namespace FootStone.Grains
                 subscribers.Subscribe(subscriber);
                 RegisterTimer((s) =>
                 {
-                    State.playerMaster.hp++;
+                    State.roleMaster.property.intel++;
                     subscribers.Notify((t) =>
                     {
-                        t.HpChanged(State.playerMaster.hp);
+                        t.HpChanged(State.roleMaster.property.intel);
                     });
                     //    return Task.CompletedTask;
                     return WriteStateAsync();
@@ -93,8 +93,9 @@ namespace FootStone.Grains
             this.State.items = new List<Item>();
             this.State.items.Add(new Item("1", "item1", 1));
             this.State.items.Add(new Item("2", "item2", 2));
-            this.State.playerMaster.hp = 10;
-            this.State.playerMaster.mp = 10;
+            this.State.roleMaster.property.intel = 10;
+            this.State.roleMaster.property.str= 10;
+            this.State.roleMaster.property.agil = 10;
             Console.WriteLine("create player:" + this.State.name);
             await WriteStateAsync();
         }

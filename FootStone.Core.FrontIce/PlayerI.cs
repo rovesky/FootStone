@@ -16,8 +16,8 @@ namespace FootStone.Core.FrontIce
     /// </summary>
     class PlayerObserver : IPlayerObserver
     {
-        readonly PlayerPushPrx playerPush;
-        public PlayerObserver(PlayerPushPrx playerPush)
+        readonly IPlayerPushPrx playerPush;
+        public PlayerObserver(IPlayerPushPrx playerPush)
         {
             this.playerPush = playerPush;
         }
@@ -37,7 +37,7 @@ namespace FootStone.Core.FrontIce
         
     }
 
-    public class PlayerI : PlayerDisp_, IServantBase
+    public class PlayerI : IPlayerDisp_, IServantBase
     {
         private SessionI sessionI;
         private IPlayerObserver playerObserver;
@@ -54,7 +54,7 @@ namespace FootStone.Core.FrontIce
             if (playerObserver == null)
             {
                 Console.Out.WriteLine("add playerPush:" + sessionI.Account);
-                PlayerPushPrx push = (PlayerPushPrx)PlayerPushPrxHelper.uncheckedCast(sessionI.SessionPushPrx, "playerPush").ice_oneway();
+                IPlayerPushPrx push = (IPlayerPushPrx)IPlayerPushPrxHelper.uncheckedCast(sessionI.SessionPushPrx, "playerPush").ice_oneway();
                 playerObserver = new PlayerObserver(push);
                 playerObserverRef = await Global.Instance.OrleansClient.CreateObjectReference<IPlayerObserver>(playerObserver);
                 var playerGrain = Global.Instance.OrleansClient.GetGrain<IPlayerGrain>(sessionI.PlayerId);
