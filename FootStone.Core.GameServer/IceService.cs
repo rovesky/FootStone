@@ -21,7 +21,10 @@ namespace FootStone.Core.GameServer
 
         private NetworkIce network = new NetworkIce();
         private int operationTimes = 0;
-    //    private IStreamProvider streamProvider;
+
+        private int playerCount = 0;
+        private List<Guid> zones = new List<Guid>();
+        //    private IStreamProvider streamProvider;
 
         public IceService(IServiceProvider services, IGrainIdentity id, Silo silo, ILoggerFactory loggerFactory, IGrainFactory grainFactory) 
             : base(id, silo, loggerFactory)
@@ -35,23 +38,32 @@ namespace FootStone.Core.GameServer
             return Task.CompletedTask;
         }
 
-        public  Task AddPlayer(Guid id)
-        {
-            //try
-            //{
-            //    var t1=Task.Run( async()=>{
-            //        streamProvider = Global.OrleansClient.GetStreamProvider("Zone");
-            //        var stream = streamProvider.GetStream<byte[]>(id, "ZonePlayer");
-            //        await stream.SubscribeAsync(new StreamObserver(id));
-            //    });
-            //    await t1;
-            //}
-            //catch(Exception e)
-            //{
-            //    Console.Error.WriteLine("AddPlayer:"+e.Message);
-            //}
-           return Task.CompletedTask;
+        //public  Task AddPlayer(Guid id)
+        //{
+        //    //try
+        //    //{
+        //    //    var t1=Task.Run( async()=>{
+        //    //        streamProvider = Global.OrleansClient.GetStreamProvider("Zone");
+        //    //        var stream = streamProvider.GetStream<byte[]>(id, "ZonePlayer");
+        //    //        await stream.SubscribeAsync(new StreamObserver(id));
+        //    //    });
+        //    //    await t1;
+        //    //}
+        //    //catch(Exception e)
+        //    //{
+        //    //    Console.Error.WriteLine("AddPlayer:"+e.Message);
+        //    //}
+        //   return Task.CompletedTask;
 
+        //}
+
+        public Task<Guid> GetZone(Guid playerId)
+        {          
+            if(playerCount%100 == 0){
+                zones.Add(Guid.NewGuid());               
+            }
+            playerCount++;
+            return Task.FromResult(zones[zones.Count - 1]);
         }
 
         public override Task Init(IServiceProvider serviceProvider)

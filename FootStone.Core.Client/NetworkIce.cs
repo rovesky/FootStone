@@ -152,6 +152,8 @@ namespace Network
     {
         private string name;
 
+        private int count = 0;
+
         public ZonePushI(string name)
         {
             this.name = name;
@@ -159,7 +161,11 @@ namespace Network
 
         public override void ZoneSync(byte[] data, Current current = null)
         {
-            Console.Out.WriteLine(name + " zone sync:" + data.Length);
+            count++;
+            if (count % 330 == 0)
+            {
+                Console.Out.WriteLine(name + " zone sync:" + count);
+            }
         }
     }
 

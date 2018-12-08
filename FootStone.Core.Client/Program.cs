@@ -18,7 +18,7 @@ namespace FootStone.client
             //  Test();
             try
             {
-                Test(1).Wait();
+                Test(2000).Wait();
             }
             catch(Exception ex)
             {
@@ -93,7 +93,7 @@ namespace FootStone.client
             {              
                 await playerPrx.SetPlayerNameAsync(playerName + "_" + i);
                 property = await roleMasterPrx.GetPropertyAsync();
-                Console.Out.WriteLine("property" + JsonConvert.SerializeObject(property));
+           //     Console.Out.WriteLine("property" + JsonConvert.SerializeObject(property));
                 playerInfo = await playerPrx.GetPlayerInfoAsync();
         
                 await Task.Delay(2000);

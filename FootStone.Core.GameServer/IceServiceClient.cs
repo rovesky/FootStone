@@ -16,6 +16,6 @@ namespace FootStone.Core.GameServer
 
         public Task AddOptionTime(int time) =>  GrainService.AddOptionTime(time);
 
-        public Task AddPlayer(Guid id) => GrainService.AddPlayer(id);
+        public Task<Guid> GetZone(Guid id) => GrainService.GetZone(id);
     }
 }

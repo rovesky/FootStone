@@ -31,10 +31,11 @@ namespace FootStone.Grains
     {
 
        // readonly ISocketServiceClient SocketServiceClient;
-        //   private IAsyncStream<byte[]> stream;
+     
        
         private Dictionary<Guid, ZonePlayer> players = new Dictionary<Guid, ZonePlayer>();
         private IStreamProvider streamProvider;
+        private IAsyncStream<byte[]> zoneStream;
 
         //public ZoneGrain(IGrainActivationContext grainActivationContext, ISocketServiceClient socketServiceClient)
         //{
@@ -45,6 +46,7 @@ namespace FootStone.Grains
         public override Task OnActivateAsync()
         {
             streamProvider = GetStreamProvider("Zone");
+            zoneStream = streamProvider.GetStream<byte[]>(this.GetPrimaryKey(), "Zone");
             int size = 200;
             var bytes = new byte[size];
             for (int i = 0; i < size; ++i) 
@@ -56,10 +58,16 @@ namespace FootStone.Grains
 
                      try
                      {
+                         zoneStream.OnNextAsync(bytes);
+                         int i = 0;
                          foreach (ZonePlayer player in players.Values)
                          {
-                            // Console.Out.WriteLine(player.id+" send msg!");
-                             player.stream.OnNextAsync(bytes);
+                             // Console.Out.WriteLine(player.id+" send msg!");
+                             if (i % 10 == 0)
+                             {
+                                 player.stream.OnNextAsync(bytes);
+                             }
+                             i++;
                          }
                      }
                      catch(Exception e)
@@ -83,10 +91,10 @@ namespace FootStone.Grains
         }
 
         public Task PlayerEnter(Guid playerId)
-        {
-          
+        {          
             var stream = streamProvider.GetStream<byte[]>(playerId, "ZonePlayer");
             players.Add(playerId, new ZonePlayer(playerId, stream));
+            Console.Out.WriteLine(this.GetPrimaryKey() + " zone player count:" + players.Count);
             return Task.CompletedTask;
         }
 

@@ -86,12 +86,12 @@ namespace FootStone.Grains
             return Task.CompletedTask;
         }
 
-        public async Task<PlayerInfo> GetPlayerInfo()
+        public  Task<PlayerInfo> GetPlayerInfo()
         {
           
             //     IceServiceClient.AddOptionTime(1);
-            return this.State;
-         //   return Task.FromResult(this.State);
+          //  return this.State;
+            return Task.FromResult(this.State);
         }
 
         public async Task InitPlayer(string name, int serverId)
@@ -100,7 +100,7 @@ namespace FootStone.Grains
             this.State.name = name;
             this.State.serverId = serverId;
 
-            this.State.zoneId = Guid.NewGuid().ToString();
+            this.State.zoneId = (await IceServiceClient.GetZone(this.GetPrimaryKey())).ToString();
             this.State.items = new List<Item>();
             this.State.items.Add(new Item("1", "item1", 1));
             this.State.items.Add(new Item("2", "item2", 2));

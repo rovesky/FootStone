@@ -10,6 +10,6 @@ namespace FootStone.Core.GrainInterfaces
     {
         Task AddOptionTime(int time);
 
-        Task AddPlayer(Guid id);
+        Task<Guid> GetZone(Guid playerId);
     }
 }
