@@ -83,8 +83,11 @@ namespace FootStone.client
 
             var playerPrx = IPlayerPrxHelper.uncheckedCast(sessionPrx, "player");
             var roleMasterPrx = IRoleMasterPrxHelper.uncheckedCast(sessionPrx, "roleMaster");
+            var zonePrx = IZonePrxHelper.uncheckedCast(sessionPrx, "zone");
 
             var playerInfo = await playerPrx.GetPlayerInfoAsync();
+            await zonePrx.PlayerEnterAsync(playerInfo.zoneId);
+
             MasterProperty property;
             for (int i = 0; i < count; ++i)
             {              
@@ -99,124 +102,124 @@ namespace FootStone.client
 
         }
 
-        private static async Task<int> run()
-        {
-            string name;
-            do
-            {
-                Console.Out.Write("Please enter your name ==> ");
-                Console.Out.Flush();
+        //private static async Task<int> run()
+        //{
+        //    string name;
+        //    do
+        //    {
+        //        Console.Out.Write("Please enter your name ==> ");
+        //        Console.Out.Flush();
 
-                name = Console.In.ReadLine();
-                if (name == null)
-                {
-                    return 1;
-                }
-                name = name.Trim();
-            }
-            while (name.Length == 0);
-            var sessionPrx = await NetworkIce.Instance.CreateSession(name);
+        //        name = Console.In.ReadLine();
+        //        if (name == null)
+        //        {
+        //            return 1;
+        //        }
+        //        name = name.Trim();
+        //    }
+        //    while (name.Length == 0);
+        //    var sessionPrx = await NetworkIce.Instance.CreateSession(name);
 
 
 
-            menu();
+        //    menu();
 
-            bool destroy = true;
-            bool shutdown = false;
-            while (true)
-            {
-                try
-                {
-                    Console.Out.Write("==> ");
-                    Console.Out.Flush();
-                    string line = Console.In.ReadLine();
-                    if (line == null)
-                    {
-                        break;
-                    }
+        //    bool destroy = true;
+        //    bool shutdown = false;
+        //    while (true)
+        //    {
+        //        try
+        //        {
+        //            Console.Out.Write("==> ");
+        //            Console.Out.Flush();
+        //            string line = Console.In.ReadLine();
+        //            if (line == null)
+        //            {
+        //                break;
+        //            }
 
-                    if (line.Length > 0 && Char.IsDigit(line[0]))
-                    {
-                        //int index = Int32.Parse(line);
-                        //if (index < hellos.Count)
-                        //{
-                        //    var hello = hellos[index];
-                        //    hello.sayHello();
-                        //}
-                        //else
-                        //{
-                        //    Console.Out.WriteLine("Index is too high. " + hellos.Count +
-                        //                          " hello objects exist so far.\n" +
-                        //                          "Use `c' to create a new hello object.");
-                        //}
-                    }
-                    else if (line.Equals("register"))
-                    {
-                        var accountPrx = AccountPrxHelper.uncheckedCast(sessionPrx, "account");
-                        await accountPrx.RegisterRequestAsync(new RegisterInfo(name, "111111"));
-                        //hellos.Add(session.createHello());
-                        Console.Out.WriteLine("RegisterRequestAsync ok: " + name);
-                    }
-                    else if (line.Equals("player"))
-                    {
-                        var playerPrx = IPlayerPrxHelper.uncheckedCast(sessionPrx, "player");
-                        await playerPrx.GetPlayerInfoAsync();
-                        //hellos.Add(session.createHello());
-                        Console.Out.WriteLine("GetPlayerInfoAsync ok: " + name);
-                    }
-                    else if (line.Equals("s"))
-                    {
-                        destroy = false;
-                        shutdown = true;
-                        break;
-                    }
-                    else if (line.Equals("x"))
-                    {
-                        break;
-                    }
-                    else if (line.Equals("t"))
-                    {
-                        destroy = false;
-                        break;
-                    }
-                    else if (line.Equals("?"))
-                    {
-                        menu();
-                    }
-                    else
-                    {
-                        Console.Out.WriteLine("Unknown command `" + line + "'.");
-                        menu();
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Console.Error.WriteLine(ex.Message);
-                }
-            }
+        //            if (line.Length > 0 && Char.IsDigit(line[0]))
+        //            {
+        //                //int index = Int32.Parse(line);
+        //                //if (index < hellos.Count)
+        //                //{
+        //                //    var hello = hellos[index];
+        //                //    hello.sayHello();
+        //                //}
+        //                //else
+        //                //{
+        //                //    Console.Out.WriteLine("Index is too high. " + hellos.Count +
+        //                //                          " hello objects exist so far.\n" +
+        //                //                          "Use `c' to create a new hello object.");
+        //                //}
+        //            }
+        //            else if (line.Equals("register"))
+        //            {
+        //                var accountPrx = AccountPrxHelper.uncheckedCast(sessionPrx, "account");
+        //                await accountPrx.RegisterRequestAsync(new RegisterInfo(name, "111111"));
+        //                //hellos.Add(session.createHello());
+        //                Console.Out.WriteLine("RegisterRequestAsync ok: " + name);
+        //            }
+        //            else if (line.Equals("player"))
+        //            {
+        //                var playerPrx = IPlayerPrxHelper.uncheckedCast(sessionPrx, "player");
+        //                await playerPrx.GetPlayerInfoAsync();
+        //                //hellos.Add(session.createHello());
+        //                Console.Out.WriteLine("GetPlayerInfoAsync ok: " + name);
+        //            }
+        //            else if (line.Equals("s"))
+        //            {
+        //                destroy = false;
+        //                shutdown = true;
+        //                break;
+        //            }
+        //            else if (line.Equals("x"))
+        //            {
+        //                break;
+        //            }
+        //            else if (line.Equals("t"))
+        //            {
+        //                destroy = false;
+        //                break;
+        //            }
+        //            else if (line.Equals("?"))
+        //            {
+        //                menu();
+        //            }
+        //            else
+        //            {
+        //                Console.Out.WriteLine("Unknown command `" + line + "'.");
+        //                menu();
+        //            }
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            Console.Error.WriteLine(ex.Message);
+        //        }
+        //    }
 
-            if (destroy)
-            {
-                sessionPrx.Destroy();
-            }
-            if (shutdown)
-            {
-            //    NetworkIce.Instance.SessionFactoryPrx.Shutdown();
-            }
-            return 0;
-        }
+        //    if (destroy)
+        //    {
+        //        sessionPrx.Destroy();
+        //    }
+        //    if (shutdown)
+        //    {
+        //    //    NetworkIce.Instance.SessionFactoryPrx.Shutdown();
+        //    }
+        //    return 0;
+        //}
 
-        private static void menu()
-        {
-            Console.Out.WriteLine(
-                "usage:\n" +
-                "register:     register account\n" +
-                "player:     getPlayerInfo\n" +              
-                "s:     shutdown the server and exit\n" +
-                "x:     exit\n" +
-                "t:     exit without destroying the session\n" +
-                "?:     help\n");
-        }
+        //private static void menu()
+        //{
+        //    Console.Out.WriteLine(
+        //        "usage:\n" +
+        //        "register:     register account\n" +
+        //        "player:     getPlayerInfo\n" +              
+        //        "s:     shutdown the server and exit\n" +
+        //        "x:     exit\n" +
+        //        "t:     exit without destroying the session\n" +
+        //        "?:     help\n");
+        //}
 
         //private static int Test1(string[] args)
         //{

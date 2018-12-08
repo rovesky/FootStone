@@ -25,24 +25,24 @@ namespace FootStone.Grains
             IceServiceClient = iceServiceClient;
         }
 
-        public override async Task OnActivateAsync()
+        public override  Task OnActivateAsync()
         {
             subscribers = new ObserverSubscriptionManager<IPlayerObserver>();
         
-            try
-            {
-                zoneGrain = this.GrainFactory.GetGrain<IZoneGrain>(Guid.NewGuid());
+            //try
+            //{
+            //    zoneGrain = this.GrainFactory.GetGrain<IZoneGrain>(Guid.NewGuid());
                
-                await zoneGrain.PlayerEnter(this.GetPrimaryKey());
-                await IceServiceClient.AddPlayer(this.GetPrimaryKey());
-            }
-            catch (Exception e)
-            {
-                Console.Error.WriteLine(e.Message);
-            }
+            //    await zoneGrain.PlayerEnter(this.GetPrimaryKey());
+            //    await IceServiceClient.AddPlayer(this.GetPrimaryKey());
+            //}
+            //catch (Exception e)
+            //{
+            //    Console.Error.WriteLine(e.Message);
+            //}
 
 
-            //   return Task.CompletedTask;
+               return Task.CompletedTask;
         }
 
         public override Task OnDeactivateAsync()
@@ -99,6 +99,8 @@ namespace FootStone.Grains
             this.State.id = this.GetPrimaryKey().ToString();
             this.State.name = name;
             this.State.serverId = serverId;
+
+            this.State.zoneId = Guid.NewGuid().ToString();
             this.State.items = new List<Item>();
             this.State.items.Add(new Item("1", "item1", 1));
             this.State.items.Add(new Item("2", "item2", 2));

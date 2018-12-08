@@ -26,6 +26,7 @@ namespace FootStone.Core.FrontIce
             current.adapter.addFacet(new AccountI(sessionI), proxy.ice_getIdentity(), "account");
             current.adapter.addFacet(new PlayerI(sessionI), proxy.ice_getIdentity(), "player");
             current.adapter.addFacet(new RoleMasterI(sessionI), proxy.ice_getIdentity(), "roleMaster");
+            current.adapter.addFacet(new ZoneI(sessionI), proxy.ice_getIdentity(), "zone");
 
             // Remove endpoints to ensure that calls are collocated-only
             // This way, if we invoke on the proxy during shutdown, the invocation fails immediately

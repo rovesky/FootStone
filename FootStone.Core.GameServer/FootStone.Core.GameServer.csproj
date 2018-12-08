@@ -11,6 +11,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="SocketService.cs" />
+    <Compile Remove="SocketServiceClient.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="AdventureMap.json" />
   </ItemGroup>
 

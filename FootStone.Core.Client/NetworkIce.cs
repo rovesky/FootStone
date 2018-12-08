@@ -136,6 +136,7 @@ namespace Network
             
             var proxy = ISessionPushPrxHelper.uncheckedCast(Adapter.addWithUUID(new SessionPushI()));
             Adapter.addFacet(new PlayerPushI(name), proxy.ice_getIdentity(), "playerPush");
+            Adapter.addFacet(new ZonePushI(name), proxy.ice_getIdentity(), "zonePush");
             // Associate the object adapter with the bidirectional connection.
             connection.setAdapter(Adapter);
 
@@ -145,6 +146,21 @@ namespace Network
             return sessionPrx;
         }
 
+    }
+
+    internal class ZonePushI : IZonePushDisp_
+    {
+        private string name;
+
+        public ZonePushI(string name)
+        {
+            this.name = name;
+        }
+
+        public override void ZoneSync(byte[] data, Current current = null)
+        {
+            Console.Out.WriteLine(name + " zone sync:" + data.Length);
+        }
     }
 
     internal class PlayerPushI : IPlayerPushDisp_
