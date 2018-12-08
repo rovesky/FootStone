@@ -38,11 +38,12 @@ namespace FootStone.Core.FrontIce
         {
 
            
-            if (count % 330 == 0)
+            if (Global.ZoneMsgCount % 100000 == 0)
             {
-              // Console.Out.WriteLine(name + " receive bytes:" + item.Length);
+               Console.Out.WriteLine("zone msg count:" + Global.ZoneMsgCount);
             }
-            count++;
+            //  count++;
+            Global.ZoneMsgCount++;
 
            
             // Console.Out.WriteLine(id + " receive bytes:" + item.Length);

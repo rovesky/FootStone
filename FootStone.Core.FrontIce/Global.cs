@@ -15,6 +15,7 @@ namespace FootStone.Core.FrontIce
             set;
         }
         public static string[] MainArgs { get; set; }
+        public static int ZoneMsgCount { get; internal set; }
     }
     
 }

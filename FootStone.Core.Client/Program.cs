@@ -92,10 +92,11 @@ namespace FootStone.client
             for (int i = 0; i < count; ++i)
             {              
                 await playerPrx.SetPlayerNameAsync(playerName + "_" + i);
+                await Task.Delay(1000);
                 property = await roleMasterPrx.GetPropertyAsync();
-           //     Console.Out.WriteLine("property" + JsonConvert.SerializeObject(property));
-                playerInfo = await playerPrx.GetPlayerInfoAsync();
-        
+                await Task.Delay(1000);
+                //     Console.Out.WriteLine("property" + JsonConvert.SerializeObject(property));
+                playerInfo = await playerPrx.GetPlayerInfoAsync();        
                 await Task.Delay(2000);
             }
             Console.Out.WriteLine("playerInfo:" + JsonConvert.SerializeObject(playerInfo));

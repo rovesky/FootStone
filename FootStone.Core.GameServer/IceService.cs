@@ -60,7 +60,8 @@ namespace FootStone.Core.GameServer
         public Task<Guid> GetZone(Guid playerId)
         {          
             if(playerCount%100 == 0){
-                zones.Add(Guid.NewGuid());               
+                zones.Add(Guid.NewGuid());
+                Console.Out.WriteLine("create new zone,zone count:" + zones.Count);
             }
             playerCount++;
             return Task.FromResult(zones[zones.Count - 1]);
