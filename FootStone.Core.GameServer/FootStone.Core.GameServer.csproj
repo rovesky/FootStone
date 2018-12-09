@@ -64,6 +64,9 @@
     <None Update="start.bat">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="StartServer.bat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="StartGameServer.bat">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

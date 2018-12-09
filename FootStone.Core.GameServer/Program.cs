@@ -44,27 +44,7 @@ namespace FootStone.Core.GameServer
         static int Main(string[] args)
         {
             try
-            {
-                //var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-                //string mapFileName = Path.Combine(path, "AdventureMap.json");
-
-                ////switch (args.Length)
-                ////{
-                ////    default:
-                ////        Console.WriteLine("*** Invalid command line arguments.");
-                ////        return -1;
-                ////    case 0:
-                ////        break;
-                ////    case 1:
-                ////        mapFileName = args[0];
-                ////        break;
-                ////}
-
-                //if (!File.Exists(mapFileName))
-                //{
-                //    Console.WriteLine("*** File not found: {0}", mapFileName);
-                //    return -2;
-                //}
+            {             
                 Global.MainArgs = args;
 
                 var silo = new SiloHostBuilder()

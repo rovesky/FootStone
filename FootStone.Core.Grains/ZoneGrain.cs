@@ -86,7 +86,6 @@ namespace FootStone.Grains
 
         public override Task OnDeactivateAsync()
         {
-    //        subscribers.Clear();
             return Task.CompletedTask;
         }
 
@@ -94,7 +93,7 @@ namespace FootStone.Grains
         {          
             var stream = streamProvider.GetStream<byte[]>(playerId, "ZonePlayer");
             players.Add(playerId, new ZonePlayer(playerId, stream));
-            Console.Out.WriteLine(this.GetPrimaryKey() + " zone player count:" + players.Count);
+         //   Console.Out.WriteLine(this.GetPrimaryKey() + " zone player count:" + players.Count);
             return Task.CompletedTask;
         }
 

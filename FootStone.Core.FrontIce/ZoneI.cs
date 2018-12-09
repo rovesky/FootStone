@@ -38,7 +38,7 @@ namespace FootStone.Core.FrontIce
         {
 
            
-            if (Global.ZoneMsgCount % 100000 == 0)
+            if (Global.ZoneMsgCount % 330000 == 0)
             {
                Console.Out.WriteLine("zone msg count:" + Global.ZoneMsgCount);
             }
@@ -46,7 +46,7 @@ namespace FootStone.Core.FrontIce
             Global.ZoneMsgCount++;
 
            
-            // Console.Out.WriteLine(id + " receive bytes:" + item.Length);
+           // Console.Out.WriteLine(" receive bytes:" + item.Length);
             //   push.begin_ZoneSync(item);
             return Task.CompletedTask;
         }

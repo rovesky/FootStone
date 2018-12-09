@@ -24,6 +24,7 @@ namespace FootStone.Core.GameServer
 
         private int playerCount = 0;
         private List<Guid> zones = new List<Guid>();
+        private bool isEnableIce = false;
         //    private IStreamProvider streamProvider;
 
         public IceService(IServiceProvider services, IGrainIdentity id, Silo silo, ILoggerFactory loggerFactory, IGrainFactory grainFactory) 
@@ -69,20 +70,26 @@ namespace FootStone.Core.GameServer
 
         public override Task Init(IServiceProvider serviceProvider)
         {
-            Console.WriteLine("----------IceService Init!");
-           
-            network.Init(Global.MainArgs);
+            if (isEnableIce)
+            {
+                Console.WriteLine("----------IceService Init!");
+                network.Init(Global.MainArgs);
+            }
             return base.Init(serviceProvider);
         }
 
         public override async Task Start()
         {
-            Console.WriteLine("-----------IceService Start!");
-          
-            network.Start();
+            if (isEnableIce)
+            {
+                Console.WriteLine("-----------IceService Start!");
+                network.Start();
+            }
+
             RegisterTimer((s) =>
             {
                 Console.Out.WriteLine("operation times:" + operationTimes);
+                Console.Out.WriteLine("zone count:" + zones.Count);
                 return Task.CompletedTask;
             }
               , null
@@ -93,7 +100,10 @@ namespace FootStone.Core.GameServer
 
         public override Task Stop()
         {
-            network.Stop();
+            if (isEnableIce)
+            {
+                network.Stop();
+            }
             return base.Stop();
         }
     }

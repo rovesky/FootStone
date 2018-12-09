@@ -11,7 +11,8 @@ namespace FootStone.Core.FrontServer
 {
     class Program
     {
-        static string mysqlConnectCluster = "server=192.168.3.14;user id=root;password=654321#;database=footstone";
+       // static string mysqlConnectCluster = "server=192.168.3.14;user id=root;password=654321#;database=footstone";
+        static string mysqlConnectCluster = "server=192.168.3.14;user id=root;password=198292;database=footstone_cluster;MaximumPoolsize=50";
 
         static void Main(string[] args)
         {
@@ -33,9 +34,10 @@ namespace FootStone.Core.FrontServer
                       })
                       .ConfigureApplicationParts(parts => parts.AddApplicationPart(typeof(IPlayerGrain).Assembly).WithReferences())
                       .ConfigureLogging(logging => logging.AddConsole())
+                      .AddSimpleMessageStreamProvider("Zone")
                       .Build();
 
-                Global.Instance.OrleansClient = client;
+                Global.OrleansClient = client;
 
                 var network = new NetworkIce();
                 network.Init(args);
