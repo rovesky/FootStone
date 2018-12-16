@@ -28,7 +28,22 @@ namespace Pomelo
     /// </summary>
     public class FastStream //: FastStream
     {
-      
+        private static readonly FastStream instance = new FastStream();
+
+        private FastStream()
+        {
+        }
+
+        public static FastStream Instance
+        {
+            get
+            {
+                return instance;
+            }
+        }
+
+
+
         /*-------------------------------------Composer--------------------------------------------------------*/
         /// <summary>
         /// 数据合成bytes

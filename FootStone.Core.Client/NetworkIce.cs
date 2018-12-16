@@ -9,7 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 
-namespace Network
+namespace FootStone.Core.Client
 {
     public class NetworkIce
     {

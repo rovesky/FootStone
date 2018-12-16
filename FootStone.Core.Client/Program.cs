@@ -1,24 +1,102 @@
-﻿using FootStone.GrainInterfaces;
-using Network;
+﻿using DotNetty.Buffers;
+using DotNetty.Codecs;
+using DotNetty.Handlers.Logging;
+using DotNetty.Transport.Bootstrapping;
+using DotNetty.Transport.Channels;
+using DotNetty.Transport.Channels.Sockets;
+using FootStone.GrainInterfaces;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FootStone.client
+namespace FootStone.Core.Client
 {
     class Program
     {
-      
-   
+        class SocketNettyHandler : ChannelHandlerAdapter
+        {
+            private IByteBuffer initialMessage;
+
+            public SocketNettyHandler()
+            {
+                this.initialMessage = Unpooled.Buffer(100);
+                byte[] messageBytes = Encoding.UTF8.GetBytes("Hello world");
+                this.initialMessage.WriteBytes(messageBytes);
+            }
+
+            public override void ChannelActive(IChannelHandlerContext context) => 
+                context.WriteAndFlushAsync(this.initialMessage);
+
+
+            public override void ChannelRead(IChannelHandlerContext context, object message)
+            {
+                // context.
+                var buffer = message as IByteBuffer;
+               // buffer.Array
+                if (buffer != null)
+                {
+                    Console.WriteLine("Received from server: " + context.Channel.Id.ToString());
+                }
+             //   context.WriteAsync(message);
+            }
+
+            public override void ChannelReadComplete(IChannelHandlerContext context) => context.Flush();
+
+            public override void ExceptionCaught(IChannelHandlerContext context, Exception exception)
+            {
+                Console.WriteLine("Exception: " + exception);
+                context.CloseAsync();
+            }
+        }
+
+        static async Task<IChannel> ConnectNettyAsync(string host,int port)
+        {
+         //   ExampleHelper.SetConsoleLogger();
+
+            var group = new MultithreadEventLoopGroup();
+
+            //X509Certificate2 cert = null;
+            //string targetHost = null;
+            //if (ClientSettings.IsSsl)
+            //{
+            //    cert = new X509Certificate2(Path.Combine(ExampleHelper.ProcessDirectory, "dotnetty.com.pfx"), "password");
+            //    targetHost = cert.GetNameInfo(X509NameType.DnsName, false);
+            //}
+            try
+            {
+                var bootstrap = new Bootstrap();
+                bootstrap
+                    .Group(group)
+                    .Channel<TcpSocketChannel>()
+                    .Option(ChannelOption.TcpNodelay, true)
+                    .Handler(new ActionChannelInitializer<ISocketChannel>(channel =>
+                    {
+                        IChannelPipeline pipeline = channel.Pipeline;
+
+                        pipeline.AddLast(new LoggingHandler());
+                        pipeline.AddLast("framing-enc", new LengthFieldPrepender(2));
+                        pipeline.AddLast("framing-dec", new LengthFieldBasedFrameDecoder(ushort.MaxValue, 0, 2, 0, 2));
+
+                        pipeline.AddLast("echo", new SocketNettyHandler());
+                    }));
+
+                return await bootstrap.ConnectAsync(host,port);
+            }
+            finally
+            {
+              //  await group.ShutdownGracefullyAsync(TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(1));
+            }
+        }
+
+
         static void Main(string[] args)
         {
             //  Test();
             try
             {
-                Test(2000).Wait();
+                Test(1).Wait();
             }
             catch(Exception ex)
             {
@@ -86,8 +164,9 @@ namespace FootStone.client
             var zonePrx = IZonePrxHelper.uncheckedCast(sessionPrx, "zone");
 
             var playerInfo = await playerPrx.GetPlayerInfoAsync();
-            await zonePrx.PlayerEnterAsync(playerInfo.zoneId);
+            var endPoint = await zonePrx.PlayerEnterAsync(playerInfo.zoneId);
 
+            var channel = await ConnectNettyAsync(endPoint.ip, endPoint.port);
             MasterProperty property;
             for (int i = 0; i < count; ++i)
             {              
@@ -100,7 +179,7 @@ namespace FootStone.client
                 await Task.Delay(10000);
             }
             Console.Out.WriteLine("playerInfo:" + JsonConvert.SerializeObject(playerInfo));
-
+            await channel.CloseAsync();
         }
 
       

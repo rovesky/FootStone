@@ -18,7 +18,7 @@ namespace FootStone.Core.FrontServer
         {
             try
             {
-          
+
                 var client = new ClientBuilder()
                       //.UseLocalhostClustering()
                       // .UseStaticClustering(gateways)
@@ -34,7 +34,10 @@ namespace FootStone.Core.FrontServer
                       })
                       .ConfigureApplicationParts(parts => parts.AddApplicationPart(typeof(IPlayerGrain).Assembly).WithReferences())
                       .ConfigureLogging(logging => logging.AddConsole())
-                      .AddSimpleMessageStreamProvider("Zone")
+                      .AddSimpleMessageStreamProvider("Zone", cfg =>
+                      {
+                          cfg.FireAndForgetDelivery = true;
+                      })
                       .Build();
 
                 Global.OrleansClient = client;
@@ -48,7 +51,7 @@ namespace FootStone.Core.FrontServer
 
                 StopAsync(client, network).Wait();
             }
-            catch(System.Exception ex)
+            catch (System.Exception ex)
             {
                 Console.Error.WriteLine(ex.Message);
             }

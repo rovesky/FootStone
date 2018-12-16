@@ -1,15 +1,17 @@
-﻿using FootStone.Core.FrontIce;
+﻿using DotNetty.Buffers;
+using DotNetty.Codecs;
+using DotNetty.Handlers.Logging;
+using DotNetty.Transport.Bootstrapping;
+using DotNetty.Transport.Channels;
+using DotNetty.Transport.Channels.Sockets;
 using FootStone.Core.GrainInterfaces;
 using Microsoft.Extensions.Logging;
 using Orleans;
 using Orleans.Concurrency;
 using Orleans.Core;
 using Orleans.Runtime;
-using Orleans.Services;
 using Orleans.Streams;
-using Pomelo;
 using System;
-using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -20,9 +22,10 @@ namespace FootStone.Core.GameServer
     {
         readonly IGrainFactory GrainFactory;
 
-      //  private NetworkIce network = new NetworkIce();
-        private int operationTimes = 0;
+   
+    //    private int operationTimes = 0;
         private IStreamProvider streamProvider;
+        private IChannel boundChannel;
 
         public SocketService(IServiceProvider services, IGrainIdentity id, Silo silo, ILoggerFactory loggerFactory, IGrainFactory grainFactory) 
             : base(id, silo, loggerFactory)
@@ -32,32 +35,98 @@ namespace FootStone.Core.GameServer
 
         public Task AddOptionTime(int time)
         {
-            operationTimes += time;
+          //  operationTimes += time;
             return Task.CompletedTask;
         }
 
         public override Task Init(IServiceProvider serviceProvider)
         {
-            Console.WriteLine("----------IceService Init!");
-          //  FastStreamConfig fastStreamConfig = new FastStreamConfig();
-            //启动FastStream
-         //   FastStream.init(class_config.Get("faststream"));
-           
-            //  network.Init(Global.Instance.MainArgs);
+            Console.WriteLine("----------SocketService Init!");
+
+            ////启动FastStream
+            //FastStreamConfig fastStreamConfig = new FastStreamConfig();       
+            //fastStreamConfig.host = this.Silo.Endpoint.Address.ToString();
+            //fastStreamConfig.port = 20010;
+            //FastStream.Instance.Init(fastStreamConfig);
+         
             return base.Init(serviceProvider);
         }
 
-        public override  Task Start()
+        public async override  Task Start()
         {
-            streamProvider = Global.OrleansClient.GetStreamProvider("Zone");
-            // FastStream.instance().Start();
-            return base.Start();
+            //  streamProvider = Global.OrleansClient.GetStreamProvider("Zone");
+            //  FastStream.Instance.Start();
+            IEventLoopGroup bossGroup;
+            IEventLoopGroup workerGroup;
+
+            bossGroup = new MultithreadEventLoopGroup(1);
+            workerGroup = new MultithreadEventLoopGroup();
+
+            try
+            {
+                var bootstrap = new ServerBootstrap();
+                bootstrap.Group(bossGroup, workerGroup);
+                bootstrap.Channel<TcpServerSocketChannel>();
+
+                bootstrap
+                    .Option(ChannelOption.SoBacklog, 100)
+                    .Handler(new LoggingHandler("SRV-LSTN"))
+                    .ChildHandler(new ActionChannelInitializer<IChannel>(channel =>
+                    {
+                        IChannelPipeline pipeline = channel.Pipeline;
+
+                        pipeline.AddLast(new LoggingHandler("SRV-CONN"));
+                        pipeline.AddLast("framing-enc", new LengthFieldPrepender(2));
+                        pipeline.AddLast("framing-dec", new LengthFieldBasedFrameDecoder(ushort.MaxValue, 0, 2, 0, 2));
+
+                        pipeline.AddLast("echo", new SocketServerHandler());
+                    }));
+
+                string host = Silo.Endpoint.Address.ToString();
+                boundChannel = await bootstrap.BindAsync(
+                    // host,
+                     20010);
+                Console.Out.WriteLine("netty started!");
+            }
+            finally
+            {
+            //    await Task.WhenAll(
+            //        bossGroup.ShutdownGracefullyAsync(TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(1)),
+            //        workerGroup.ShutdownGracefullyAsync(TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(1)));
+            }
+         
         }
 
-        public override Task Stop()
+        public async override Task Stop()
         {
-          //  FastStream.instance().Stop();
-            return base.Stop();
+           
+            await boundChannel.CloseAsync();
+            await base.Stop();        
+
+        }
+       
+    }
+
+
+    class SocketServerHandler : ChannelHandlerAdapter
+    {
+        public override void ChannelRead(IChannelHandlerContext context, object message)
+        {
+           // context.
+            var buffer = message as IByteBuffer;
+            if (buffer != null)
+            {
+                Console.WriteLine("Received from client: " + buffer.ToString(Encoding.UTF8));
+            }
+            context.WriteAsync(message);
+        }
+
+        public override void ChannelReadComplete(IChannelHandlerContext context) => context.Flush();
+
+        public override void ExceptionCaught(IChannelHandlerContext context, Exception exception)
+        {
+            Console.WriteLine("Exception: " + exception);
+            context.CloseAsync();
         }
     }
 }

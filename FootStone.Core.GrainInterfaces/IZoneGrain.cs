@@ -1,4 +1,5 @@
-﻿using Orleans;
+﻿using FootStone.GrainInterfaces;
+using Orleans;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,7 +9,7 @@ namespace FootStone.Core.GrainInterfaces
 {
     public interface IZoneGrain : IGrainWithGuidKey
     {
-        Task PlayerEnter(Guid playerId);
+        Task<EndPointZone> PlayerEnter(Guid playerId);
 
         Task PlayerLeave(Guid playerId);
 

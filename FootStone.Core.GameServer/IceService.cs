@@ -100,6 +100,7 @@ namespace FootStone.Core.GameServer
 
         public override Task Stop()
         {
+           // this.Silo
             if (isEnableIce)
             {
                 network.Stop();

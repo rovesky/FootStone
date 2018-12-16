@@ -46,7 +46,7 @@ namespace FootStone.Core.FrontIce
             Global.ZoneMsgCount++;
 
            
-           // Console.Out.WriteLine(" receive bytes:" + item.Length);
+            //Console.Out.WriteLine(" receive bytes:" + item.Length);
             //   push.begin_ZoneSync(item);
             return Task.CompletedTask;
         }
@@ -111,7 +111,7 @@ namespace FootStone.Core.FrontIce
             throw new NotImplementedException();
         }
 
-        public override async void PlayerEnter(string zoneId, Current current = null)
+        public async override Task<EndPointZone> PlayerEnterAsync(string zoneId, Current current = null)
         {
             try
             {
@@ -119,14 +119,14 @@ namespace FootStone.Core.FrontIce
                 await AddObserver(zoneGuid);
 
                 var zoneGrain = Global.OrleansClient.GetGrain<IZoneGrain>(zoneGuid);
+                return await zoneGrain.PlayerEnter(sessionI.PlayerId);
 
-                await zoneGrain.PlayerEnter(sessionI.PlayerId);
-                
             }
             catch (System.Exception e)
             {
                 Console.Error.WriteLine(e.Message);
+                throw e;
             }
-        }
+        }      
     }
 }

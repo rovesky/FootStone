@@ -22,17 +22,18 @@ namespace FootStone.Grains
 
         public PlayerGrain(IGrainActivationContext grainActivationContext, IIceServiceClient iceServiceClient)
         {
+      
             IceServiceClient = iceServiceClient;
         }
 
-        public override  Task OnActivateAsync()
+        public override Task OnActivateAsync()
         {
             subscribers = new ObserverSubscriptionManager<IPlayerObserver>();
-        
+
             //try
             //{
             //    zoneGrain = this.GrainFactory.GetGrain<IZoneGrain>(Guid.NewGuid());
-               
+
             //    await zoneGrain.PlayerEnter(this.GetPrimaryKey());
             //    await IceServiceClient.AddPlayer(this.GetPrimaryKey());
             //}
@@ -41,8 +42,9 @@ namespace FootStone.Grains
             //    Console.Error.WriteLine(e.Message);
             //}
 
+                  
 
-               return Task.CompletedTask;
+            return Task.CompletedTask;
         }
 
         public override Task OnDeactivateAsync()

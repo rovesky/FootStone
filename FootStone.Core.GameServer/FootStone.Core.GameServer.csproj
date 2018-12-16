@@ -11,11 +11,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="SocketService.cs" />
-    <Compile Remove="SocketServiceClient.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Remove="AdventureMap.json" />
   </ItemGroup>
 
@@ -26,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="DotNetty.Handlers" Version="0.6.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="2.1.1" />
     <PackageReference Include="Microsoft.Orleans.Clustering.AdoNet" Version="2.1.2" />
     <PackageReference Include="Microsoft.Orleans.Persistence.AdoNet" Version="2.1.2" />
