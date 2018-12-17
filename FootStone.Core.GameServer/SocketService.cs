@@ -5,6 +5,7 @@ using DotNetty.Transport.Bootstrapping;
 using DotNetty.Transport.Channels;
 using DotNetty.Transport.Channels.Sockets;
 using FootStone.Core.GrainInterfaces;
+using FootStone.Core.Grains;
 using Microsoft.Extensions.Logging;
 using Orleans;
 using Orleans.Concurrency;
@@ -119,6 +120,21 @@ namespace FootStone.Core.GameServer
                 Console.WriteLine("Received from client: " + buffer.ToString(Encoding.UTF8));
             }
             context.WriteAsync(message);
+        }
+
+        public override void ChannelRegistered(IChannelHandlerContext context)
+        {
+          
+            Console.Out.WriteLine("ChannelRegistered:" + context.Channel.Id.AsLongText());
+            ChannelManager.Instance.AddChannel(
+                context.Channel.Id.AsLongText(),
+                new PlayerChannel(context.Channel));
+            base.ChannelRegistered(context);
+        }
+
+        public override void ChannelUnregistered(IChannelHandlerContext context)
+        {
+            ChannelManager.Instance.RemoveChannel(context.Channel.Id.AsLongText());
         }
 
         public override void ChannelReadComplete(IChannelHandlerContext context) => context.Flush();

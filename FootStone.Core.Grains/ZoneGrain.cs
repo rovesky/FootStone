@@ -13,12 +13,13 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FootStone.Grains
+namespace FootStone.Core.Grains
 {
 
     class ZonePlayer
     {
         public Guid id;
+        public string channelId;
         public IAsyncStream<byte[]> stream;
 
 
@@ -80,15 +81,23 @@ namespace FootStone.Grains
 
                      try
                      {
-                         zoneStream.OnNextAsync(bytes);
+                        // zoneStream.OnNextAsync(bytes);
                          int i = 0;
                          foreach (ZonePlayer player in players.Values)
                          {
-                             // Console.Out.WriteLine(player.id+" send msg!");
-                             if (i % 10 == 0)
+                             if (player.channelId != null)
                              {
-                                 player.stream.OnNextAsync(bytes);
+                                 var channel = ChannelManager.Instance.GetChannel(player.channelId);
+                                 if (channel != null)
+                                 {
+                                     channel.Send(bytes);
+                                 }
                              }
+                             // Console.Out.WriteLine(player.id+" send msg!");
+                             //if (i % 10 == 0)
+                             //{
+                             //    player.stream.OnNextAsync(bytes);
+                             //}
                              i++;
                          }
                      }
@@ -108,6 +117,18 @@ namespace FootStone.Grains
 
         public override Task OnDeactivateAsync()
         {
+            return Task.CompletedTask;
+        }
+
+        public Task PlayerBindChannel(Guid playerId, string channelId)
+        {
+            if (!players.ContainsKey(playerId))
+            {
+                throw new Exception("");
+            }
+
+            var player = players[playerId];
+            player.channelId = channelId;
             return Task.CompletedTask;
         }
 

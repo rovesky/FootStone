@@ -106,10 +106,7 @@ namespace FootStone.Core.FrontIce
                 Console.Error.WriteLine("zonePush:" + e.Message);
             }
         }
-        public override void Move(byte[] data, Current current = null)
-        {
-            throw new NotImplementedException();
-        }
+  
 
         public async override Task<EndPointZone> PlayerEnterAsync(string zoneId, Current current = null)
         {
@@ -119,7 +116,9 @@ namespace FootStone.Core.FrontIce
                 await AddObserver(zoneGuid);
 
                 var zoneGrain = Global.OrleansClient.GetGrain<IZoneGrain>(zoneGuid);
-                return await zoneGrain.PlayerEnter(sessionI.PlayerId);
+                var ret = await zoneGrain.PlayerEnter(sessionI.PlayerId);
+                this.sessionI.SetAttribute("zoneId", zoneId);
+                return ret;
 
             }
             catch (System.Exception e)
@@ -127,6 +126,30 @@ namespace FootStone.Core.FrontIce
                 Console.Error.WriteLine(e.Message);
                 throw e;
             }
-        }      
+        }
+             
+
+        public override Task MoveAsync(byte[] data, Current current = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async override Task PlayerBindChannelAsync(string channelId, Current current = null)
+        {
+            try
+            {
+               
+                var zoneGuid = Guid.Parse((string)sessionI.GetAttribute("zoneId"));               
+
+                var zoneGrain = Global.OrleansClient.GetGrain<IZoneGrain>(zoneGuid);
+                await zoneGrain.PlayerBindChannel(sessionI.PlayerId,channelId);
+
+            }
+            catch (System.Exception e)
+            {
+                Console.Error.WriteLine(e.Message);
+                throw e;
+            }
+        }
     }
 }

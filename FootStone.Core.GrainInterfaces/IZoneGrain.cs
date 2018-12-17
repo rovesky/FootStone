@@ -12,6 +12,7 @@ namespace FootStone.Core.GrainInterfaces
         Task<EndPointZone> PlayerEnter(Guid playerId);
 
         Task PlayerLeave(Guid playerId);
+        Task PlayerBindChannel(Guid playerId, string channelId);
 
         //Task GetOnlinePlayersByLevel(int level);
     }

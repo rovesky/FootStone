@@ -165,8 +165,13 @@ namespace FootStone.Core.Client
 
             var playerInfo = await playerPrx.GetPlayerInfoAsync();
             var endPoint = await zonePrx.PlayerEnterAsync(playerInfo.zoneId);
+            Console.Out.WriteLine("ConnectNetty begin(" + endPoint.ip+":"+endPoint.port+")");
 
             var channel = await ConnectNettyAsync(endPoint.ip, endPoint.port);
+            Console.Out.WriteLine("PlayerBind :" + channel.Id.AsLongText());
+
+            await zonePrx.PlayerBindChannelAsync(channel.Id.AsLongText());
+           // channel.Id.AsLongText
             MasterProperty property;
             for (int i = 0; i < count; ++i)
             {              
