@@ -11,8 +11,8 @@ namespace FootStone.Core.FrontServer
 {
     class Program
     {
-        static string mysqlConnectCluster = "server=192.168.3.14;user id=root;password=654321#;database=footstone;MaximumPoolsize=50";
-    //    static string mysqlConnectCluster = "server=192.168.3.14;user id=root;password=198292;database=footstone_cluster;MaximumPoolsize=50";
+        static string mysqlConnectCluster = "server=192.168.3.28;user id=root;password=654321#;database=footstone;MaximumPoolsize=50";
+    //    static string mysqlConnectCluster = "server=192.168.3.28;user id=root;password=198292;database=footstone_cluster;MaximumPoolsize=50";
 
         static void Main(string[] args)
         {

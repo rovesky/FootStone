@@ -27,6 +27,8 @@ namespace FootStone.Core.GameServer
     //    private int operationTimes = 0;
         private IStreamProvider streamProvider;
         private IChannel boundChannel;
+        private MultithreadEventLoopGroup bossGroup;
+        private MultithreadEventLoopGroup workerGroup;
 
         public SocketService(IServiceProvider services, IGrainIdentity id, Silo silo, ILoggerFactory loggerFactory, IGrainFactory grainFactory) 
             : base(id, silo, loggerFactory)
@@ -55,10 +57,7 @@ namespace FootStone.Core.GameServer
 
         public async override  Task Start()
         {
-            //  streamProvider = Global.OrleansClient.GetStreamProvider("Zone");
-            //  FastStream.Instance.Start();
-            IEventLoopGroup bossGroup;
-            IEventLoopGroup workerGroup;
+     
 
             bossGroup = new MultithreadEventLoopGroup(1);
             workerGroup = new MultithreadEventLoopGroup();
@@ -86,8 +85,12 @@ namespace FootStone.Core.GameServer
                 string host = Silo.Endpoint.Address.ToString();
                 boundChannel = await bootstrap.BindAsync(
                     // host,
-                     20010);
+                     8007);
                 Console.Out.WriteLine("netty started!");
+            }
+            catch(Exception ex)
+            {
+                Console.Error.WriteLine(ex.StackTrace);
             }
             finally
             {
@@ -102,6 +105,10 @@ namespace FootStone.Core.GameServer
         {
            
             await boundChannel.CloseAsync();
+            await Task.WhenAll(
+                 bossGroup.ShutdownGracefullyAsync(TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(1)),
+                 workerGroup.ShutdownGracefullyAsync(TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(1)));
+
             await base.Stop();        
 
         }

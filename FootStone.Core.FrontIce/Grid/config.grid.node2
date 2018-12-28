@@ -6,9 +6,9 @@ IceGrid.InstanceName=FootStone
 #
 # The IceGrid locator proxy.
 #
-Ice.Default.Locator=FootStone/Locator:default -h 192.168.3.14 -p 4061
+Ice.Default.Locator=FootStone/Locator:default -h 192.168.3.28 -p 4061
 
-IceGrid.Registry.Client.Endpoints=default -h 192.168.3.14 -p 4061
+IceGrid.Registry.Client.Endpoints=default -h 192.168.3.28 -p 4061
 #
 # IceGrid node configuration.
 #

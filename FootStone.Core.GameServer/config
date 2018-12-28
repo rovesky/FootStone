@@ -5,7 +5,7 @@ Ice.Admin.ServerId=FootStoneServer-1
 Ice.Admin.Endpoints=tcp -h localhost
 Ice.ProgramName=FootStoneServer-1
 # Object adapter SessionFactory
-SessionFactory.Endpoints=tcp -h 192.168.3.14 -p 12000
+SessionFactory.Endpoints=tcp -h 192.168.3.28 -p 12000
 SessionFactory.AdapterId=FootStoneServer-1.SessionFactory
 SessionFactory.ReplicaGroupId=ReplicatedSessionFactoryAdapter
 # Server descriptor properties
@@ -18,4 +18,4 @@ Ice.Trace.Locator=1
 Ice.Trace.Network=2
 Ice.Trace.Retry=2
 Ice.Trace.Protocol=0
-Ice.Default.Locator=FootStone/Locator:default -h 192.168.3.14 -p 4061
+Ice.Default.Locator=FootStone/Locator:default -h 192.168.3.28 -p 4061

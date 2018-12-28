@@ -152,7 +152,7 @@ namespace FootStone.Core.Grains
 
             return Task.FromResult(new EndPointZone(
                 siloAddress.Endpoint.Address.ToString(),
-                20010));
+                8007));
         }
 
         public Task PlayerLeave(Guid playerId)

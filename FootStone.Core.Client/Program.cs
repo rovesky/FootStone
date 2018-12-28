@@ -8,6 +8,7 @@ using FootStone.GrainInterfaces;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -82,7 +83,12 @@ namespace FootStone.Core.Client
                         pipeline.AddLast("echo", new SocketNettyHandler());
                     }));
 
-                return await bootstrap.ConnectAsync(host,port);
+                return await bootstrap.ConnectAsync(new IPEndPoint(IPAddress.Parse(host),port));
+            }
+            catch(Exception ex)
+            {
+                Console.Error.WriteLine(ex.Message+ex.StackTrace);
+                return null;
             }
             finally
             {
@@ -96,7 +102,10 @@ namespace FootStone.Core.Client
             //  Test();
             try
             {
+              //  ConnectNettyAsync("127.0.0.1", 8007).Wait();
+             
                 Test(1).Wait();
+                Console.WriteLine("OK!");
             }
             catch(Exception ex)
             {
@@ -106,7 +115,7 @@ namespace FootStone.Core.Client
 
         private static async Task Test(int count)
         {
-            NetworkIce.Instance.Init("192.168.3.14", 4061);
+            NetworkIce.Instance.Init("192.168.3.28", 4061);
             for (int i = 0; i < count; ++i)
             {
                 runTest(i, 1000);
@@ -168,10 +177,12 @@ namespace FootStone.Core.Client
             Console.Out.WriteLine("ConnectNetty begin(" + endPoint.ip+":"+endPoint.port+")");
 
             var channel = await ConnectNettyAsync(endPoint.ip, endPoint.port);
-            Console.Out.WriteLine("PlayerBind :" + channel.Id.AsLongText());
+            Console.Out.WriteLine("PlayerBind begin:" + channel.Id.AsLongText());
 
             await zonePrx.PlayerBindChannelAsync(channel.Id.AsLongText());
-           // channel.Id.AsLongText
+            Console.Out.WriteLine("PlayerBind end:" + channel.Id.AsLongText());
+
+            // channel.Id.AsLongText
             MasterProperty property;
             for (int i = 0; i < count; ++i)
             {              
