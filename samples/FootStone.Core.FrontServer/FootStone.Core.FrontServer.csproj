@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <OutputPath>..\output\</OutputPath>
+    <OutputPath>..\..\output\</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FootStone.Core.FrontIce\FootStone.Core.FrontIce.csproj" />
+    <ProjectReference Include="..\..\src\FootStone.FrontIce\FootStone.FrontIce.csproj" />
   </ItemGroup>
 
   <ItemGroup>

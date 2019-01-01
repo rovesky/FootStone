@@ -7,7 +7,7 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
-    <OutputPath>..\output\</OutputPath>
+    <OutputPath>..\..\output\</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -30,8 +30,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FootStone.Core.FrontIce\FootStone.Core.FrontIce.csproj" />
-    <ProjectReference Include="..\FootStone.Core.Grains\FootStone.Core.Grains.csproj" />
+    <ProjectReference Include="..\..\src\FootStone.Core.Grains\FootStone.Core.Grains.csproj" />
+    <ProjectReference Include="..\..\src\FootStone.FrontIce\FootStone.FrontIce.csproj" />
   </ItemGroup>
 
   <ItemGroup>

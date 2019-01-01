@@ -122,7 +122,7 @@ namespace FootStone.Core.Client
             {
               //  ConnectNettyAsync("127.0.0.1", 8007,"11").Wait();
              
-                Test(1000).Wait();
+                Test(1).Wait();
                 Console.WriteLine("OK!");
 
                 Console.ReadLine();

@@ -5,22 +5,24 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
-    <OutputPath>..\output\</OutputPath>
+    <OutputPath>..\..\output\</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="ObserverSubscriptionManager.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.Orleans.Core.Abstractions" Version="2.1.2" />
+    <PackageReference Include="Microsoft.Orleans.Core.Legacy" Version="2.1.2" />
     <PackageReference Include="Microsoft.Orleans.OrleansCodeGenerator.Build" Version="2.1.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="zeroc.ice.net" Version="3.7.1" />
-    <PackageReference Include="zeroc.icebuilder.msbuild" Version="5.0.4" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\FootStone.Protocol\FootStone.Protocol.csproj" />
+    <ProjectReference Include="..\FootStone.Core.GrainInterfaces\FootStone.Core.GrainInterfaces.csproj" />
   </ItemGroup>
 
 </Project>
