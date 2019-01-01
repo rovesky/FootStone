@@ -85,25 +85,13 @@ namespace FootStone.Core.Grains
                          int i = 0;
                          foreach (ZonePlayer player in players.Values)
                          {
-                             if (player.channelId != null)
-                             {
-                                 var channel = ChannelManager.Instance.GetChannel(player.channelId);
-                                 if (channel != null)
-                                 {
-                                     channel.Send(bytes);
-                                 }
-                             }
-                             // Console.Out.WriteLine(player.id+" send msg!");
-                             //if (i % 10 == 0)
-                             //{
-                             //    player.stream.OnNextAsync(bytes);
-                             //}
+                             ChannelManager.Instance.Send(player.id.ToString(), bytes);
                              i++;
                          }
                      }
                      catch(Exception e)
                      {
-                         Console.Error.WriteLine(e.Message);
+                       //  Console.Error.WriteLine(e.Message);
                      }
                     
                      return Task.CompletedTask;
@@ -120,17 +108,17 @@ namespace FootStone.Core.Grains
             return Task.CompletedTask;
         }
 
-        public Task PlayerBindChannel(Guid playerId, string channelId)
-        {
-            if (!players.ContainsKey(playerId))
-            {
-                throw new Exception("");
-            }
+        //public Task PlayerBindChannel(Guid playerId, string channelId)
+        //{
+        //    if (!players.ContainsKey(playerId))
+        //    {
+        //        throw new Exception("");
+        //    }
 
-            var player = players[playerId];
-            player.channelId = channelId;
-            return Task.CompletedTask;
-        }
+        //    var player = players[playerId];
+        //    player.channelId = channelId;
+        //    return Task.CompletedTask;
+        //}
 
         public Task<EndPointZone> PlayerEnter(Guid playerId)
         {          
@@ -146,7 +134,7 @@ namespace FootStone.Core.Grains
 
             var siloAddress = (SiloAddress)SiloAddressInfo.GetValue(this);
 
-            Console.Out.WriteLine("silo addr:"+siloAddress.Endpoint.Address);
+            Console.Out.WriteLine("zone silo addr:"+siloAddress.Endpoint.Address);
           
             //   Console.Out.WriteLine(this.GetPrimaryKey() + " zone player count:" + players.Count);
 
@@ -157,6 +145,8 @@ namespace FootStone.Core.Grains
 
         public Task PlayerLeave(Guid playerId)
         {
+            Console.Out.WriteLine("zone PlayerLeave:" + playerId.ToString());
+
             players.Remove(playerId);
             return Task.CompletedTask;
         }

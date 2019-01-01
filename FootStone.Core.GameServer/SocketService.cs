@@ -6,6 +6,7 @@ using DotNetty.Transport.Channels;
 using DotNetty.Transport.Channels.Sockets;
 using FootStone.Core.GrainInterfaces;
 using FootStone.Core.Grains;
+using FootStone.Protocol;
 using Microsoft.Extensions.Logging;
 using Orleans;
 using Orleans.Concurrency;
@@ -120,29 +121,52 @@ namespace FootStone.Core.GameServer
     {
         public override void ChannelRead(IChannelHandlerContext context, object message)
         {
-           // context.
-            var buffer = message as IByteBuffer;
-            if (buffer != null)
+            Console.Out.WriteLine("ChannelRead:" + message);
+            //if (message is MsgHandShakeRequest handshake)
+            //{
+            //    Console.Out.WriteLine("handshake:" + handshake.playerId);
+            //    ChannelManager.Instance.AddChannel(
+            //        handshake.playerId,
+            //        new PlayerChannel(context.Channel));
+            //}
+            // context.
+          //  var buffer = message as IByteBuffer;
+            if (message is IByteBuffer buffer)
             {
-                Console.WriteLine("Received from client: " + buffer.ToString(Encoding.UTF8));
+                ushort type = buffer.ReadUnsignedShort();
+                if(type == 1)
+                {
+                    ushort length = buffer.ReadUnsignedShort();
+                    string playerId = buffer.ReadBytes(length).ToString(Encoding.UTF8);
+                    Console.Out.WriteLine("handshake:" + playerId);
+                    ChannelManager.Instance.AddChannel(
+                        playerId,
+                        new PlayerChannel(context.Channel));
+                }
+
+                //Console.WriteLine("Received from client: " + buffer.ToString(Encoding.UTF8));
+
+
+           // buffer.rel
             }
-            context.WriteAsync(message);
+            
+            //context.WriteAsync(message);
         }
 
-        public override void ChannelRegistered(IChannelHandlerContext context)
-        {
-          
-            Console.Out.WriteLine("ChannelRegistered:" + context.Channel.Id.AsLongText());
-            ChannelManager.Instance.AddChannel(
-                context.Channel.Id.AsLongText(),
-                new PlayerChannel(context.Channel));
-            base.ChannelRegistered(context);
-        }
+        //public override void ChannelRegistered(IChannelHandlerContext context)
+        //{
 
-        public override void ChannelUnregistered(IChannelHandlerContext context)
-        {
-            ChannelManager.Instance.RemoveChannel(context.Channel.Id.AsLongText());
-        }
+        //    Console.Out.WriteLine("ChannelRegistered:" + context.Channel.Id.AsLongText());
+        //    //ChannelManager.Instance.AddChannel(
+        //    //    context.Channel.Id.AsLongText(),
+        //    //    new PlayerChannel(context.Channel));
+        //    base.ChannelRegistered(context);
+        //}
+
+        //public override void ChannelUnregistered(IChannelHandlerContext context)
+        //{
+        //  //  ChannelManager.Instance.RemoveChannel(context.Channel.Id.AsLongText());
+        //}
 
         public override void ChannelReadComplete(IChannelHandlerContext context) => context.Flush();
 

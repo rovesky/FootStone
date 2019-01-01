@@ -6,41 +6,59 @@ using DotNetty.Transport.Channels;
 using DotNetty.Transport.Channels.Sockets;
 using FootStone.GrainInterfaces;
 using Newtonsoft.Json;
+using FootStone.Protocol;
 using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace FootStone.Core.Client
 {
     class Program
     {
+        
         class SocketNettyHandler : ChannelHandlerAdapter
         {
+            // private MsgHandShakeRequest initialMessage;
             private IByteBuffer initialMessage;
+            private string playerId;
 
-            public SocketNettyHandler()
+            private static int msgCount = 0;
+
+            public SocketNettyHandler(string playerId)
             {
+                //  this.initialMessage = new IByteBuffer();
+                //   this.initialMessage.playerId = playerId;
+                this.playerId = playerId;
                 this.initialMessage = Unpooled.Buffer(100);
-                byte[] messageBytes = Encoding.UTF8.GetBytes("Hello world");
+                byte[] messageBytes = Encoding.UTF8.GetBytes(playerId);
+                this.initialMessage.WriteUnsignedShort(1);
+                this.initialMessage.WriteUnsignedShort((ushort)messageBytes.Length);
                 this.initialMessage.WriteBytes(messageBytes);
             }
 
-            public override void ChannelActive(IChannelHandlerContext context) => 
+            public override void ChannelActive(IChannelHandlerContext context)
+            {
+                Console.WriteLine("ChannelActive: " + this.playerId);
                 context.WriteAndFlushAsync(this.initialMessage);
+            }
+            
 
 
             public override void ChannelRead(IChannelHandlerContext context, object message)
             {
-                // context.
+          
                 var buffer = message as IByteBuffer;
-               // buffer.Array
                 if (buffer != null)
                 {
-                    Console.WriteLine("Received from server: " + context.Channel.Id.ToString());
+                    Interlocked.Increment(ref msgCount);
+                    if (msgCount % 10000 == 0)                    {
+
+                        Console.WriteLine("Received from server msg count: " + msgCount + ",msg length:" + buffer.Capacity);
+                    }
                 }
-             //   context.WriteAsync(message);
             }
 
             public override void ChannelReadComplete(IChannelHandlerContext context) => context.Flush();
@@ -52,7 +70,7 @@ namespace FootStone.Core.Client
             }
         }
 
-        static async Task<IChannel> ConnectNettyAsync(string host,int port)
+        static async Task<IChannel> ConnectNettyAsync(string host,int port,string playerId)
         {
          //   ExampleHelper.SetConsoleLogger();
 
@@ -80,7 +98,7 @@ namespace FootStone.Core.Client
                         pipeline.AddLast("framing-enc", new LengthFieldPrepender(2));
                         pipeline.AddLast("framing-dec", new LengthFieldBasedFrameDecoder(ushort.MaxValue, 0, 2, 0, 2));
 
-                        pipeline.AddLast("echo", new SocketNettyHandler());
+                        pipeline.AddLast("echo", new SocketNettyHandler(playerId));
                     }));
 
                 return await bootstrap.ConnectAsync(new IPEndPoint(IPAddress.Parse(host),port));
@@ -102,10 +120,12 @@ namespace FootStone.Core.Client
             //  Test();
             try
             {
-              //  ConnectNettyAsync("127.0.0.1", 8007).Wait();
+              //  ConnectNettyAsync("127.0.0.1", 8007,"11").Wait();
              
-                Test(1).Wait();
+                Test(1000).Wait();
                 Console.WriteLine("OK!");
+
+                Console.ReadLine();
             }
             catch(Exception ex)
             {
@@ -176,11 +196,13 @@ namespace FootStone.Core.Client
             var endPoint = await zonePrx.PlayerEnterAsync(playerInfo.zoneId);
             Console.Out.WriteLine("ConnectNetty begin(" + endPoint.ip+":"+endPoint.port+")");
 
-            var channel = await ConnectNettyAsync(endPoint.ip, endPoint.port);
-            Console.Out.WriteLine("PlayerBind begin:" + channel.Id.AsLongText());
+            var channel = await ConnectNettyAsync(endPoint.ip, endPoint.port, playerInfo.id);
+            Console.Out.WriteLine("ConnectNetty end(" + endPoint.ip + ":" + endPoint.port + ")");
 
-            await zonePrx.PlayerBindChannelAsync(channel.Id.AsLongText());
-            Console.Out.WriteLine("PlayerBind end:" + channel.Id.AsLongText());
+            //   Console.Out.WriteLine("PlayerBind begin:" + channel.Id.AsLongText());
+
+            //  await zonePrx.PlayerBindChannelAsync(channel.Id.AsLongText());
+            //  Console.Out.WriteLine("PlayerBind end:" + channel.Id.AsLongText());
 
             // channel.Id.AsLongText
             MasterProperty property;

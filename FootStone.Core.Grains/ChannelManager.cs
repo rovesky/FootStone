@@ -2,12 +2,15 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 
 namespace FootStone.Core.Grains
 {
     public class ChannelManager
     {
         private static readonly ChannelManager instance = new ChannelManager();
+
+        private static int msgCount = 0;
 
         private ChannelManager()
         {
@@ -41,6 +44,23 @@ namespace FootStone.Core.Grains
         {
             Console.Out.WriteLine("FindChannel:" + id);
             return this.channels[id];
+        }
+
+        public void Send(string id,byte[] data)
+        {
+            Interlocked.Increment(ref msgCount);
+            if (msgCount % 10000 == 0)
+            {
+                Console.Out.WriteLine("send msg count:" + msgCount);
+            }
+
+          //  this.channels.ContainsKey
+
+            IPlayerChannel channel = this.channels[id];
+            if(channel != null)
+            {
+                channel.Send(data);
+            }
         }
     }
 }

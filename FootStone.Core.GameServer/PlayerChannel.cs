@@ -1,4 +1,5 @@
-﻿using DotNetty.Transport.Channels;
+﻿using DotNetty.Buffers;
+using DotNetty.Transport.Channels;
 using FootStone.Core.Grains;
 using System;
 using System.Collections.Generic;
@@ -17,7 +18,10 @@ namespace FootStone.Core.GameServer
 
         public void Send(byte[] data)
         {
-            channel.WriteAsync(data);
+         //   Console.Out.WriteLine("write data to client:"+ data.Length);
+            IByteBuffer byteBuffer = Unpooled.Buffer(data.Length);
+            byteBuffer.WriteBytes(data);
+            channel.WriteAndFlushAsync(byteBuffer);
         }
     }
 }

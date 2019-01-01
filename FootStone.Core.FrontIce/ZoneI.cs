@@ -67,7 +67,15 @@ namespace FootStone.Core.FrontIce
 
         public void Destroy()
         {
-            if(playerStreamHandler != null)
+        
+            // await AddObserver(zoneGuid);
+            var zoneId = (string)this.sessionI.GetAttribute("zoneId");
+            var zoneGrain = Global.OrleansClient.GetGrain<IZoneGrain>(Guid.Parse(zoneId));
+
+            zoneGrain.PlayerLeave(this.sessionI.PlayerId);
+         
+
+            if (playerStreamHandler != null)
             {
                 playerStreamHandler.UnsubscribeAsync();
                 playerStreamHandler = null;
@@ -113,7 +121,7 @@ namespace FootStone.Core.FrontIce
             try
             {
                 var zoneGuid = Guid.Parse(zoneId);
-                await AddObserver(zoneGuid);
+               // await AddObserver(zoneGuid);
 
                 var zoneGrain = Global.OrleansClient.GetGrain<IZoneGrain>(zoneGuid);
                 var ret = await zoneGrain.PlayerEnter(sessionI.PlayerId);
@@ -127,29 +135,34 @@ namespace FootStone.Core.FrontIce
                 throw e;
             }
         }
-             
 
-        public override Task MoveAsync(byte[] data, Current current = null)
+        public override void Move(byte[] data, Current current = null)
         {
             throw new NotImplementedException();
         }
 
-        public async override Task PlayerBindChannelAsync(string channelId, Current current = null)
-        {
-            try
-            {
-               
-                var zoneGuid = Guid.Parse((string)sessionI.GetAttribute("zoneId"));               
 
-                var zoneGrain = Global.OrleansClient.GetGrain<IZoneGrain>(zoneGuid);
-                await zoneGrain.PlayerBindChannel(sessionI.PlayerId,channelId);
+        //public override Task MoveAsync(byte[] data, Current current = null)
+        //{
+        //    throw new NotImplementedException();
+        //}
 
-            }
-            catch (System.Exception e)
-            {
-                Console.Error.WriteLine(e.Message);
-                throw e;
-            }
-        }
+        //public async override Task PlayerBindChannelAsync(string channelId, Current current = null)
+        //{
+        //    try
+        //    {
+
+        //        var zoneGuid = Guid.Parse((string)sessionI.GetAttribute("zoneId"));               
+
+        //        var zoneGrain = Global.OrleansClient.GetGrain<IZoneGrain>(zoneGuid);
+        //        await zoneGrain.PlayerBindChannel(sessionI.PlayerId,channelId);
+
+        //    }
+        //    catch (System.Exception e)
+        //    {
+        //        Console.Error.WriteLine(e.Message);
+        //        throw e;
+        //    }
+        //}
     }
 }
