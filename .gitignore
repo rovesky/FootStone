@@ -27,3 +27,8 @@
 /FootStone.Core.FrontIce/bin
 /FootStone.Core.FrontServer/bin
 /FootStone.Core.FrontServer/obj
+/samples/FootStone.Core.Client/obj
+obj
+packages
+output
+FootStone.GameServer
