@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "FootStone.Core.GameServer": {
-      "commandName": "Project",
-      "commandLineArgs": "--Ice.Config=config"
-    }
-  }
-}

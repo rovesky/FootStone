@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\FootStone.Protocol\FootStone.Protocol.csproj" />
+    <ProjectReference Include="..\..\src\FootStone.Protocolce\FootStone.ProtocolIce.csproj" />
   </ItemGroup>
 
   <ItemGroup>
