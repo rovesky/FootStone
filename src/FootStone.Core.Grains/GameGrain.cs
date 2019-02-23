@@ -15,22 +15,11 @@ namespace FootStone.Grains
 
     [StorageProvider(ProviderName = "memory1")]
     public  class GameGrain : Grain, IGameGrain,IPlayerObserver
-    {
-       
+    {       
 
         private GameInfo gameInfo;
 
         private Dictionary<Guid, GamePlayerInfo> players = new Dictionary<Guid, GamePlayerInfo>();
-        private Dictionary<Guid, IPlayerObserver[]> playersObserver = new Dictionary<Guid, IPlayerObserver[]>();
-     //   private IPlayerObserver playerObserver;
-        private IPlayerObserver[] observerArray = new IPlayerObserver[2];
-
-        readonly IIceServiceClient IceServiceClient;
-
-        public GameGrain(IGrainActivationContext grainActivationContext, IIceServiceClient iceServiceClient)
-        {
-            IceServiceClient = iceServiceClient;
-        }
 
 
         public override Task OnActivateAsync()
@@ -82,12 +71,6 @@ namespace FootStone.Grains
 
             players.Add(id, info);
 
-            //observerArray = new IPlayerObserver[2];
-        //    playersObserver.Add(id, observerArray);         
-
-            //observerArray[0] = new PlayerObserver(this, id);
-          //  observerArray[1] = await this.GrainFactory.CreateObjectReference<IPlayerObserver>(observerArray[0]);
-
             var playerGrain = this.GrainFactory.GetGrain<IPlayerGrain>(id);
             await playerGrain.SubscribeForPlayerUpdates(this);
         }
@@ -97,8 +80,7 @@ namespace FootStone.Grains
            
             var playerGrain = this.GrainFactory.GetGrain<IPlayerGrain>(playerId);
             await playerGrain.UnsubscribeForPlayerUpdates(this);
-         //   playersObserver.Remove(playerId);
-
+  
             players.Remove(playerId);
 
         }
@@ -120,27 +102,6 @@ namespace FootStone.Grains
             Console.WriteLine($"{info.name} new level {info.level}");
         }
 
-        //class PlayerObserver : IPlayerObserver
-        //{
-        //    private GameGrain gameGrain;
-        //    private Guid id;
-
-        //    public PlayerObserver(GameGrain gameGrain, Guid id)
-        //    {
-        //        this.gameGrain = gameGrain;
-        //        this.id = id;
-        //    }
-
-        //    public void HpChanged(int hp)
-        //    {
-        //        throw new NotImplementedException();
-        //    }
-
-        //    public void LevelChanged(int oldLevel, int newLevel)
-        //    {
-        //        var info = gameGrain.players[id];
-        //        info.level = newLevel;
-        //    }
-        //}
+      
     }
 }

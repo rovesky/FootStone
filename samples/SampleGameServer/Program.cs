@@ -88,12 +88,12 @@ namespace FootStone.Core.GameServer
                     //     options.Invariant = "MySql.Data.MySqlClient";
                     // })
                     .AddGrainService<IceService>()
-                    .AddGrainService<SocketService>()
+                    .AddGrainService<NettyService>()
                     .ConfigureServices(s =>
                     {
                         // Register Client of GrainService
                         s.AddSingleton<IIceServiceClient, IceServiceClient>();
-                        s.AddSingleton<ISocketServiceClient, SocketServiceClient>();
+                        s.AddSingleton<INettyServiceClient, NettyServiceClient>();
                     })
                     .AddMemoryGrainStorage("PubSubStore")
                     .AddSimpleMessageStreamProvider("Zone", cfg =>

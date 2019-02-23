@@ -5,7 +5,7 @@ using System.Text;
 
 namespace FootStone.Core.GrainInterfaces
 {
-    public interface ISocketServiceClient : IGrainServiceClient<ISocketService>, ISocketService
+    public interface INettyServiceClient : IGrainServiceClient<INettyService>, INettyService
     {
     }
 }

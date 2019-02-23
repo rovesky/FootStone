@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace FootStone.Core.GameServer
 {
-    public class SocketServiceClient : GrainServiceClient<ISocketServiceClient>, ISocketServiceClient
+    public class NettyServiceClient : GrainServiceClient<INettyServiceClient>, INettyServiceClient
     {
-        public SocketServiceClient(IServiceProvider serviceProvider) : base(serviceProvider)
+        public NettyServiceClient(IServiceProvider serviceProvider) : base(serviceProvider)
         {
         }
 

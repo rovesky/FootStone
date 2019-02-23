@@ -38,25 +38,7 @@ namespace FootStone.Core.GameServer
             operationTimes += time;
             return Task.CompletedTask;
         }
-
-        //public  Task AddPlayer(Guid id)
-        //{
-        //    //try
-        //    //{
-        //    //    var t1=Task.Run( async()=>{
-        //    //        streamProvider = Global.OrleansClient.GetStreamProvider("Zone");
-        //    //        var stream = streamProvider.GetStream<byte[]>(id, "ZonePlayer");
-        //    //        await stream.SubscribeAsync(new StreamObserver(id));
-        //    //    });
-        //    //    await t1;
-        //    //}
-        //    //catch(Exception e)
-        //    //{
-        //    //    Console.Error.WriteLine("AddPlayer:"+e.Message);
-        //    //}
-        //   return Task.CompletedTask;
-
-        //}
+       
 
         public Task<Guid> GetZone(Guid playerId)
         {          

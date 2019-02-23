@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FootStone.Core.GrainInterfaces
 {
-    public interface ISocketService : IGrainService
+    public interface INettyService : IGrainService
     {
         Task AddOptionTime(int time);
     }

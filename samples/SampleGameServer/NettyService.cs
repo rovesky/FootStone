@@ -20,7 +20,7 @@ using System.Threading.Tasks;
 namespace FootStone.Core.GameServer
 {
     [Reentrant]
-    public class SocketService : GrainService,ISocketServiceClient
+    public class NettyService : GrainService,INettyServiceClient
     {
         readonly IGrainFactory GrainFactory;
 
@@ -31,7 +31,7 @@ namespace FootStone.Core.GameServer
         private MultithreadEventLoopGroup bossGroup;
         private MultithreadEventLoopGroup workerGroup;
 
-        public SocketService(IServiceProvider services, IGrainIdentity id, Silo silo, ILoggerFactory loggerFactory, IGrainFactory grainFactory) 
+        public NettyService(IServiceProvider services, IGrainIdentity id, Silo silo, ILoggerFactory loggerFactory, IGrainFactory grainFactory) 
             : base(id, silo, loggerFactory)
         {         
             GrainFactory = grainFactory;

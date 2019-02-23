@@ -54,7 +54,7 @@ namespace FootStone.Core.Grains
 
         //public IGrainRuntime Runtime1 { get; }
 
-        public ZoneGrain(IGrainActivationContext grainActivationContext, ISocketServiceClient socketServiceClient)
+        public ZoneGrain(IGrainActivationContext grainActivationContext, INettyServiceClient socketServiceClient)
         {
             SiloAddressInfo = grainActivationContext.GrainType.GetProperty("SiloAddress", BindingFlags.Instance | BindingFlags.NonPublic);
           
@@ -63,7 +63,7 @@ namespace FootStone.Core.Grains
 
         public PropertyInfo SiloAddressInfo { get; }
        // public SiloAddress SiloAddress1 { get; set; }
-        public ISocketServiceClient SocketServiceClient { get; }
+        public INettyServiceClient SocketServiceClient { get; }
 
         public override Task OnActivateAsync()
         {
