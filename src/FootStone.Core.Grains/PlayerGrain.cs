@@ -58,20 +58,7 @@ namespace FootStone.Grains
         {
             if (!subscribers.IsSubscribed(subscriber))
             {
-                subscribers.Subscribe(subscriber);
-                RegisterTimer((s) =>
-                {
-                    State.roleMaster.property.intel++;
-                    subscribers.Notify((t) =>
-                    {
-                        t.HpChanged(State.roleMaster.property.intel);
-                    });
-                    //    return Task.CompletedTask;
-                    return WriteStateAsync();
-                }
-                , null
-                , TimeSpan.FromSeconds(10)
-                , TimeSpan.FromSeconds(10));
+                subscribers.Subscribe(subscriber);               
             }
             isOnline = true;
             return Task.CompletedTask;
@@ -96,11 +83,11 @@ namespace FootStone.Grains
             return Task.FromResult(this.State);
         }
 
-        public async Task InitPlayer(string name, int serverId)
+        public async Task InitPlayer(string name, int gameId)
         {
             this.State.id = this.GetPrimaryKey().ToString();
             this.State.name = name;
-            this.State.serverId = serverId;
+            this.State.gameId = gameId;
 
             this.State.zoneId = (await IceServiceClient.GetZone(this.GetPrimaryKey())).ToString();
             this.State.items = new List<Item>();
@@ -111,6 +98,35 @@ namespace FootStone.Grains
             this.State.roleMaster.property.agil = 10;
             Console.WriteLine("create player:" + this.State.name);
             await WriteStateAsync();
+
+            IGameGrain gameGrain = this.GrainFactory.GetGrain<IGameGrain>(gameId);
+
+            var gamePlayerInfo = new GamePlayerInfo();
+            gamePlayerInfo.id = this.State.id;
+            gamePlayerInfo.name = this.State.name;
+            gamePlayerInfo.level = this.State.level;
+            await gameGrain.PlayerEnter(gamePlayerInfo);
+
+            RegisterTimer((s) =>
+            {
+                Console.WriteLine("time out!!");
+
+                State.roleMaster.property.intel++;
+                State.level++;
+                subscribers.Notify((t) =>
+                {
+                    t.HpChanged(State.roleMaster.property.intel);
+                    t.LevelChanged(Guid.Parse(State.id), this.State.level);
+                });
+
+
+                WriteStateAsync();
+
+                return Task.CompletedTask;
+            }
+               , null
+               , TimeSpan.FromSeconds(10)
+               , TimeSpan.FromSeconds(10));
         }
 
         public  Task SetPlayerName(string name)

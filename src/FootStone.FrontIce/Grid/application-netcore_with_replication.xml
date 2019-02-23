@@ -34,7 +34,7 @@
     </replica-group>
 
     <node name="node1">
-      <server-instance template="FootStoneServer" index="1" endpoints="tcp -h 192.168.3.28 -p 12000"/>
+      <server-instance template="FootStoneServer" index="1" endpoints="tcp -h 192.168.0.128 -p 12000"/>
     </node>
     <node name="node2">
       <server-instance template="FootStoneServer" index="2" endpoints="tcp -h 192.168.206.3 -p 12000"/>

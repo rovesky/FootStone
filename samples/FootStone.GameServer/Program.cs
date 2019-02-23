@@ -21,12 +21,12 @@ namespace FootStone.Core.GameServer
     class Program
     {
 
-        static string IP_START = "192.168.3";
-        //  static string mysqlConnectCluster = "server=192.168.3.28;user id=root;password=654321#;database=footstone;MaximumPoolsize=50";
-        //   static string mysqlConnectStorage = "server=192.168.3.28;user id=root;password=654321#;database=footstonestorage;MaximumPoolsize=50";
+        static string IP_START = "192.168.0";
+          static string mysqlConnectCluster = "server=192.168.0.128;user id=root;password=654321#;database=footstone;MaximumPoolsize=50";
+           static string mysqlConnectStorage = "server=192.168.0.128;user id=root;password=654321#;database=footstonestorage;MaximumPoolsize=50";
 
-        static string mysqlConnectCluster = "server=192.168.3.28;user id=root;password=198292;database=footstone_cluster;MaximumPoolsize=50";
-        //   static string mysqlConnectStorage = "server=192.168.3.28;user id=root;password=654321#;database=footstonestorage;MaximumPoolsize=50";
+       // static string mysqlConnectCluster = "server=192.168.0.128;user id=root;password=198292;database=footstone_cluster;MaximumPoolsize=50";
+       // static string mysqlConnectStorage = "server=192.168.1.128;user id=root;password=654321#;database=footstonestorage;MaximumPoolsize=50";
 
         public static string GetLocalIP()
         {

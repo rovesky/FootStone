@@ -1,2 +1,2 @@
-dotnet FootStone.Core.GameServer.dll --Ice.Config=config
+dotnet FootStone.GameServer.dll --Ice.Config=config
 pause

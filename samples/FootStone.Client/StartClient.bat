@@ -1,2 +1,2 @@
-dotnet FootStone.Core.Client.dll
+dotnet FootStone.Client.dll
 pause

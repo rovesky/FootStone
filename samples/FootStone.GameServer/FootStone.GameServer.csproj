@@ -11,22 +11,22 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="AdventureMap.json" />
+    <None Remove="Games.json" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="AdventureMap.json">
+    <Content Include="Games.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="DotNetty.Handlers" Version="0.6.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="2.1.1" />
-    <PackageReference Include="Microsoft.Orleans.Clustering.AdoNet" Version="2.1.2" />
-    <PackageReference Include="Microsoft.Orleans.Persistence.AdoNet" Version="2.1.2" />
-    <PackageReference Include="Microsoft.Orleans.Server" Version="2.1.2" />
-    <PackageReference Include="MySql.Data" Version="8.0.13" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Orleans.Clustering.AdoNet" Version="2.2.3" />
+    <PackageReference Include="Microsoft.Orleans.Persistence.AdoNet" Version="2.2.3" />
+    <PackageReference Include="Microsoft.Orleans.Server" Version="2.2.3" />
+    <PackageReference Include="MySql.Data" Version="8.0.15" />
   </ItemGroup>
 
   <ItemGroup>

@@ -2,14 +2,14 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace FootStone.Core.GrainInterfaces
 {
-    public interface IPlayerObserver : IGrainObserver
+    public interface IGameManagerGrain : IGrainWithStringKey
     {
-        void HpChanged(int hp);
+       
 
-
-        void LevelChanged(Guid playerId, int newLevel);
+      
     }
 }

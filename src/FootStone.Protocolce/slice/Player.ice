@@ -29,7 +29,7 @@ module FootStone
 		{
 			string id;
 			string name;
-			int    serverId;
+			int    gameId;
 			int    level;
 			
 			string zoneId;

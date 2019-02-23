@@ -1,4 +1,4 @@
-# Configuration file (12/03/18 16:58:22.299)
+# Configuration file (02/23/19 15:20:15.855)
 
 # Server configuration
 Ice.Admin.ServerId=FootStoneServer-1
@@ -16,6 +16,6 @@ IceMX.Metrics.ByParent.GroupBy=parent
 IceMX.Metrics.ByParent.Disabled=1
 Ice.Trace.Locator=1
 Ice.Trace.Network=2
-Ice.Trace.Retry=2
+Ice.Trace.Retry=1
 Ice.Trace.Protocol=0
 Ice.Default.Locator=FootStone/Locator:default -h 192.168.0.128 -p 4061

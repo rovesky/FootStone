@@ -238,7 +238,7 @@ namespace FootStone
             public string name;
 
             [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-            public int serverId;
+            public int gameId;
 
             [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
             public int level;
@@ -269,11 +269,11 @@ namespace FootStone
             }
 
             [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-            public PlayerInfo(string id, string name, int serverId, int level, string zoneId, RoleMaster roleMaster, _System.Collections.Generic.List<Item> items)
+            public PlayerInfo(string id, string name, int gameId, int level, string zoneId, RoleMaster roleMaster, _System.Collections.Generic.List<Item> items)
             {
                 this.id = id;
                 this.name = name;
-                this.serverId = serverId;
+                this.gameId = gameId;
                 this.level = level;
                 this.zoneId = zoneId;
                 this.roleMaster = roleMaster;
@@ -302,7 +302,7 @@ namespace FootStone
                 IceInternal.HashUtil.hashAdd(ref h_, "::FootStone::GrainInterfaces::PlayerInfo");
                 IceInternal.HashUtil.hashAdd(ref h_, id);
                 IceInternal.HashUtil.hashAdd(ref h_, name);
-                IceInternal.HashUtil.hashAdd(ref h_, serverId);
+                IceInternal.HashUtil.hashAdd(ref h_, gameId);
                 IceInternal.HashUtil.hashAdd(ref h_, level);
                 IceInternal.HashUtil.hashAdd(ref h_, zoneId);
                 IceInternal.HashUtil.hashAdd(ref h_, roleMaster);
@@ -354,7 +354,7 @@ namespace FootStone
                         return false;
                     }
                 }
-                if(!this.serverId.Equals(o.serverId))
+                if(!this.gameId.Equals(o.gameId))
                 {
                     return false;
                 }
@@ -422,7 +422,7 @@ namespace FootStone
             {
                 ostr.writeString(this.id);
                 ostr.writeString(this.name);
-                ostr.writeInt(this.serverId);
+                ostr.writeInt(this.gameId);
                 ostr.writeInt(this.level);
                 ostr.writeString(this.zoneId);
                 this.roleMaster.ice_writeMembers(ostr);
@@ -434,7 +434,7 @@ namespace FootStone
             {
                 this.id = istr.readString();
                 this.name = istr.readString();
-                this.serverId = istr.readInt();
+                this.gameId = istr.readInt();
                 this.level = istr.readInt();
                 this.zoneId = istr.readString();
                 this.roleMaster.ice_readMembers(istr);

@@ -13,8 +13,8 @@
     <node name="node1">
 
       <server id="SimpleServer" exe="dotnet" activation="on-demand">
-        <option>FootStone.Core.GameServer.dll</option>
-        <adapter name="Player" endpoints="tcp -h 192.168.3.28">
+        <option>FootStone.GameServer.dll</option>
+        <adapter name="Player" endpoints="tcp -h 192.168.0.128">
           <object identity="player" type="::FootStone::GrainInterfaces::Player" property="Identity"/>
         </adapter>
 

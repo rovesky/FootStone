@@ -2,7 +2,7 @@
 # The client reads this property to create the reference to the
 # "player" object in the server.
 #
-Player.Proxy=player:tcp -h 192.168.3.28 -p 12000
+Player.Proxy=player:tcp -h 192.168.0.128 -p 12000
 
 #
 # Warn about connection exceptions

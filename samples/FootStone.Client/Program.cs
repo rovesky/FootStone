@@ -135,10 +135,10 @@ namespace FootStone.Core.Client
 
         private static async Task Test(int count)
         {
-            NetworkIce.Instance.Init("192.168.3.28", 4061);
+            NetworkIce.Instance.Init("192.168.0.128", 4061);
             for (int i = 0; i < count; ++i)
             {
-                runTest(i, 1000);
+                runTest(i, 1);
                 await Task.Delay(20);
             }
             Console.Out.WriteLine("all session created:" + count);

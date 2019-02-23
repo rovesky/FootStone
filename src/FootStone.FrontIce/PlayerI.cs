@@ -34,7 +34,11 @@ namespace FootStone.Core.FrontIce
             //}
          
         }
-        
+
+        public void LevelChanged(Guid id, int newLevel)
+        {
+          //  throw new NotImplementedException();
+        }
     }
 
     public class PlayerI : IPlayerDisp_, IServantBase

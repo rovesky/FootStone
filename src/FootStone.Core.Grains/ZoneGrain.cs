@@ -5,7 +5,6 @@ using Orleans.Core;
 using Orleans.Providers;
 using Orleans.Runtime;
 using Orleans.Streams;
-using Pomelo;
 using System;
 using System.Collections.Generic;
 using System.Linq;

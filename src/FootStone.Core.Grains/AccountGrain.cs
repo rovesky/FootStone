@@ -1,5 +1,6 @@
 ﻿using FootStone.Core.GrainInterfaces;
 using FootStone.GrainInterfaces;
+using Newtonsoft.Json;
 using Orleans;
 using Orleans.Providers;
 using System;
@@ -58,9 +59,11 @@ namespace FootStone.Core.Grains
         }
 
 
-        public Task Login(string sessionId,LoginInfo info)
+        public Task Login(string sessionId, LoginInfo info)
         {
-            if(State.account == null)
+            
+         //   var info = JsonConvert.DeserializeObject<LoginInfo>(infoJson);
+            if (State.account == null)
             {
                 throw new AccountException("account is not registered!");
             }
@@ -93,21 +96,21 @@ namespace FootStone.Core.Grains
             return WriteStateAsync();
         }
 
-        public async Task<string> CreatePlayer(string name, int serverId)
+        public async Task<string> CreatePlayer(string name, int gameId)
         {
             var playerId = Guid.NewGuid();
             var playerGrain = GrainFactory.GetGrain<IPlayerGrain>(playerId);
-            await playerGrain.InitPlayer(name, serverId);
+            await playerGrain.InitPlayer(name, gameId);
 
             if(State.players == null)
             {
                 State.players = new Dictionary<int, List<PlayerShortInfo>>();               
             }
-            if (!State.players.ContainsKey(serverId))
+            if (!State.players.ContainsKey(gameId))
             {                
-                State.players.Add(serverId, new List<PlayerShortInfo>());
+                State.players.Add(gameId, new List<PlayerShortInfo>());
             }
-            State.players[serverId].Add(new PlayerShortInfo(playerId.ToString(), name,0,0));
+            State.players[gameId].Add(new PlayerShortInfo(playerId.ToString(), name,0,0));
 
             return playerId.ToString();
         }
@@ -134,5 +137,7 @@ namespace FootStone.Core.Grains
             State.curPlayerId = playerId;
             return Task.CompletedTask;
         }
+
+       
     }
 }

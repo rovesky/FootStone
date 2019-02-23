@@ -21,8 +21,6 @@ namespace FootStone.Core.GrainInterfaces
 
         Task<string> CreatePlayer(string name, int serverId);
 
-
-
         Task SubscribeForAccount(IAccountObserver subscriber);
 
         Task UnsubscribeForAccount(IAccountObserver subscriber);
