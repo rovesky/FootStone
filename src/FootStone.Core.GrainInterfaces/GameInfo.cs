@@ -9,6 +9,7 @@ namespace FootStone.Core.GrainInterfaces
         public long id;
         public string name;
         public bool enabled;
+     
 
         public GameInfo(long id)
         {

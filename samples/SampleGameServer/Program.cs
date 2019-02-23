@@ -144,8 +144,10 @@ namespace FootStone.Core.GameServer
         static async Task RunAsync(ISiloHost silo, IClusterClient client)
         {
             await silo.StartAsync();
-         //   await client.Connect();
-            
+            //   await client.Connect();
+
+            IWorldGrain world = Global.OrleansClient.GetGrain<IWorldGrain>("1");
+            await world.Init(System.Environment.CurrentDirectory);
 
             //Console.WriteLine("Map file name is '{0}'.", mapFileName);
             //Console.WriteLine("Setting up Adventure, please wait ...");

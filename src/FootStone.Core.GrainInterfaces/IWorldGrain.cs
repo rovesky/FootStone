@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace FootStone.Core.GrainInterfaces
 {
-    public interface IGameManagerGrain : IGrainWithStringKey
+    public interface IWorldGrain : IGrainWithStringKey
     {
-       
+
+        Task Init(string configRoot);
 
       
     }

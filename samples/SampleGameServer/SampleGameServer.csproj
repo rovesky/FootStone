@@ -32,6 +32,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\FootStone.Core.Grains\FootStone.Core.Grains.csproj" />
     <ProjectReference Include="..\..\src\FootStone.FrontIce\FootStone.FrontIce.csproj" />
+    <ProjectReference Include="..\SampleGrainInterfaces\SampleGrainInterfaces.csproj" />
   </ItemGroup>
 
   <ItemGroup>

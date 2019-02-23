@@ -1,10 +1,13 @@
+using FootStone.Core;
 using FootStone.Core.GrainInterfaces;
 using FootStone.GrainInterfaces;
+using Newtonsoft.Json;
 using Orleans;
 using Orleans.Providers;
 using Orleans.Runtime;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,7 +15,7 @@ using System.Threading.Tasks;
 namespace FootStone.Grains
 {
 
-    public class WorldGrain : Grain, IGameManagerGrain
+    public class WorldGrain : Grain, IWorldGrain
     {
 
         private List<GameInfo> gameInfos = new List<GameInfo>();
@@ -20,7 +23,7 @@ namespace FootStone.Grains
 
         public override Task OnActivateAsync()
         {
-
+           
             return Task.CompletedTask;
         }
 
@@ -78,6 +81,25 @@ namespace FootStone.Grains
         public Task UpdateGameInfo(GameInfo info)
         {
             return Task.CompletedTask;
+        }
+
+        public async Task Init(string configRoot)
+        {
+            using (var jsonStream = new JsonTextReader(File.OpenText($"{configRoot}\\Games.json")))
+            {
+                var deserializer = new JsonSerializer();
+                var gameConfigs = deserializer.Deserialize<List<GameConfig>>(jsonStream);
+
+                foreach (var config in gameConfigs)
+                {
+                    var gameInfo = new GameInfo(config.id);
+                    gameInfo.name = config.name;
+                  
+                    await AddGame(gameInfo);
+                }
+            }        
+            
+
         }
     }
   
