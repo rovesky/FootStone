@@ -19,12 +19,15 @@ namespace FootStone.Core
 
         public override  Task OnActivateAsync()
         {
+            AddComponent(CreateGameComponent());
             AddComponent(new PlayerManagerComponent(this));
-            AddComponent(new GameManagerComponent(this));
 
             return base.OnActivateAsync();
-        }       
+        }
 
+
+        protected abstract IComponent CreateGameComponent();
+        
 
     }
 }

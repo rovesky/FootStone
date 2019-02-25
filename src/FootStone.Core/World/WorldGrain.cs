@@ -30,7 +30,7 @@ namespace FootStone.Grains
                
             }
         }
-        private List<GameInfo> gameInfos = new List<GameInfo>();
+        private List<GameState> gameInfos = new List<GameState>();
 
 
         public override async Task OnActivateAsync()
@@ -55,7 +55,7 @@ namespace FootStone.Grains
 
 
 
-        public async Task AddGame(GameInfo gameInfo)
+        public async Task AddGame(GameState gameInfo)
         {
             gameInfos.Add(gameInfo);
             if (gameInfo.enabled)
@@ -65,7 +65,7 @@ namespace FootStone.Grains
         }
 
 
-        public Task<List<GameInfo>> GetGameInfoList()
+        public Task<List<GameState>> GetGameInfoList()
         {
             return Task.FromResult(gameInfos);
         }
@@ -87,7 +87,7 @@ namespace FootStone.Grains
         public async Task DisableAllGames()
         {
 
-            foreach (GameInfo gameInfo in gameInfos)
+            foreach (GameState gameInfo in gameInfos)
             {
                 if (gameInfo.enabled)
                 {
@@ -97,7 +97,7 @@ namespace FootStone.Grains
             }
         }
 
-        public Task UpdateGameInfo(GameInfo info)
+        public Task UpdateGameInfo(GameState info)
         {
             return Task.CompletedTask;
         }
@@ -113,7 +113,7 @@ namespace FootStone.Grains
 
                 foreach (var config in gameConfigs)
                 {
-                    var gameInfo = new GameInfo(config.id);
+                    var gameInfo = new GameState(config.id);
                     gameInfo.name = config.name;
                   
                     await AddGame(gameInfo);

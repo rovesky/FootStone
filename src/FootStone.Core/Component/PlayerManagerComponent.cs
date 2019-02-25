@@ -10,7 +10,7 @@ namespace FootStone.Core
 {
     public class PlayerManagerComponent : ComponentBase,IPlayerManager,IPlayerObserver
     {
-        private Dictionary<Guid, GamePlayerInfo> players = new Dictionary<Guid, GamePlayerInfo>();
+        private Dictionary<Guid, GamePlayerState> players = new Dictionary<Guid, GamePlayerState>();
 
         public PlayerManagerComponent(FootStoneGrain grain):
             base(grain)
@@ -43,7 +43,7 @@ namespace FootStone.Core
             Console.WriteLine($"{info.name} new level {info.level}");
         }
 
-        public async Task PlayerEnter(GamePlayerInfo info)
+        public async Task PlayerEnter(GamePlayerState info)
         {
             Guid id = Guid.Parse(info.id);
 
@@ -63,7 +63,7 @@ namespace FootStone.Core
             players.Remove(playerId);
         }
 
-        public Task<List<GamePlayerInfo>> GetOnlinePlayersByLevel(int level)
+        public Task<List<GamePlayerState>> GetOnlinePlayersByLevel(int level)
         {
             throw new NotImplementedException();
         }

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace FootStone.Core.GrainInterfaces
 {
-    public class GamePlayerInfo
+    public class GamePlayerState
     {
         public string id;
         public string name;

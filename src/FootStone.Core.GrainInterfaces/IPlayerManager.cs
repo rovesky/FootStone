@@ -8,10 +8,10 @@ namespace FootStone.Core.GrainInterfaces
 {
     public interface IPlayerManager
     {        
-        Task PlayerEnter(GamePlayerInfo info);
+        Task PlayerEnter(GamePlayerState state);
 
         Task PlayerLeave(Guid playerId);
 
-        Task<List<GamePlayerInfo>> GetOnlinePlayersByLevel(int level);
+        Task<List<GamePlayerState>> GetOnlinePlayersByLevel(int level);
     }
 }

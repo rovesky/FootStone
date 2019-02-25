@@ -160,7 +160,7 @@ namespace FootStone.Core.GameServer
             ISampleGameGrain game = Global.OrleansClient.GetGrain<ISampleGameGrain>(1);
             await game.PlayerLeave(Guid.NewGuid());
 
-            var info = await game.GetGameInfo();
+            var info = await game.GetGameState();
 
             await game.SampleBattleBegin();
 

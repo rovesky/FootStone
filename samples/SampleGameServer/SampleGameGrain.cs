@@ -11,11 +11,14 @@ namespace SampleGameServer
 {
     public class SampleGameGrain : GameGrain,ISampleGameGrain
     {
+       
 
         public override Task OnActivateAsync()
-        {
+        {          
+            var ret =  base.OnActivateAsync();
+
             AddComponent(new SampleBattleComponent(this));
-            return base.OnActivateAsync();
+            return ret;
         }
 
         public override Task OnDeactivateAsync()
@@ -31,6 +34,21 @@ namespace SampleGameServer
         public Task SampleBattleEnd()
         {
             return FindComponent<ISampleBattle>().SampleBattleEnd();
+        }
+
+        protected override IComponent CreateGameComponent()
+        {
+            return new GameComponent<SampleGameState>(this,new SampleGameState(1));
+        }
+    }
+
+    internal class SampleGameState : GameState
+    {
+        public string sampleName;
+
+        public SampleGameState(long id) :base(id)
+        {
+            
         }
     }
 }

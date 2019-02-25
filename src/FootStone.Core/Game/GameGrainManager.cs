@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 namespace FootStone.Core
 {
 
-    public abstract partial class GameGrain : FootStoneGrain, IGameManager
+    public abstract partial class GameGrain : FootStoneGrain, IGameGrain 
     {      
 
         public Task DisableGame() 
@@ -26,9 +26,9 @@ namespace FootStone.Core
             return FindComponent<IGameManager>().EanbleGame();
         }
 
-        public Task<GameInfo> GetGameInfo()
+        public Task<GameState> GetGameState()
         {
-            return FindComponent<IGameManager>().GetGameInfo();
+            return FindComponent<IGameManager>().GetGameState();
         }
 
 

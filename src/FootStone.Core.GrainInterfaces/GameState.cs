@@ -4,14 +4,14 @@ using System.Text;
 
 namespace FootStone.Core.GrainInterfaces
 {
-    public class GameInfo
+    public class GameState
     {
         public long id;
         public string name;
         public bool enabled;
      
 
-        public GameInfo(long id)
+        public GameState(long id)
         {
             this.id = id;
         }

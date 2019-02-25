@@ -11,9 +11,6 @@ namespace FootStone.Core
     {
         private Dictionary<Type, IComponent> components = new Dictionary<Type, IComponent>();
 
-
-        private Dictionary<MethodInfo, IComponent> components1 = new Dictionary<MethodInfo, IComponent>();
-
         public new IGrainFactory GrainFactory
         {
             get
@@ -29,7 +26,7 @@ namespace FootStone.Core
             await base.OnActivateAsync();
         }
 
-        protected async Task InitAllComponent()
+        private async Task InitAllComponent()
         {
             foreach(var com in components.Values)
             {
@@ -47,11 +44,22 @@ namespace FootStone.Core
             }
         }
 
+        protected void RemoveComponent(IComponent component)
+        {
+            Type type = component.GetType();
+            foreach (var typeI in type.GetInterfaces())
+            {
+                if (components.ContainsKey(typeI))
+                    components.Remove(typeI);
+            }
+        }
+
         protected T FindComponent<T>()
         {
             return (T)components[typeof(T)];
         }
 
+      
 
         public async Task Invoke(IIncomingGrainCallContext context)
         {

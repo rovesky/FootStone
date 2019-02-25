@@ -8,19 +8,22 @@ using System.Threading.Tasks;
 
 namespace FootStone.Core
 {
-    public class GameManagerComponent : ComponentBase,IGameManager
-    {
-        private GameInfo gameInfo;
+    public class GameComponent<TState> :
+        ComponentBase,
+        IGameManager
+        where TState:GameState
 
-        public GameManagerComponent(FootStoneGrain grain):
+    {
+        private TState gameState;
+
+        public GameComponent(FootStoneGrain grain, TState state):
             base(grain)
         {
-           
+            this.gameState = state;
         }
 
         public override Task Init()
-        {
-            gameInfo = new GameInfo(1);
+        {           
             return Task.CompletedTask;
         }
 
@@ -43,9 +46,9 @@ namespace FootStone.Core
 
       
 
-        public Task<GameInfo> GetGameInfo()
+        public Task<GameState> GetGameState()
         {
-            return Task.FromResult(gameInfo);
+            return Task.FromResult((GameState)gameState);
         }
 
      

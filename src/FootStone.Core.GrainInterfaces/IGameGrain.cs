@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 
 namespace FootStone.Core.GrainInterfaces
 {
-    public interface IGameGrain :       IGrainWithIntegerKey,
+    public interface IGameGrain : 
+        IGameManager,
         IPlayerManager,
-        IGameManager
+        IGrainWithIntegerKey     
+
     { 
 
       

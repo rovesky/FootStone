@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace FootStone.Core.GrainInterfaces
 {
-    public interface IGameManager
+    public interface IGameManager 
     {
-        Task<GameInfo> GetGameInfo();
+        Task<GameState> GetGameState();
         Task EanbleGame();
         Task DisableGame();
     }

@@ -101,7 +101,7 @@ namespace FootStone.Core
 
             IGameGrain gameGrain = this.GrainFactory.GetGrain<IGameGrain>(gameId);
 
-            var gamePlayerInfo = new GamePlayerInfo();
+            var gamePlayerInfo = new GamePlayerState();
             gamePlayerInfo.id = this.State.id;
             gamePlayerInfo.name = this.State.name;
             gamePlayerInfo.level = this.State.level;

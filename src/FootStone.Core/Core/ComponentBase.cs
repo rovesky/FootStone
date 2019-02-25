@@ -7,6 +7,9 @@ namespace FootStone.Core
 {
     public abstract class ComponentBase : IComponent
     {
+        protected FootStoneGrain Grain { get; }
+
+
         protected ComponentBase(FootStoneGrain grain)
         {
             Grain = grain;
@@ -15,6 +18,6 @@ namespace FootStone.Core
         public abstract Task Fini();
         public abstract Task Init();
 
-        protected FootStoneGrain Grain { get; }
+      
     }
 }

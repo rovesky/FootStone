@@ -16,7 +16,7 @@ namespace FootStone.Core
     public abstract partial class GameGrain : FootStoneGrain, IPlayerManager, IPlayerObserver
     {
 
-        public Task PlayerEnter(GamePlayerInfo info)
+        public Task PlayerEnter(GamePlayerState info)
         {
             return FindComponent<IPlayerManager>().PlayerEnter(info);
         }
@@ -26,7 +26,7 @@ namespace FootStone.Core
             return FindComponent<IPlayerManager>().PlayerLeave(playerId);
         }
 
-        public Task<List<GamePlayerInfo>> GetOnlinePlayersByLevel(int level)
+        public Task<List<GamePlayerState>> GetOnlinePlayersByLevel(int level)
         {
             return FindComponent<IPlayerManager>().GetOnlinePlayersByLevel(level);          
         }
