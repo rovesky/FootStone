@@ -5,9 +5,6 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{DE744EFF-2381-42CE-BD81-FE1A47284CD3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{1063D54A-B4A7-4237-BA0A-7C4C05309FD5}"
-	ProjectSection(SolutionItems) = preProject
-		src\FootStone.Core.Grains\FootStone.Core.Grains.csproj = src\FootStone.Core.Grains\FootStone.Core.Grains.csproj
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{5FF603E1-E0F7-47C6-AE6B-361655BED863}"
 EndProject

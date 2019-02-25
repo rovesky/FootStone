@@ -7,7 +7,7 @@ using FootStone.GrainInterfaces;
 using Orleans;
 using Orleans.Providers;
 
-namespace FootStone.Grains
+namespace FootStone.Core
 {
 
     public partial class PlayerGrain : Grain<PlayerInfo>, IRoleMasterGrain

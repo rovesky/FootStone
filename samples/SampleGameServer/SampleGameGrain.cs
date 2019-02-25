@@ -1,5 +1,5 @@
 ﻿using FootStone.Core.GrainInterfaces;
-using FootStone.Grains;
+using FootStone.Core;
 using Orleans;
 using SampleGrainInterfaces;
 using System;

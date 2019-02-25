@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 
-namespace FootStone.Core.Grains
+namespace FootStone.Core
 {
     public class ChannelManager
     {
