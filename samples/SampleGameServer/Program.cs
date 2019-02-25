@@ -8,6 +8,7 @@ using Orleans;
 using Orleans.Configuration;
 using Orleans.Hosting;
 using Orleans.Runtime;
+using SampleGrainInterfaces;
 using System;
 using System.IO;
 using System.Net;
@@ -47,7 +48,13 @@ namespace FootStone.Core.GameServer
         static int Main(string[] args)
         {
             try
-            {             
+            {
+                PlayerManagerComponent v = new PlayerManagerComponent(null);
+                Type type = v.GetType();
+                Console.WriteLine(type.Name);
+
+
+
                 Global.MainArgs = args;
 
                 var silo = new SiloHostBuilder()
@@ -125,7 +132,9 @@ namespace FootStone.Core.GameServer
                 //        })
                 //        .Build();
                 var client = silo.Services.GetRequiredService<IClusterClient>();
-                Global.OrleansClient = client;               
+                FootStone.Core.Global.OrleansClient = client;
+                FootStone.Core.FrontIce.Global.OrleansClient = client;
+
                 RunAsync(silo, client).Wait();
 
                 Console.ReadLine();
@@ -145,6 +154,15 @@ namespace FootStone.Core.GameServer
         {
             await silo.StartAsync();
             //   await client.Connect();
+
+            //ITestGrain test = Global.OrleansClient.GetGrain<ITestGrain>(0);
+            //await test.Test();
+            ISampleGameGrain game = Global.OrleansClient.GetGrain<ISampleGameGrain>(1);
+            await game.PlayerLeave(Guid.NewGuid());
+
+            var info = await game.GetGameInfo();
+
+            await game.SampleBattleBegin();
 
             IWorldGrain world = Global.OrleansClient.GetGrain<IWorldGrain>("1");
             await world.Init(System.Environment.CurrentDirectory);

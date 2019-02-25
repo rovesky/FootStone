@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Text;
+using FootStone.Core.GrainInterfaces;
 
 namespace SampleGrainInterfaces
 {
-    public interface ISampleGameGrain
+    public interface ISampleGameGrain : IGameGrain,ISampleBattle
     {
-        Task SampleBattleBegin();
-
-        Task SampleBattleEnd();
-
     }
 }

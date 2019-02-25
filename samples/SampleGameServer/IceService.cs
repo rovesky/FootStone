@@ -24,7 +24,7 @@ namespace FootStone.Core.GameServer
 
         private int playerCount = 0;
         private List<Guid> zones = new List<Guid>();
-        private bool isEnableIce = true;
+        private bool isEnableIce = false;
         //    private IStreamProvider streamProvider;
 
         public IceService(IServiceProvider services, IGrainIdentity id, Silo silo, ILoggerFactory loggerFactory, IGrainFactory grainFactory) 

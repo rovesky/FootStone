@@ -15,16 +15,35 @@ using System.Threading.Tasks;
 namespace FootStone.Grains
 {
 
-    public class WorldGrain : Grain, IWorldGrain
+    public class WorldGrain : FootStoneGrain, IWorldGrain
     {
 
+        class PlayerObserver : IPlayerObserver
+        {
+            public void HpChanged(int hp)
+            {
+                
+            }
+
+            public void LevelChanged(Guid playerId, int newLevel)
+            {
+               
+            }
+        }
         private List<GameInfo> gameInfos = new List<GameInfo>();
 
 
-        public override Task OnActivateAsync()
+        public override async Task OnActivateAsync()
         {
-           
-            return Task.CompletedTask;
+            //try {
+            //    var obj = await Global.OrleansClient.CreateObjectReference<IPlayerObserver>(new PlayerObserver());
+            //}
+            //catch ( Exception e)
+            //{
+            //    Console.WriteLine(e.StackTrace);
+            //}
+
+            //  return Task.CompletedTask;
         }
 
         public override Task OnDeactivateAsync()
@@ -85,6 +104,8 @@ namespace FootStone.Grains
 
         public async Task Init(string configRoot)
         {
+
+
             using (var jsonStream = new JsonTextReader(File.OpenText($"{configRoot}\\Games.json")))
             {
                 var deserializer = new JsonSerializer();

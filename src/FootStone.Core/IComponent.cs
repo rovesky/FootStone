@@ -1,8 +1,10 @@
-﻿namespace FootStone.Core
+﻿using System.Threading.Tasks;
+
+namespace FootStone.Core
 {
     public interface IComponent
     {
-        //void Fini();
-        //void Init();
+        Task Fini();
+        Task Init();
     }
 }
