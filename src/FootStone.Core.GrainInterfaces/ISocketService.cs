@@ -8,6 +8,6 @@ namespace FootStone.Core.GrainInterfaces
 {
     public interface INettyService : IGrainService
     {
-        Task AddOptionTime(int time);
+       // Task AddOptionTime(int time);
     }
 }

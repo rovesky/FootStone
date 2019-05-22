@@ -43,7 +43,7 @@ namespace FootStone.Core.FrontServer
                 Global.OrleansClient = client;
 
                 var network = new NetworkIce();
-                network.Init(args);
+                network.Init("config");
 
                 RunAsync(client, network).Wait();
 

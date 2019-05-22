@@ -164,7 +164,8 @@ namespace FootStone.Core.Client
             {
                 Console.Out.WriteLine("RegisterRequest fail:" + ex.Message);
             }
-         
+
+            await accountPrx.TestLoginRequestAsync("11", "22", new Sample.SampleLoginData("code1"));
 
             await accountPrx.LoginRequestAsync(new LoginInfo(account, password));
             Console.Out.WriteLine("LoginRequest ok:" + account);

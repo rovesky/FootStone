@@ -39,6 +39,7 @@
     <ProjectReference Include="..\..\src\FootStone.Core\FootStone.Core.csproj" />
     <ProjectReference Include="..\..\src\FootStone.FrontIce\FootStone.FrontIce.csproj" />
     <ProjectReference Include="..\SampleGrainInterfaces\SampleGrainInterfaces.csproj" />
+    <ProjectReference Include="..\SampleProtocol\SampleProtocol.csproj" />
   </ItemGroup>
 
   <ItemGroup>

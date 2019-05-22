@@ -167,6 +167,13 @@ namespace FootStone.Core.FrontIce
             }
         }
 
-      
+        public override Task TestLoginRequestAsync(string account, string pwd, LoginData data, Current current = null)
+        {
+
+            var type = data.GetType();
+
+            Console.WriteLine("TestLoginRequestAsync:" + type.Name);
+            return Task.CompletedTask;
+        }
     }
 }

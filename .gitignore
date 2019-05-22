@@ -37,3 +37,4 @@ output
 /test/TestAOI/bin
 /src/FootStone.Core/bin
 /samples/SampleGrainInterfaces/bin
+/samples/SampleProtocol/bin

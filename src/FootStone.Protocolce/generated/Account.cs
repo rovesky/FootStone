@@ -925,6 +925,62 @@ namespace FootStone
         [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1720")]
         [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1722")]
         [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1724")]
+        [_System.Serializable]
+        public partial class LoginData : Ice.Value
+        {
+            partial void ice_initialize();
+
+            #region Constructors
+
+            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
+            public LoginData()
+            {
+                ice_initialize();
+            }
+
+            #endregion
+
+            private const string _id = "::FootStone::GrainInterfaces::LoginData";
+
+            public static new string ice_staticId()
+            {
+                return _id;
+            }
+            public override string ice_id()
+            {
+                return _id;
+            }
+
+            #region Marshaling support
+
+            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
+            protected override void iceWriteImpl(Ice.OutputStream ostr_)
+            {
+                ostr_.startSlice(ice_staticId(), -1, true);
+                ostr_.endSlice();
+            }
+
+            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
+            protected override void iceReadImpl(Ice.InputStream istr_)
+            {
+                istr_.startSlice();
+                istr_.endSlice();
+            }
+
+            #endregion
+        }
+
+        [_System.Runtime.InteropServices.ComVisible(false)]
+        [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704")]
+        [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707")]
+        [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709")]
+        [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1710")]
+        [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1711")]
+        [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1715")]
+        [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1716")]
+        [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1720")]
+        [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1722")]
+        [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1724")]
         public partial interface Account : Ice.Object, AccountOperations_
         {
         }
@@ -952,6 +1008,9 @@ namespace FootStone
 
         [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
         public delegate void Callback_Account_CreatePlayerRequest(string ret);
+
+        [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
+        public delegate void Callback_Account_TestLoginRequest();
     }
 }
 
@@ -1033,6 +1092,18 @@ namespace FootStone
             Ice.AsyncResult begin_CreatePlayerRequest(string name, int serverId, Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie);
 
             string end_CreatePlayerRequest(Ice.AsyncResult asyncResult);
+
+            void TestLoginRequest(string account, string pwd, LoginData data, Ice.OptionalContext context = new Ice.OptionalContext());
+
+            _System.Threading.Tasks.Task TestLoginRequestAsync(string account, string pwd, LoginData data, Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken());
+
+            Ice.AsyncResult<Callback_Account_TestLoginRequest> begin_TestLoginRequest(string account, string pwd, LoginData data, Ice.OptionalContext context = new Ice.OptionalContext());
+
+            Ice.AsyncResult begin_TestLoginRequest(string account, string pwd, LoginData data, Ice.AsyncCallback callback, object cookie);
+
+            Ice.AsyncResult begin_TestLoginRequest(string account, string pwd, LoginData data, Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie);
+
+            void end_TestLoginRequest(Ice.AsyncResult asyncResult);
         }
     }
 }
@@ -1061,6 +1132,9 @@ namespace FootStone
 
             [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
             _System.Threading.Tasks.Task<string> CreatePlayerRequestAsync(string name, int serverId, Ice.Current current = null);
+
+            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
+            _System.Threading.Tasks.Task TestLoginRequestAsync(string account, string pwd, LoginData data, Ice.Current current = null);
         }
     }
 }
@@ -1221,6 +1295,18 @@ namespace FootStone
                 try
                 {
                     _iceI_SelectPlayerRequestAsync(playerId, context, null, _System.Threading.CancellationToken.None, true).Wait();
+                }
+                catch(_System.AggregateException ex_)
+                {
+                    throw ex_.InnerException;
+                }
+            }
+
+            public void TestLoginRequest(string account, string pwd, LoginData data, Ice.OptionalContext context = new Ice.OptionalContext())
+            {
+                try
+                {
+                    _iceI_TestLoginRequestAsync(account, pwd, data, context, null, _System.Threading.CancellationToken.None, true).Wait();
                 }
                 catch(_System.AggregateException ex_)
                 {
@@ -1511,6 +1597,53 @@ namespace FootStone
                     });
             }
 
+            public _System.Threading.Tasks.Task TestLoginRequestAsync(string account, string pwd, LoginData data, Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken())
+            {
+                return _iceI_TestLoginRequestAsync(account, pwd, data, context, progress, cancel, false);
+            }
+
+            private _System.Threading.Tasks.Task _iceI_TestLoginRequestAsync(string iceP_account, string iceP_pwd, LoginData iceP_data, Ice.OptionalContext context, _System.IProgress<bool> progress, _System.Threading.CancellationToken cancel, bool synchronous)
+            {
+                iceCheckTwowayOnly(_TestLoginRequest_name);
+                var completed = new IceInternal.OperationTaskCompletionCallback<object>(progress, cancel);
+                _iceI_TestLoginRequest(iceP_account, iceP_pwd, iceP_data, context, synchronous, completed);
+                return completed.Task;
+            }
+
+            private const string _TestLoginRequest_name = "TestLoginRequest";
+
+            private void _iceI_TestLoginRequest(string iceP_account, string iceP_pwd, LoginData iceP_data, _System.Collections.Generic.Dictionary<string, string> context, bool synchronous, IceInternal.OutgoingAsyncCompletionCallback completed)
+            {
+                var outAsync = getOutgoingAsync<object>(completed);
+                outAsync.invoke(
+                    _TestLoginRequest_name,
+                    Ice.OperationMode.Normal,
+                    Ice.FormatType.DefaultFormat,
+                    context,
+                    synchronous,
+                    write: (Ice.OutputStream ostr) =>
+                    {
+                        ostr.writeString(iceP_account);
+                        ostr.writeString(iceP_pwd);
+                        ostr.writeValue(iceP_data);
+                        ostr.writePendingValues();
+                    },
+                    userException: (Ice.UserException ex) =>
+                    {
+                        try
+                        {
+                            throw ex;
+                        }
+                        catch(AccountException)
+                        {
+                            throw;
+                        }
+                        catch(Ice.UserException)
+                        {
+                        }
+                    });
+            }
+
             #endregion
 
             #region Asynchronous operations
@@ -1740,6 +1873,43 @@ namespace FootStone
                 return completed;
             }
 
+            public Ice.AsyncResult<Callback_Account_TestLoginRequest> begin_TestLoginRequest(string account, string pwd, LoginData data, Ice.OptionalContext context = new Ice.OptionalContext())
+            {
+                return begin_TestLoginRequest(account, pwd, data, context, null, null, false);
+            }
+
+            public Ice.AsyncResult begin_TestLoginRequest(string account, string pwd, LoginData data, Ice.AsyncCallback callback, object cookie)
+            {
+                return begin_TestLoginRequest(account, pwd, data, new Ice.OptionalContext(), callback, cookie, false);
+            }
+
+            public Ice.AsyncResult begin_TestLoginRequest(string account, string pwd, LoginData data, Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie)
+            {
+                return begin_TestLoginRequest(account, pwd, data, context, callback, cookie, false);
+            }
+
+            public void end_TestLoginRequest(Ice.AsyncResult asyncResult)
+            {
+                var resultI_ = IceInternal.AsyncResultI.check(asyncResult, this, _TestLoginRequest_name);
+                ((IceInternal.OutgoingAsyncT<object>)resultI_.OutgoingAsync).getResult(resultI_.wait());
+            }
+
+            private Ice.AsyncResult<Callback_Account_TestLoginRequest> begin_TestLoginRequest(string iceP_account, string iceP_pwd, LoginData iceP_data, _System.Collections.Generic.Dictionary<string, string> context, Ice.AsyncCallback completedCallback, object cookie, bool synchronous)
+            {
+                iceCheckAsyncTwowayOnly(_TestLoginRequest_name);
+                var completed = new IceInternal.OperationAsyncResultCompletionCallback<Callback_Account_TestLoginRequest, object>(
+                    (Callback_Account_TestLoginRequest cb, object ret) =>
+                    {
+                        if(cb != null)
+                        {
+                            cb.Invoke();
+                        }
+                    },
+                    this, _TestLoginRequest_name, cookie, completedCallback);
+                _iceI_TestLoginRequest(iceP_account, iceP_pwd, iceP_data, context, synchronous, completed);
+                return completed;
+            }
+
             #endregion
 
             #region Checked and unchecked cast operations
@@ -1907,6 +2077,8 @@ namespace FootStone
 
             public abstract _System.Threading.Tasks.Task<string> CreatePlayerRequestAsync(string name, int serverId, Ice.Current current = null);
 
+            public abstract _System.Threading.Tasks.Task TestLoginRequestAsync(string account, string pwd, LoginData data, Ice.Current current = null);
+
             #endregion
 
             #region Slice type-related members
@@ -2026,6 +2198,24 @@ namespace FootStone
                     });
             }
 
+            [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011")]
+            public static _System.Threading.Tasks.Task<Ice.OutputStream>
+            iceD_TestLoginRequest(Account obj, IceInternal.Incoming inS, Ice.Current current)
+            {
+                Ice.ObjectImpl.iceCheckMode(Ice.OperationMode.Normal, current.mode);
+                var istr = inS.startReadParams();
+                string iceP_account;
+                string iceP_pwd;
+                LoginData iceP_data;
+                iceP_data = null;
+                iceP_account = istr.readString();
+                iceP_pwd = istr.readString();
+                istr.readValue((LoginData v) => {iceP_data = v; });
+                istr.readPendingValues();
+                inS.endReadParams();
+                return inS.setResultTask(obj.TestLoginRequestAsync(iceP_account, iceP_pwd, iceP_data, current));
+            }
+
             private static readonly string[] _all =
             {
                 "CreatePlayerRequest",
@@ -2034,6 +2224,7 @@ namespace FootStone
                 "LoginRequest",
                 "RegisterRequest",
                 "SelectPlayerRequest",
+                "TestLoginRequest",
                 "ice_id",
                 "ice_ids",
                 "ice_isA",
@@ -2077,17 +2268,21 @@ namespace FootStone
                     }
                     case 6:
                     {
-                        return Ice.ObjectImpl.iceD_ice_id(this, inS, current);
+                        return iceD_TestLoginRequest(this, inS, current);
                     }
                     case 7:
                     {
-                        return Ice.ObjectImpl.iceD_ice_ids(this, inS, current);
+                        return Ice.ObjectImpl.iceD_ice_id(this, inS, current);
                     }
                     case 8:
                     {
-                        return Ice.ObjectImpl.iceD_ice_isA(this, inS, current);
+                        return Ice.ObjectImpl.iceD_ice_ids(this, inS, current);
                     }
                     case 9:
+                    {
+                        return Ice.ObjectImpl.iceD_ice_isA(this, inS, current);
+                    }
+                    case 10:
                     {
                         return Ice.ObjectImpl.iceD_ice_ping(this, inS, current);
                     }

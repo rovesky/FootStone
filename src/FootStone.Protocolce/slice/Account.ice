@@ -44,7 +44,12 @@ module FootStone
 			int    gender;
 			int    modelId;
 		}
+
 		["clr:generic:List"]sequence<PlayerShortInfo> PlayerList;
+
+		class LoginData
+		{
+		}
 
 		interface Account
 		{
@@ -60,6 +65,8 @@ module FootStone
 	  	  ["amd"] void SelectPlayerRequest(string playerId) throws AccountException;		
 		
 	      ["amd"] string CreatePlayerRequest(string name,int serverId) throws AccountException;
+
+		  ["amd"] void TestLoginRequest(string account,string pwd,LoginData data) throws AccountException;
 
 		}
     

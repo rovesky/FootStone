@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FootStone.Core.GrainInterfaces\FootStone.Core.GrainInterfaces.csproj" />
+    <ProjectReference Include="..\FootStone.Core\FootStone.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>

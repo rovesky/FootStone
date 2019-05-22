@@ -17,8 +17,7 @@ namespace FootStone.Core
         {
            
         }
-
-    
+        
 
         public override async Task Init()
         {

@@ -1,0 +1,34 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemDefinitionGroup Label="IceBuilder">
+    <SliceCompile>
+      <OutputDir>$(MSBuildProjectDirectory)\generated</OutputDir>
+      <IncludeDirectories>D:\work\footstone\FootStone\src\FootStone.Protocolce\slice</IncludeDirectories>
+      <AdditionalOptions></AdditionalOptions>
+    </SliceCompile>
+  </ItemDefinitionGroup>
+
+  <ItemGroup>
+    <Compile Update="generated\SampleAccount.cs">
+      <SliceCompileSource>slice\SampleAccount.ice</SliceCompileSource>
+    </Compile>  
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="generated\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="zeroc.ice.net" Version="3.7.1" />
+    <PackageReference Include="zeroc.icebuilder.msbuild" Version="5.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\FootStone.Protocolce\FootStone.ProtocolIce.csproj" />
+  </ItemGroup>
+
+</Project>

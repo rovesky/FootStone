@@ -6,10 +6,6 @@ using System.Threading.Tasks;
 
 namespace FootStone.Core.GrainInterfaces
 {
-    public interface IIceService : IGrainService
-    {
-        Task AddOptionTime(int time);
-
-        Task<Guid> GetZone(Guid playerId);
+    public interface IIceService : IGrainService { 
     }
 }

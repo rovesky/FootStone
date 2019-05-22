@@ -18,12 +18,12 @@ namespace FootStone.Core
         private ObserverSubscriptionManager<IPlayerObserver> subscribers;
         private IZoneGrain zoneGrain;
         private bool isOnline;
-        readonly IIceServiceClient IceServiceClient;
+     //   readonly IIceServiceClient IceServiceClient;
 
-        public PlayerGrain(IGrainActivationContext grainActivationContext, IIceServiceClient iceServiceClient)
+        public PlayerGrain(IGrainActivationContext grainActivationContext)
         {
-      
-            IceServiceClient = iceServiceClient;
+
+          //  IceServiceClient = iceServiceClient;
         }
 
         public override Task OnActivateAsync()
@@ -89,7 +89,7 @@ namespace FootStone.Core
             this.State.name = name;
             this.State.gameId = gameId;
 
-            this.State.zoneId = (await IceServiceClient.GetZone(this.GetPrimaryKey())).ToString();
+         //   this.State.zoneId = (await IceServiceClient.GetZone(this.GetPrimaryKey())).ToString();
             this.State.items = new List<Item>();
             this.State.items.Add(new Item("1", "item1", 1));
             this.State.items.Add(new Item("2", "item2", 2));

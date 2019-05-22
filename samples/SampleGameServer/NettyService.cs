@@ -7,9 +7,12 @@ using DotNetty.Transport.Channels.Sockets;
 using FootStone.Core.GrainInterfaces;
 using FootStone.Core.Grains;
 using FootStone.Protocol;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Orleans;
 using Orleans.Concurrency;
+using Orleans.Configuration;
 using Orleans.Core;
 using Orleans.Runtime;
 using Orleans.Streams;
@@ -20,7 +23,7 @@ using System.Threading.Tasks;
 namespace FootStone.Core.GameServer
 {
     [Reentrant]
-    public class NettyService : GrainService,INettyServiceClient
+    public class NettyService : GrainService,INettyService
     {
         readonly IGrainFactory GrainFactory;
 
@@ -37,6 +40,8 @@ namespace FootStone.Core.GameServer
             GrainFactory = grainFactory;
         }
 
+        public NettyOptions options { get; private set; }
+
         public Task AddOptionTime(int time)
         {
           //  operationTimes += time;
@@ -45,14 +50,18 @@ namespace FootStone.Core.GameServer
 
         public override Task Init(IServiceProvider serviceProvider)
         {
-            Console.WriteLine("----------SocketService Init!");
+            Console.WriteLine("----------netty Init!");
 
             ////启动FastStream
             //FastStreamConfig fastStreamConfig = new FastStreamConfig();       
             //fastStreamConfig.host = this.Silo.Endpoint.Address.ToString();
             //fastStreamConfig.port = 20010;
             //FastStream.Instance.Init(fastStreamConfig);
-         
+           // var ret = serviceProvider.GetRequiredService<EndpointOptions>();
+
+            this.options = serviceProvider.GetService<IOptions<NettyOptions>>().Value;
+
+
             return base.Init(serviceProvider);
         }
 
@@ -85,9 +94,9 @@ namespace FootStone.Core.GameServer
 
                 string host = Silo.Endpoint.Address.ToString();
                 boundChannel = await bootstrap.BindAsync(
-                    // host,
-                     8007);
-                Console.Out.WriteLine("netty started!");
+                     // host,
+                     options.Port);
+                Console.Out.WriteLine("netty started:"+ options.Port);
             }
             catch(Exception ex)
             {
@@ -104,7 +113,7 @@ namespace FootStone.Core.GameServer
 
         public async override Task Stop()
         {
-           
+            Console.Out.WriteLine("netty stopped!");
             await boundChannel.CloseAsync();
             await Task.WhenAll(
                  bossGroup.ShutdownGracefullyAsync(TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(1)),
