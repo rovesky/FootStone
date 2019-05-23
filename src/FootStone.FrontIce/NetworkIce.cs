@@ -12,8 +12,7 @@ namespace FootStone.Core.FrontIce
         {
 
         }
-
-     
+             
         private Ice.Communicator communicator;
 
         public void Init(string configFile)
@@ -22,29 +21,19 @@ namespace FootStone.Core.FrontIce
             {
                 communicator = Ice.Util.initialize(configFile);
 
-                //if (communicator ==)
-                //{
-                //    Console.Error.WriteLine("too many arguments:" + args);
+                var adapter = communicator.createObjectAdapter("SessionFactory");
+                var properties = communicator.getProperties();
+                var id = Ice.Util.stringToIdentity(properties.getProperty("Identity"));
+                var serverName = properties.getProperty("Ice.ProgramName");
+                adapter.add(new SessionFactoryI(serverName), id);
 
-                //}
-                //else
-                //{
-                    var adapter = communicator.createObjectAdapter("SessionFactory");
-                    var properties = communicator.getProperties();
-                    var id = Ice.Util.stringToIdentity(properties.getProperty("Identity"));
-                    var serverName = properties.getProperty("Ice.ProgramName");
-                    adapter.add(new  SessionFactoryI(serverName), id);               
-
-                    adapter.activate();
-                    Console.WriteLine("ice inited!");
-               // }
-
+                adapter.activate();
+                Console.WriteLine("ice inited!");
             }
             catch (Exception ex)
             {
                 Console.WriteLine("ice init failed!");
                 Console.Error.WriteLine(ex);
-
             }
         }
 

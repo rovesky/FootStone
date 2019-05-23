@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputPath>..\..\output</OutputPath>
+  </PropertyGroup>
+
+  <ItemGroup> 
+    <ProjectReference Include="..\FootStone.Core\FootStone.Core.csproj" />
+    <ProjectReference Include="..\FootStone.GrainInterfaces\FootStone.GrainInterfaces.csproj" />
+  </ItemGroup>
+
+</Project>

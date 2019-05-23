@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FootStone.Core.GrainInterfaces\FootStone.Core.GrainInterfaces.csproj" />
+    <ProjectReference Include="..\FootStone.GrainInterfaces\FootStone.GrainInterfaces.csproj" />
     <ProjectReference Include="..\FootStone.Core\FootStone.Core.csproj" />
   </ItemGroup>
 

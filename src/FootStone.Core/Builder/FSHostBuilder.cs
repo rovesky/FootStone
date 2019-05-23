@@ -7,7 +7,7 @@ namespace FootStone.Core
 {
     public class FSHostBuilder : IFSHostBuilder
     {
-        private SiloHostBuilder siloHostBuilder = new SiloHostBuilder();
+      //  private SiloHostBuilder siloHostBuilder = new SiloHostBuilder();
         private readonly List<Action<ISiloHostBuilder>> configureSiloConfigActions = new List<Action<ISiloHostBuilder>>();
         private ISiloHost siloHost;
         private bool built = false;
@@ -15,9 +15,7 @@ namespace FootStone.Core
         public FSHostBuilder()
         {
            
-        }    
-
-        
+        }                
 
 
         public IFSHost Build()
@@ -33,7 +31,7 @@ namespace FootStone.Core
 
         private void BuildSiloConfiguration()
         {
-         //   var siloHostBuilder = new SiloHostBuilder();
+            var siloHostBuilder = new SiloHostBuilder();
             foreach (var buildAction in this.configureSiloConfigActions)
             {
                 buildAction(siloHostBuilder);

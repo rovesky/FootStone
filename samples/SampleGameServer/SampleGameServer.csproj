@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -36,8 +36,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\FootStone.Core\FootStone.Core.csproj" />
     <ProjectReference Include="..\..\src\FootStone.FrontIce\FootStone.FrontIce.csproj" />
+    <ProjectReference Include="..\..\src\FootStone.Game\FootStone.Game.csproj" />
     <ProjectReference Include="..\SampleGrainInterfaces\SampleGrainInterfaces.csproj" />
     <ProjectReference Include="..\SampleProtocol\SampleProtocol.csproj" />
   </ItemGroup>

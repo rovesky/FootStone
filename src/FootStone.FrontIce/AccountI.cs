@@ -83,8 +83,7 @@ namespace FootStone.Core.FrontIce
                 throw ex;
             }
         }
-
-     
+            
 
         public async override Task LoginRequestAsync(LoginInfo info, Current current = null)
         {
