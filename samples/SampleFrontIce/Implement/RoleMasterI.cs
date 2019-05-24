@@ -9,11 +9,16 @@ namespace FootStone.Core.FrontIce
 {
     public class RoleMasterI : IRoleMasterDisp_, IServantBase
     {
-        private SessionI sessionI;
+        private SessionI sessionI;     
 
-        public RoleMasterI(SessionI session)
+        public string GetFacet()
         {
-            this.sessionI = session;
+            return "roleMaster";
+        }
+
+        public void setSessionI(SessionI sessionI)
+        {
+            this.sessionI = sessionI;
         }
 
         public void Destroy()

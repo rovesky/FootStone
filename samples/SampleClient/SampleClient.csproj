@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SampleProtocol\SampleProtocol.csproj" />
+    <ProjectReference Include="..\SampleProtocolIce\SampleProtocolIce.csproj" />
   </ItemGroup>
 
   <ItemGroup>

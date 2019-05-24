@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FootStone.Core.GrainInterfaces
+namespace FootStone.GrainInterfaces
 {
     public interface IAccountGrain : IGrainWithStringKey
     {

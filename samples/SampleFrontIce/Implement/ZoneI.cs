@@ -38,12 +38,12 @@ namespace FootStone.Core.FrontIce
         {
 
            
-            if (Global.ZoneMsgCount % 330000 == 0)
-            {
-               Console.Out.WriteLine("zone msg count:" + Global.ZoneMsgCount);
-            }
+            //if (Global.ZoneMsgCount % 330000 == 0)
+            //{
+            //   Console.Out.WriteLine("zone msg count:" + Global.ZoneMsgCount);
+            //}
             //  count++;
-            Global.ZoneMsgCount++;
+         //   Global.ZoneMsgCount++;
 
            
             //Console.Out.WriteLine(" receive bytes:" + item.Length);
@@ -59,12 +59,18 @@ namespace FootStone.Core.FrontIce
         private StreamSubscriptionHandle<byte[]> zoneStreamHandler;
 
         public object GrainFactory { get; private set; }
+              
 
-        public ZoneI(SessionI sessionI)
+
+        public string GetFacet()
+        {
+            return "zone";
+        }
+
+        public void setSessionI(SessionI sessionI)
         {
             this.sessionI = sessionI;
         }
-
         public void Destroy()
         {
         

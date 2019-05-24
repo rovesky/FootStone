@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Games.json">
+    <Content Include="GameData\Games.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
@@ -36,10 +36,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\FootStone.FrontIce\FootStone.FrontIce.csproj" />
     <ProjectReference Include="..\..\src\FootStone.Game\FootStone.Game.csproj" />
-    <ProjectReference Include="..\SampleGrainInterfaces\SampleGrainInterfaces.csproj" />
-    <ProjectReference Include="..\SampleProtocol\SampleProtocol.csproj" />
+    <ProjectReference Include="..\SampleFrontIce\SampleFrontIce.csproj" />
   </ItemGroup>
 
   <ItemGroup>

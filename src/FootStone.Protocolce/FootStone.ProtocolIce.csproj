@@ -24,9 +24,6 @@
     <Compile Update="generated\Player.cs">
       <SliceCompileSource>slice\Player.ice</SliceCompileSource>
     </Compile>
-    <Compile Update="generated\RoleMaster.cs">
-      <SliceCompileSource>slice\RoleMaster.ice</SliceCompileSource>
-    </Compile>
     <Compile Update="generated\Session.cs">
       <SliceCompileSource>slice\Session.ice</SliceCompileSource>
     </Compile>
@@ -37,9 +34,5 @@
   </ItemGroup>
 
   <ItemGroup />
-
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="xcopy  /e /y .\bin\Debug\netstandard2.0\FootStone.Protocol.dll  ..\..\..\FootStoneUnity\Assets\Plugins\" />
-  </Target>
 
 </Project>

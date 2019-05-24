@@ -106,7 +106,7 @@ namespace FootStone.Grains
         {
 
 
-            using (var jsonStream = new JsonTextReader(File.OpenText($"{configRoot}\\Games.json")))
+            using (var jsonStream = new JsonTextReader(File.OpenText($"{configRoot}\\GameData\\Games.json")))
             {
                 var deserializer = new JsonSerializer();
                 var gameConfigs = deserializer.Deserialize<List<GameConfig>>(jsonStream);

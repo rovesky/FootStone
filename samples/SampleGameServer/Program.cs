@@ -2,9 +2,11 @@ using FootStone.Core.FrontIce;
 using FootStone.Core.GrainInterfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Orleans;
 using Orleans.Configuration;
 using Orleans.Hosting;
+using Orleans.Services;
 using SampleGrainInterfaces;
 using System;
 using System.Net;
@@ -89,18 +91,18 @@ namespace FootStone.Core.GameServer
                         //     options.ConnectionString = mysqlConnectStorage;           
                         //     options.Invariant = "MySql.Data.MySqlClient";
                         // })
-                        //.AddGrainService<IceService>()
-                        //.AddGrainService<NettyService>()
+                        // .AddGrainService<IceService>()
+                        .AddGrainService<NettyService>()
                         .Configure<NettyOptions>(options =>
                         {
                             options.Port = 8007;
                         })
                         // .ConfigureServices(s =>
                         // {
-                        // Register Client of GrainService
-                        //  s.AddSingleton<IIceServiceClient, IceServiceClient>();
-                        //  s.AddSingleton<INettyServiceClient, NettyServiceClient>();
-                        //})
+                        //    // Register Client of GrainService
+                        //     s.AddSingleton<IIceService, IceService>();
+                        ////     s.AddSingleton<INettyServiceClient, NettyServiceClient>();
+                        // })
                         .AddMemoryGrainStorage("PubSubStore")
                         .AddSimpleMessageStreamProvider("Zone", cfg =>
                         {
@@ -108,17 +110,27 @@ namespace FootStone.Core.GameServer
                         })
                         .EnableDirectClient();
                     })
+
                     //Ìí¼ÓIceÖ§³Ö
                     .AddFrontIce(options =>
-                   {
-                       options.ConfigFile = "config";
-                   })
+                    {
+                        options.ConfigFile = "config";
+                    })
+                    .ConfigureSilo(silo =>
+                    {
+                        silo.ConfigureServices(services =>
+                        {
+                            services.AddSingleton<IServantBase, AccountI>();
+                            services.AddSingleton<IServantBase, PlayerI>();
+                            services.AddSingleton<IServantBase, RoleMasterI>();
+                            services.AddSingleton<IServantBase, ZoneI>();
+                        });
+                    })
                     .Build();
 
-                var client = footStone.Services.GetRequiredService<IClusterClient>();
+                Global.FSHost = footStone;
 
-                Global.OrleansClient = client;
-                FrontIce.Global.OrleansClient = client;
+                var iceService = footStone.Services.GetService<IceService>();
 
                 RunAsync(footStone).Wait();
 

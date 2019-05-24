@@ -40,10 +40,10 @@ namespace FootStone.Core.FrontServer
                       })
                       .Build();
 
-                Global.OrleansClient = client;
+              //  Global.OrleansClient = client;
 
                 var network = new NetworkIce();
-                network.Init("config");
+              //  network.Init("config");
 
                 RunAsync(client, network).Wait();
 

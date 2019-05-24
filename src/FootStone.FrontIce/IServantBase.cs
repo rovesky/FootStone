@@ -8,6 +8,10 @@ namespace FootStone.Core.FrontIce
     public interface IServantBase 
     {
         void Destroy();
+
+        string GetFacet();
+
+        void setSessionI(SessionI sessionI);
       
     }
 }

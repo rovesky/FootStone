@@ -81,9 +81,19 @@ namespace FootStone.Core.FrontIce
              attributes.Add(name, value);
         }
 
+        public string GetFacet()
+        {
+            return "session";
+        }
+
+        public void setSessionI(SessionI sessionI)
+        {
+            throw new NotImplementedException();
+        }
+
         public ISessionPushPrx SessionPushPrx { get; private set; }
-        public Guid PlayerId { get; internal set; }
-        public string Account { get; internal set; }
+        public Guid PlayerId { get;  set; }
+        public string Account { get;  set; }
         public string Name { get; }
         private bool _destroy;
         private Dictionary<String, object> attributes = new Dictionary<string, object>();

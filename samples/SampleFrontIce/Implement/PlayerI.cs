@@ -47,11 +47,21 @@ namespace FootStone.Core.FrontIce
         private IPlayerObserver playerObserver;
         private IPlayerObserver playerObserverRef;
 
-        public PlayerI(SessionI session)
+     
+        public PlayerI()
         {
-            this.sessionI = session;           
+           
         }
 
+        public string GetFacet()
+        {
+            return "player";
+        }
+
+        public void setSessionI(SessionI sessionI)
+        {
+            this.sessionI = sessionI;
+        }
 
         public async Task AddObserver()
         {

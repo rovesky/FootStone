@@ -54,11 +54,11 @@ namespace FootStone.Core.Grains
 
         //public IGrainRuntime Runtime1 { get; }
 
-        public ZoneGrain(IGrainActivationContext grainActivationContext, INettyServiceClient socketServiceClient)
+        public ZoneGrain(IGrainActivationContext grainActivationContext)
         {
             SiloAddressInfo = grainActivationContext.GrainType.GetProperty("SiloAddress", BindingFlags.Instance | BindingFlags.NonPublic);
           
-            SocketServiceClient = socketServiceClient;
+          //  SocketServiceClient = socketServiceClient;
         }
 
         public PropertyInfo SiloAddressInfo { get; }
@@ -121,15 +121,15 @@ namespace FootStone.Core.Grains
 
         public Task<EndPointZone> PlayerEnter(Guid playerId)
         {          
-            var stream = streamProvider.GetStream<byte[]>(playerId, "ZonePlayer");
-            try
-            {
-                players.Add(playerId, new ZonePlayer(playerId, stream));
-            }
-            catch(Exception e)
-            {
+            //var stream = streamProvider.GetStream<byte[]>(playerId, "ZonePlayer");
+            //try
+            //{
+            //    players.Add(playerId, new ZonePlayer(playerId, stream));
+            //}
+            //catch(Exception e)
+            //{
 
-            }
+            //}
 
             var siloAddress = (SiloAddress)SiloAddressInfo.GetValue(this);
 

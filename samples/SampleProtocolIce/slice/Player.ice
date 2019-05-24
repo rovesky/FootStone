@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "common.ice"
+#include <common.ice>
 #include "RoleMaster.ice"
 
 module FootStone

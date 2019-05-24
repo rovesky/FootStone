@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Orleans;
 
 namespace FootStone.Core
@@ -11,11 +12,17 @@ namespace FootStone.Core
     {
         static public IClusterClient OrleansClient
         {
-            get;
-            set;
+            get
+            {
+                return FSHost == null ? null : FSHost.Services.GetRequiredService<IClusterClient>();
+            }
+
         }
-        public static string[] MainArgs { get; set; }
-        public static int ZoneMsgCount { get; internal set; }
+
+        static public IFSHost  FSHost { get; set; }
+
+     //   public static string[] MainArgs { get; set; }
+       // public static int ZoneMsgCount { get; internal set; }
     }
     
 }

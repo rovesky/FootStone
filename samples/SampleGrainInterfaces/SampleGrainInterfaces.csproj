@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\FootStone.GrainInterfaces\FootStone.GrainInterfaces.csproj" />
+    <ProjectReference Include="..\SampleProtocolIce\SampleProtocolIce.csproj" />
   </ItemGroup>
 
 </Project>

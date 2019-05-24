@@ -33,7 +33,10 @@ namespace FootStone.Core.FrontIce
             
             Console.WriteLine("----------IceService Init!");
             var options =  serviceProvider.GetService<IOptions<IceOptions>>().Value;
-            network.Init(options.ConfigFile);
+
+            var servants = serviceProvider.GetServices<IServantBase>();
+
+            network.Init(options.ConfigFile, servants);
 
             return base.Init(serviceProvider);
         }

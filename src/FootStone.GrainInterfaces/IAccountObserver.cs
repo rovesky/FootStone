@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace FootStone.Core.GrainInterfaces
+namespace FootStone.GrainInterfaces
 {
     public interface IAccountObserver : IGrainObserver
     {

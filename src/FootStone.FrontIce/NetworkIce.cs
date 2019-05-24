@@ -15,7 +15,7 @@ namespace FootStone.Core.FrontIce
              
         private Ice.Communicator communicator;
 
-        public void Init(string configFile)
+        public void Init(string configFile, IEnumerable<IServantBase> servants)
         {
             try
             {
@@ -25,7 +25,7 @@ namespace FootStone.Core.FrontIce
                 var properties = communicator.getProperties();
                 var id = Ice.Util.stringToIdentity(properties.getProperty("Identity"));
                 var serverName = properties.getProperty("Ice.ProgramName");
-                adapter.add(new SessionFactoryI(serverName), id);
+                adapter.add(new SessionFactoryI(serverName, servants), id);
 
                 adapter.activate();
                 Console.WriteLine("ice inited!");

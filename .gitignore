@@ -38,3 +38,5 @@ output
 /src/FootStone.Core/bin
 /samples/SampleGrainInterfaces/bin
 /samples/SampleProtocol/bin
+/samples/SampleFrontIce/bin
+/samples/SampleProtocolIce/bin

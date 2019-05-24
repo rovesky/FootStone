@@ -37,10 +37,11 @@ namespace FootStone.Core.FrontIce
         private SessionI sessionI;
         private IAccountObserver accountObserver;
         private IAccountObserver accountObserverRef;
+        
 
-        public AccountI(SessionI sessionI)
+        public AccountI()
         {
-            this.sessionI = sessionI;           
+            
         }
 
         private async Task AddObserver(IAccountGrain accountGrain,string account)
@@ -173,6 +174,16 @@ namespace FootStone.Core.FrontIce
 
             Console.WriteLine("TestLoginRequestAsync:" + type.Name);
             return Task.CompletedTask;
+        }
+
+        public string GetFacet()
+        {
+            return "account";
+        }
+
+        public void setSessionI(SessionI sessionI)
+        {
+            this.sessionI = sessionI;
         }
     }
 }
