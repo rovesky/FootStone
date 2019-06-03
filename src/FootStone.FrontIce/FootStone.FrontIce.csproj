@@ -24,7 +24,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Grid\application-netcore.xml">
+    <None Update="Grid1\config.grid.registry">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Grid1\StartGridRegistry.bat">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Grid\application-netcore_with_replication.xml">
@@ -33,13 +36,7 @@
     <None Update="Grid\config.grid.node2">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Grid\config.client">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="Grid\config.grid.registry">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Grid\config.server">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Grid\StartGridNode2.sh">

@@ -1,4 +1,5 @@
 ﻿using FootStone.Core.FrontIce;
+using FootStone.FrontIce;
 using FootStone.GrainInterfaces;
 using Microsoft.Extensions.Logging;
 using Orleans;

@@ -1,5 +1,6 @@
 using FootStone.Core;
 using FootStone.Core.GrainInterfaces;
+using FootStone.Game;
 using FootStone.GrainInterfaces;
 using Newtonsoft.Json;
 using Orleans;

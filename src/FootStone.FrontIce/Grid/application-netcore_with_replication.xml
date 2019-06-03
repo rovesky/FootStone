@@ -15,7 +15,7 @@
       <parameter name="endpoints"/>
       <server id="FootStoneServer-${index}" exe="dotnet" activation="manual">
         <!--<option>FootStone.Core.GameServer.dll</option>-->
-        <adapter name="SessionFactory" endpoints="${endpoints}" replica-group="ReplicatedSessionFactoryAdapter"/>
+        <adapter name="SessionFactoryAdapter" endpoints="${endpoints}" replica-group="ReplicatedSessionFactoryAdapter"/>
         <property name="Identity" value="sessionFactory"/>
         <property name="IceMX.Metrics.Debug.GroupBy" value="id"/>
         <property name="IceMX.Metrics.Debug.Disabled" value="1"/>

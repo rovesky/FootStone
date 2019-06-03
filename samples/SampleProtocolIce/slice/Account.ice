@@ -23,11 +23,6 @@ module FootStone
 			string password;
 		}
 
-		struct LoginInfo
-		{
-			string account;
-			string password;
-		}
 
 		struct ServerInfo
 		{
@@ -54,9 +49,9 @@ module FootStone
 		interface Account
 		{
       
-		  ["amd"] void LoginRequest(LoginInfo info) throws AccountException;
+		  ["amd"] void LoginRequest(string account,string pwd) throws AccountException;
 
-		  ["amd"] void RegisterRequest(RegisterInfo info) throws AccountException;
+		  ["amd"] void RegisterRequest(string account,RegisterInfo info) throws AccountException;
 
 		  ["amd"] ServerList GetServerListRequest() throws AccountException;
 

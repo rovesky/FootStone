@@ -19,6 +19,7 @@ IceGrid.Registry.PermissionsVerifier=FootStone/NullPermissionsVerifier
 IceGrid.Registry.AdminPermissionsVerifier=FootStone/NullPermissionsVerifier
 IceGrid.Registry.SSLPermissionsVerifier=FootStone/NullSSLPermissionsVerifier
 IceGrid.Registry.AdminSSLPermissionsVerifier=FootStone/NullSSLPermissionsVerifier
+#IceGrid.Registry.DynamicRegistration=1
 IceGrid.Registry.Discovery.Interface=192.168.0.128
 IceGrid.Registry.Trace.Locator=2
 

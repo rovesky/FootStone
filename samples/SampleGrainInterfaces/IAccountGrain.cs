@@ -1,4 +1,4 @@
-﻿using FootStone.GrainInterfaces;
+﻿using FootStone.Core.GrainInterfaces;
 using Orleans;
 using System;
 using System.Collections.Generic;
@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace FootStone.GrainInterfaces
 {
-    public interface IAccountGrain : IGrainWithStringKey
+    public interface IAccountGrain :  IGrainWithStringKey, IObserverComponent<IAccountObserver>
     {
-        Task Login(string sessionId, LoginInfo info);
+        Task Login(string sessionId,string account,string pwd);
 
         Task Register(RegisterInfo info);
 
@@ -20,9 +20,6 @@ namespace FootStone.GrainInterfaces
         Task  SelectPlayer(string playerId);
 
         Task<string> CreatePlayer(string name, int serverId);
-
-        Task SubscribeForAccount(IAccountObserver subscriber);
-
-        Task UnsubscribeForAccount(IAccountObserver subscriber);
+      
     }
 }

@@ -1,4 +1,5 @@
-﻿using FootStone.GrainInterfaces;
+﻿using FootStone.FrontIce;
+using FootStone.GrainInterfaces;
 using Ice;
 using System;
 using System.Collections.Generic;

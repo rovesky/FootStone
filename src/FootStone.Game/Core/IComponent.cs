@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace FootStone.Core
+namespace FootStone.Game
 {
     public interface IComponent
     {

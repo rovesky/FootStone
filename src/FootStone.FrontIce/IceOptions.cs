@@ -1,4 +1,4 @@
-﻿namespace FootStone.Core.FrontIce
+﻿namespace FootStone.FrontIce
 {
     public class IceOptions
     {

@@ -1,4 +1,5 @@
 ﻿using FootStone.Core.GrainInterfaces;
+using FootStone.Game;
 using FootStone.GrainInterfaces;
 using Orleans;
 using System;
@@ -48,18 +49,21 @@ namespace FootStone.Core
 
             players.Add(id, info);
 
-            var playerGrain = Grain.GrainFactory.GetGrain<IPlayerGrain>(id);
+            //    var playerGrain = Grain.GrainFactory.GetGrain<IPlayerGrain>(id);
+            //
+            //   await playerGrain.SubscribeForPlayerUpdates(Grain as IPlayerObserver);
 
-            await playerGrain.SubscribeForPlayerUpdates(Grain as IPlayerObserver);
+           // throw new NotImplementedException();
         }
 
         public async Task PlayerLeave(Guid playerId)
         {
-            var playerGrain = Grain.GrainFactory.GetGrain<IPlayerGrain>(playerId);
+            //  var playerGrain = Grain.GrainFactory.GetGrain<IPlayerGrain>(playerId);
 
-            await playerGrain.UnsubscribeForPlayerUpdates(Grain as IPlayerObserver);
+            //    await playerGrain.UnsubscribeForPlayerUpdates(Grain as IPlayerObserver);
 
-            players.Remove(playerId);
+            //    players.Remove(playerId);
+            throw new NotImplementedException();
         }
 
         public Task<List<GamePlayerState>> GetOnlinePlayersByLevel(int level)

@@ -1,4 +1,5 @@
 ﻿using FootStone.Core.GrainInterfaces;
+using FootStone.Game;
 using FootStone.GrainInterfaces;
 using Newtonsoft.Json;
 using Orleans;
@@ -17,49 +18,35 @@ namespace FootStone.Core
         public string password;
         public string curPlayerId;
         public string token;
-        public Dictionary<int,List<PlayerShortInfo>> players;
-      
+        public Dictionary<int,List<PlayerShortInfo>> players;      
     }
 
     [StorageProvider(ProviderName = "memory1")]
-    public class AccountGrain : Grain<AccountState>, IAccountGrain
+    public class AccountGrain : FootStoneGrain<AccountState,IAccountObserver>, IAccountGrain
     {
-        private ObserverSubscriptionManager<IAccountObserver> subscribers;
+  
+        public AccountGrain()
+        {         
+        }
 
-        public override Task OnActivateAsync()
-        {
-            subscribers = new ObserverSubscriptionManager<IAccountObserver>();
 
-            return Task.CompletedTask;
+        public async override Task OnActivateAsync()
+        {     
+            await base.OnActivateAsync();
+
+           
+
+           // return Task.CompletedTask;
         }
 
         public override Task OnDeactivateAsync()
         {
-            subscribers.Clear();
-            return Task.CompletedTask;
-        }
-
-        public Task SubscribeForAccount(IAccountObserver subscriber)
-        {
-            if (!subscribers.IsSubscribed(subscriber))
-            {
-                subscribers.Subscribe(subscriber);              
-            }
-            return Task.CompletedTask;
-        }
-
-        public Task UnsubscribeForAccount(IAccountObserver subscriber)
-        {
-            if (subscribers.IsSubscribed(subscriber))
-            {
-                Console.Out.WriteLine("accountObserver Unsubscribe end");
-                subscribers.Unsubscribe(subscriber);
-            }
-            return Task.CompletedTask;
+            return base.OnDeactivateAsync();
         }
 
 
-        public Task Login(string sessionId, LoginInfo info)
+
+        public Task Login(string sessionId,string account,string pwd)
         {
             
          //   var info = JsonConvert.DeserializeObject<LoginInfo>(infoJson);
@@ -67,15 +54,16 @@ namespace FootStone.Core
             {
                 throw new AccountException("account is not registered!");
             }
-            if(!(State.account.Equals(info.account)
-                && State.password.Equals(info.password)))
+            if(!(State.account.Equals(account)
+                && State.password.Equals(pwd)))
             {
                 throw new AccountException("account or password is not  valid!");
             }
             State.token = Guid.NewGuid().ToString();
 
-            //通知所有session已经登录成功
-            subscribers.Notify((s) =>
+
+            //通知所有session已经登录成功         
+            Notify((s) =>
             {
                 s.AccountLogined(sessionId);
             });
@@ -138,6 +126,6 @@ namespace FootStone.Core
             return Task.CompletedTask;
         }
 
-       
+     
     }
 }

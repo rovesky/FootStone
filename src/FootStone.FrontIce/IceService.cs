@@ -1,19 +1,15 @@
 ﻿using FootStone.Core.GrainInterfaces;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Microsoft.Extensions.DependencyInjection;
 using Orleans;
 using Orleans.Concurrency;
 using Orleans.Core;
 using Orleans.Runtime;
-using Orleans.Services;
-using Orleans.Streams;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace FootStone.Core.FrontIce
+namespace FootStone.FrontIce
 {
     [Reentrant]
     public class IceService : GrainService, IIceService

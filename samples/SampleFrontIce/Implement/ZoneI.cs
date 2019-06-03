@@ -1,4 +1,5 @@
 ﻿using FootStone.Core.GrainInterfaces;
+using FootStone.FrontIce;
 using FootStone.GrainInterfaces;
 using Ice;
 using Orleans.Streams;
@@ -75,7 +76,7 @@ namespace FootStone.Core.FrontIce
         {
         
             // await AddObserver(zoneGuid);
-            var zoneId = (string)this.sessionI.GetAttribute("zoneId");
+            var zoneId = this.sessionI.Get<string>("zoneId");
             var zoneGrain = Global.OrleansClient.GetGrain<IZoneGrain>(Guid.Parse(zoneId));
 
             zoneGrain.PlayerLeave(this.sessionI.PlayerId);
@@ -131,7 +132,7 @@ namespace FootStone.Core.FrontIce
 
                 var zoneGrain = Global.OrleansClient.GetGrain<IZoneGrain>(zoneGuid);
                 var ret = await zoneGrain.PlayerEnter(sessionI.PlayerId);
-                this.sessionI.SetAttribute("zoneId", zoneId);
+                this.sessionI.Bind("zoneId", zoneId);
                 return ret;
 
             }

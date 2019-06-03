@@ -1,19 +1,22 @@
-﻿using System;
+﻿using Orleans;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FootStone.Core
+namespace FootStone.Game
 {
     public abstract class ComponentBase : IComponent
     {
-        protected FootStoneGrain Grain { get; }
+        protected IFSObject FSObject { get; }
 
 
-        protected ComponentBase(FootStoneGrain grain)
+        protected ComponentBase(IFSObject obj)
         {
-            Grain = grain;
+            FSObject = obj;
         }
+
+
 
         public abstract Task Fini();
         public abstract Task Init();

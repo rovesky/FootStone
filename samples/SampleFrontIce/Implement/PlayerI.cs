@@ -1,4 +1,5 @@
 ﻿using FootStone.Core.GrainInterfaces;
+using FootStone.FrontIce;
 using FootStone.GrainInterfaces;
 using Ice;
 using System;
@@ -84,7 +85,7 @@ namespace FootStone.Core.FrontIce
                 {
                     throw new PlayerNotExsit();
                 }
-
+                
                 var player = Global.OrleansClient.GetGrain<IPlayerGrain>(sessionI.PlayerId);
                 var playerInfo = await player.GetPlayerInfo();
        

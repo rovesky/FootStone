@@ -4,7 +4,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace FootStone.Core.FrontIce
+namespace FootStone.FrontIce
 {
     public class NetworkIce
     {
@@ -19,13 +19,18 @@ namespace FootStone.Core.FrontIce
         {
             try
             {
-                communicator = Ice.Util.initialize(configFile);
+                communicator = Ice.Util.initialize(configFile);              
 
-                var adapter = communicator.createObjectAdapter("SessionFactory");
+                var adapter = communicator.createObjectAdapter("SessionFactoryAdapter");         
+
                 var properties = communicator.getProperties();
+              
                 var id = Ice.Util.stringToIdentity(properties.getProperty("Identity"));
                 var serverName = properties.getProperty("Ice.ProgramName");
-                adapter.add(new SessionFactoryI(serverName, servants), id);
+
+             
+
+                adapter.add(new SessionFactoryI(serverName, servants, communicator), id);
 
                 adapter.activate();
                 Console.WriteLine("ice inited!");

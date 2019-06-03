@@ -1,4 +1,5 @@
 ﻿using FootStone.Core.GrainInterfaces;
+using FootStone.Game;
 using FootStone.GrainInterfaces;
 using Orleans;
 using System;

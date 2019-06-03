@@ -6,13 +6,13 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FootStone.Core.FrontIce
+namespace FootStone.FrontIce
 {
-    public class SessionI : ISessionDisp_,IServantBase
+    public class SessionI : ISessionDisp_
     {
-         public SessionI(string name)
+         public SessionI(string account)
         {
-            this.Name = name;  
+            this.Account = account;  
             _destroy = false;       
         }
 
@@ -55,10 +55,6 @@ namespace FootStone.Core.FrontIce
             }
         }
 
-        public void Destroy()
-        {
-          
-        }
 
         public string Id
         {
@@ -70,31 +66,27 @@ namespace FootStone.Core.FrontIce
             }
         }
 
-        public object GetAttribute(string name)
+        public T Get<T>(string key)
         {
-            return attributes[name];
-
+            return (T)attributes[key];
         }
 
-        public void SetAttribute(string name,object value)
+        public void Bind<T>(string key,T value)
         {
-             attributes.Add(name, value);
+             attributes.Add(key, value);
         }
 
-        public string GetFacet()
+        public void Unbind(string key)
         {
-            return "session";
+            attributes.Remove(key);
         }
 
-        public void setSessionI(SessionI sessionI)
-        {
-            throw new NotImplementedException();
-        }
+        public string Account { set; get; }
+        public Guid   PlayerId { set; get; }
 
         public ISessionPushPrx SessionPushPrx { get; private set; }
-        public Guid PlayerId { get;  set; }
-        public string Account { get;  set; }
-        public string Name { get; }
+             
+     
         private bool _destroy;
         private Dictionary<String, object> attributes = new Dictionary<string, object>();
 

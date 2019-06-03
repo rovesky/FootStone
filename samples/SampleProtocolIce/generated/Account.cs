@@ -381,180 +381,6 @@ namespace FootStone
         [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1722")]
         [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1724")]
         [_System.Serializable]
-        public partial class LoginInfo : _System.ICloneable
-        {
-            #region Slice data members
-
-            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-            public string account;
-
-            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-            public string password;
-
-            #endregion
-
-            partial void ice_initialize();
-
-            #region Constructors
-
-            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-            public LoginInfo()
-            {
-                this.account = "";
-                this.password = "";
-                ice_initialize();
-            }
-
-            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-            public LoginInfo(string account, string password)
-            {
-                this.account = account;
-                this.password = password;
-                ice_initialize();
-            }
-
-            #endregion
-
-            #region ICloneable members
-
-            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-            public object Clone()
-            {
-                return MemberwiseClone();
-            }
-
-            #endregion
-
-            #region Object members
-
-            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-            public override int GetHashCode()
-            {
-                int h_ = 5381;
-                IceInternal.HashUtil.hashAdd(ref h_, "::FootStone::GrainInterfaces::LoginInfo");
-                IceInternal.HashUtil.hashAdd(ref h_, account);
-                IceInternal.HashUtil.hashAdd(ref h_, password);
-                return h_;
-            }
-
-            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-            public override bool Equals(object other)
-            {
-                if(object.ReferenceEquals(this, other))
-                {
-                    return true;
-                }
-                if(other == null)
-                {
-                    return false;
-                }
-                if(GetType() != other.GetType())
-                {
-                    return false;
-                }
-                LoginInfo o = (LoginInfo)other;
-                if(this.account == null)
-                {
-                    if(o.account != null)
-                    {
-                        return false;
-                    }
-                }
-                else
-                {
-                    if(!this.account.Equals(o.account))
-                    {
-                        return false;
-                    }
-                }
-                if(this.password == null)
-                {
-                    if(o.password != null)
-                    {
-                        return false;
-                    }
-                }
-                else
-                {
-                    if(!this.password.Equals(o.password))
-                    {
-                        return false;
-                    }
-                }
-                return true;
-            }
-
-            #endregion
-
-            #region Comparison members
-
-            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-            public static bool operator==(LoginInfo lhs, LoginInfo rhs)
-            {
-                return Equals(lhs, rhs);
-            }
-
-            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-            public static bool operator!=(LoginInfo lhs, LoginInfo rhs)
-            {
-                return !Equals(lhs, rhs);
-            }
-
-            #endregion
-
-            #region Marshaling support
-
-            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-            public void ice_writeMembers(Ice.OutputStream ostr)
-            {
-                ostr.writeString(this.account);
-                ostr.writeString(this.password);
-            }
-
-            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-            public void ice_readMembers(Ice.InputStream istr)
-            {
-                this.account = istr.readString();
-                this.password = istr.readString();
-            }
-
-            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-            public static void ice_write(Ice.OutputStream ostr, LoginInfo v)
-            {
-                if(v == null)
-                {
-                    _nullMarshalValue.ice_writeMembers(ostr);
-                }
-                else
-                {
-                    v.ice_writeMembers(ostr);
-                }
-            }
-
-            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-            public static LoginInfo ice_read(Ice.InputStream istr)
-            {
-                var v = new LoginInfo();
-                v.ice_readMembers(istr);
-                return v;
-            }
-
-            private static readonly LoginInfo _nullMarshalValue = new LoginInfo();
-
-            #endregion
-        }
-
-        [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704")]
-        [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707")]
-        [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709")]
-        [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1710")]
-        [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1711")]
-        [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1715")]
-        [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1716")]
-        [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1720")]
-        [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1722")]
-        [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1724")]
-        [_System.Serializable]
         public partial class ServerInfo : _System.ICloneable
         {
             #region Slice data members
@@ -1021,27 +847,27 @@ namespace FootStone
         [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
         public interface AccountPrx : Ice.ObjectPrx
         {
-            void LoginRequest(LoginInfo info, Ice.OptionalContext context = new Ice.OptionalContext());
+            void LoginRequest(string account, string pwd, Ice.OptionalContext context = new Ice.OptionalContext());
 
-            _System.Threading.Tasks.Task LoginRequestAsync(LoginInfo info, Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken());
+            _System.Threading.Tasks.Task LoginRequestAsync(string account, string pwd, Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken());
 
-            Ice.AsyncResult<Callback_Account_LoginRequest> begin_LoginRequest(LoginInfo info, Ice.OptionalContext context = new Ice.OptionalContext());
+            Ice.AsyncResult<Callback_Account_LoginRequest> begin_LoginRequest(string account, string pwd, Ice.OptionalContext context = new Ice.OptionalContext());
 
-            Ice.AsyncResult begin_LoginRequest(LoginInfo info, Ice.AsyncCallback callback, object cookie);
+            Ice.AsyncResult begin_LoginRequest(string account, string pwd, Ice.AsyncCallback callback, object cookie);
 
-            Ice.AsyncResult begin_LoginRequest(LoginInfo info, Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie);
+            Ice.AsyncResult begin_LoginRequest(string account, string pwd, Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie);
 
             void end_LoginRequest(Ice.AsyncResult asyncResult);
 
-            void RegisterRequest(RegisterInfo info, Ice.OptionalContext context = new Ice.OptionalContext());
+            void RegisterRequest(string account, RegisterInfo info, Ice.OptionalContext context = new Ice.OptionalContext());
 
-            _System.Threading.Tasks.Task RegisterRequestAsync(RegisterInfo info, Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken());
+            _System.Threading.Tasks.Task RegisterRequestAsync(string account, RegisterInfo info, Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken());
 
-            Ice.AsyncResult<Callback_Account_RegisterRequest> begin_RegisterRequest(RegisterInfo info, Ice.OptionalContext context = new Ice.OptionalContext());
+            Ice.AsyncResult<Callback_Account_RegisterRequest> begin_RegisterRequest(string account, RegisterInfo info, Ice.OptionalContext context = new Ice.OptionalContext());
 
-            Ice.AsyncResult begin_RegisterRequest(RegisterInfo info, Ice.AsyncCallback callback, object cookie);
+            Ice.AsyncResult begin_RegisterRequest(string account, RegisterInfo info, Ice.AsyncCallback callback, object cookie);
 
-            Ice.AsyncResult begin_RegisterRequest(RegisterInfo info, Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie);
+            Ice.AsyncResult begin_RegisterRequest(string account, RegisterInfo info, Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie);
 
             void end_RegisterRequest(Ice.AsyncResult asyncResult);
 
@@ -1116,10 +942,10 @@ namespace FootStone
         public interface AccountOperations_
         {
             [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-            _System.Threading.Tasks.Task LoginRequestAsync(LoginInfo info, Ice.Current current = null);
+            _System.Threading.Tasks.Task LoginRequestAsync(string account, string pwd, Ice.Current current = null);
 
             [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-            _System.Threading.Tasks.Task RegisterRequestAsync(RegisterInfo info, Ice.Current current = null);
+            _System.Threading.Tasks.Task RegisterRequestAsync(string account, RegisterInfo info, Ice.Current current = null);
 
             [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
             _System.Threading.Tasks.Task<_System.Collections.Generic.List<ServerInfo>> GetServerListRequestAsync(Ice.Current current = null);
@@ -1266,11 +1092,11 @@ namespace FootStone
                 }
             }
 
-            public void LoginRequest(LoginInfo info, Ice.OptionalContext context = new Ice.OptionalContext())
+            public void LoginRequest(string account, string pwd, Ice.OptionalContext context = new Ice.OptionalContext())
             {
                 try
                 {
-                    _iceI_LoginRequestAsync(info, context, null, _System.Threading.CancellationToken.None, true).Wait();
+                    _iceI_LoginRequestAsync(account, pwd, context, null, _System.Threading.CancellationToken.None, true).Wait();
                 }
                 catch(_System.AggregateException ex_)
                 {
@@ -1278,11 +1104,11 @@ namespace FootStone
                 }
             }
 
-            public void RegisterRequest(RegisterInfo info, Ice.OptionalContext context = new Ice.OptionalContext())
+            public void RegisterRequest(string account, RegisterInfo info, Ice.OptionalContext context = new Ice.OptionalContext())
             {
                 try
                 {
-                    _iceI_RegisterRequestAsync(info, context, null, _System.Threading.CancellationToken.None, true).Wait();
+                    _iceI_RegisterRequestAsync(account, info, context, null, _System.Threading.CancellationToken.None, true).Wait();
                 }
                 catch(_System.AggregateException ex_)
                 {
@@ -1465,22 +1291,22 @@ namespace FootStone
                     });
             }
 
-            public _System.Threading.Tasks.Task LoginRequestAsync(LoginInfo info, Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken())
+            public _System.Threading.Tasks.Task LoginRequestAsync(string account, string pwd, Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken())
             {
-                return _iceI_LoginRequestAsync(info, context, progress, cancel, false);
+                return _iceI_LoginRequestAsync(account, pwd, context, progress, cancel, false);
             }
 
-            private _System.Threading.Tasks.Task _iceI_LoginRequestAsync(LoginInfo iceP_info, Ice.OptionalContext context, _System.IProgress<bool> progress, _System.Threading.CancellationToken cancel, bool synchronous)
+            private _System.Threading.Tasks.Task _iceI_LoginRequestAsync(string iceP_account, string iceP_pwd, Ice.OptionalContext context, _System.IProgress<bool> progress, _System.Threading.CancellationToken cancel, bool synchronous)
             {
                 iceCheckTwowayOnly(_LoginRequest_name);
                 var completed = new IceInternal.OperationTaskCompletionCallback<object>(progress, cancel);
-                _iceI_LoginRequest(iceP_info, context, synchronous, completed);
+                _iceI_LoginRequest(iceP_account, iceP_pwd, context, synchronous, completed);
                 return completed.Task;
             }
 
             private const string _LoginRequest_name = "LoginRequest";
 
-            private void _iceI_LoginRequest(LoginInfo iceP_info, _System.Collections.Generic.Dictionary<string, string> context, bool synchronous, IceInternal.OutgoingAsyncCompletionCallback completed)
+            private void _iceI_LoginRequest(string iceP_account, string iceP_pwd, _System.Collections.Generic.Dictionary<string, string> context, bool synchronous, IceInternal.OutgoingAsyncCompletionCallback completed)
             {
                 var outAsync = getOutgoingAsync<object>(completed);
                 outAsync.invoke(
@@ -1491,7 +1317,8 @@ namespace FootStone
                     synchronous,
                     write: (Ice.OutputStream ostr) =>
                     {
-                        LoginInfo.ice_write(ostr, iceP_info);
+                        ostr.writeString(iceP_account);
+                        ostr.writeString(iceP_pwd);
                     },
                     userException: (Ice.UserException ex) =>
                     {
@@ -1509,22 +1336,22 @@ namespace FootStone
                     });
             }
 
-            public _System.Threading.Tasks.Task RegisterRequestAsync(RegisterInfo info, Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken())
+            public _System.Threading.Tasks.Task RegisterRequestAsync(string account, RegisterInfo info, Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken())
             {
-                return _iceI_RegisterRequestAsync(info, context, progress, cancel, false);
+                return _iceI_RegisterRequestAsync(account, info, context, progress, cancel, false);
             }
 
-            private _System.Threading.Tasks.Task _iceI_RegisterRequestAsync(RegisterInfo iceP_info, Ice.OptionalContext context, _System.IProgress<bool> progress, _System.Threading.CancellationToken cancel, bool synchronous)
+            private _System.Threading.Tasks.Task _iceI_RegisterRequestAsync(string iceP_account, RegisterInfo iceP_info, Ice.OptionalContext context, _System.IProgress<bool> progress, _System.Threading.CancellationToken cancel, bool synchronous)
             {
                 iceCheckTwowayOnly(_RegisterRequest_name);
                 var completed = new IceInternal.OperationTaskCompletionCallback<object>(progress, cancel);
-                _iceI_RegisterRequest(iceP_info, context, synchronous, completed);
+                _iceI_RegisterRequest(iceP_account, iceP_info, context, synchronous, completed);
                 return completed.Task;
             }
 
             private const string _RegisterRequest_name = "RegisterRequest";
 
-            private void _iceI_RegisterRequest(RegisterInfo iceP_info, _System.Collections.Generic.Dictionary<string, string> context, bool synchronous, IceInternal.OutgoingAsyncCompletionCallback completed)
+            private void _iceI_RegisterRequest(string iceP_account, RegisterInfo iceP_info, _System.Collections.Generic.Dictionary<string, string> context, bool synchronous, IceInternal.OutgoingAsyncCompletionCallback completed)
             {
                 var outAsync = getOutgoingAsync<object>(completed);
                 outAsync.invoke(
@@ -1535,6 +1362,7 @@ namespace FootStone
                     synchronous,
                     write: (Ice.OutputStream ostr) =>
                     {
+                        ostr.writeString(iceP_account);
                         RegisterInfo.ice_write(ostr, iceP_info);
                     },
                     userException: (Ice.UserException ex) =>
@@ -1762,19 +1590,19 @@ namespace FootStone
                 return completed;
             }
 
-            public Ice.AsyncResult<Callback_Account_LoginRequest> begin_LoginRequest(LoginInfo info, Ice.OptionalContext context = new Ice.OptionalContext())
+            public Ice.AsyncResult<Callback_Account_LoginRequest> begin_LoginRequest(string account, string pwd, Ice.OptionalContext context = new Ice.OptionalContext())
             {
-                return begin_LoginRequest(info, context, null, null, false);
+                return begin_LoginRequest(account, pwd, context, null, null, false);
             }
 
-            public Ice.AsyncResult begin_LoginRequest(LoginInfo info, Ice.AsyncCallback callback, object cookie)
+            public Ice.AsyncResult begin_LoginRequest(string account, string pwd, Ice.AsyncCallback callback, object cookie)
             {
-                return begin_LoginRequest(info, new Ice.OptionalContext(), callback, cookie, false);
+                return begin_LoginRequest(account, pwd, new Ice.OptionalContext(), callback, cookie, false);
             }
 
-            public Ice.AsyncResult begin_LoginRequest(LoginInfo info, Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie)
+            public Ice.AsyncResult begin_LoginRequest(string account, string pwd, Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie)
             {
-                return begin_LoginRequest(info, context, callback, cookie, false);
+                return begin_LoginRequest(account, pwd, context, callback, cookie, false);
             }
 
             public void end_LoginRequest(Ice.AsyncResult asyncResult)
@@ -1783,7 +1611,7 @@ namespace FootStone
                 ((IceInternal.OutgoingAsyncT<object>)resultI_.OutgoingAsync).getResult(resultI_.wait());
             }
 
-            private Ice.AsyncResult<Callback_Account_LoginRequest> begin_LoginRequest(LoginInfo iceP_info, _System.Collections.Generic.Dictionary<string, string> context, Ice.AsyncCallback completedCallback, object cookie, bool synchronous)
+            private Ice.AsyncResult<Callback_Account_LoginRequest> begin_LoginRequest(string iceP_account, string iceP_pwd, _System.Collections.Generic.Dictionary<string, string> context, Ice.AsyncCallback completedCallback, object cookie, bool synchronous)
             {
                 iceCheckAsyncTwowayOnly(_LoginRequest_name);
                 var completed = new IceInternal.OperationAsyncResultCompletionCallback<Callback_Account_LoginRequest, object>(
@@ -1795,23 +1623,23 @@ namespace FootStone
                         }
                     },
                     this, _LoginRequest_name, cookie, completedCallback);
-                _iceI_LoginRequest(iceP_info, context, synchronous, completed);
+                _iceI_LoginRequest(iceP_account, iceP_pwd, context, synchronous, completed);
                 return completed;
             }
 
-            public Ice.AsyncResult<Callback_Account_RegisterRequest> begin_RegisterRequest(RegisterInfo info, Ice.OptionalContext context = new Ice.OptionalContext())
+            public Ice.AsyncResult<Callback_Account_RegisterRequest> begin_RegisterRequest(string account, RegisterInfo info, Ice.OptionalContext context = new Ice.OptionalContext())
             {
-                return begin_RegisterRequest(info, context, null, null, false);
+                return begin_RegisterRequest(account, info, context, null, null, false);
             }
 
-            public Ice.AsyncResult begin_RegisterRequest(RegisterInfo info, Ice.AsyncCallback callback, object cookie)
+            public Ice.AsyncResult begin_RegisterRequest(string account, RegisterInfo info, Ice.AsyncCallback callback, object cookie)
             {
-                return begin_RegisterRequest(info, new Ice.OptionalContext(), callback, cookie, false);
+                return begin_RegisterRequest(account, info, new Ice.OptionalContext(), callback, cookie, false);
             }
 
-            public Ice.AsyncResult begin_RegisterRequest(RegisterInfo info, Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie)
+            public Ice.AsyncResult begin_RegisterRequest(string account, RegisterInfo info, Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie)
             {
-                return begin_RegisterRequest(info, context, callback, cookie, false);
+                return begin_RegisterRequest(account, info, context, callback, cookie, false);
             }
 
             public void end_RegisterRequest(Ice.AsyncResult asyncResult)
@@ -1820,7 +1648,7 @@ namespace FootStone
                 ((IceInternal.OutgoingAsyncT<object>)resultI_.OutgoingAsync).getResult(resultI_.wait());
             }
 
-            private Ice.AsyncResult<Callback_Account_RegisterRequest> begin_RegisterRequest(RegisterInfo iceP_info, _System.Collections.Generic.Dictionary<string, string> context, Ice.AsyncCallback completedCallback, object cookie, bool synchronous)
+            private Ice.AsyncResult<Callback_Account_RegisterRequest> begin_RegisterRequest(string iceP_account, RegisterInfo iceP_info, _System.Collections.Generic.Dictionary<string, string> context, Ice.AsyncCallback completedCallback, object cookie, bool synchronous)
             {
                 iceCheckAsyncTwowayOnly(_RegisterRequest_name);
                 var completed = new IceInternal.OperationAsyncResultCompletionCallback<Callback_Account_RegisterRequest, object>(
@@ -1832,7 +1660,7 @@ namespace FootStone
                         }
                     },
                     this, _RegisterRequest_name, cookie, completedCallback);
-                _iceI_RegisterRequest(iceP_info, context, synchronous, completed);
+                _iceI_RegisterRequest(iceP_account, iceP_info, context, synchronous, completed);
                 return completed;
             }
 
@@ -2065,9 +1893,9 @@ namespace FootStone
         {
             #region Slice operations
 
-            public abstract _System.Threading.Tasks.Task LoginRequestAsync(LoginInfo info, Ice.Current current = null);
+            public abstract _System.Threading.Tasks.Task LoginRequestAsync(string account, string pwd, Ice.Current current = null);
 
-            public abstract _System.Threading.Tasks.Task RegisterRequestAsync(RegisterInfo info, Ice.Current current = null);
+            public abstract _System.Threading.Tasks.Task RegisterRequestAsync(string account, RegisterInfo info, Ice.Current current = null);
 
             public abstract _System.Threading.Tasks.Task<_System.Collections.Generic.List<ServerInfo>> GetServerListRequestAsync(Ice.Current current = null);
 
@@ -2119,11 +1947,12 @@ namespace FootStone
             {
                 Ice.ObjectImpl.iceCheckMode(Ice.OperationMode.Normal, current.mode);
                 var istr = inS.startReadParams();
-                LoginInfo iceP_info;
-                iceP_info = null;
-                iceP_info = LoginInfo.ice_read(istr);
+                string iceP_account;
+                string iceP_pwd;
+                iceP_account = istr.readString();
+                iceP_pwd = istr.readString();
                 inS.endReadParams();
-                return inS.setResultTask(obj.LoginRequestAsync(iceP_info, current));
+                return inS.setResultTask(obj.LoginRequestAsync(iceP_account, iceP_pwd, current));
             }
 
             [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011")]
@@ -2132,11 +1961,13 @@ namespace FootStone
             {
                 Ice.ObjectImpl.iceCheckMode(Ice.OperationMode.Normal, current.mode);
                 var istr = inS.startReadParams();
+                string iceP_account;
                 RegisterInfo iceP_info;
                 iceP_info = null;
+                iceP_account = istr.readString();
                 iceP_info = RegisterInfo.ice_read(istr);
                 inS.endReadParams();
-                return inS.setResultTask(obj.RegisterRequestAsync(iceP_info, current));
+                return inS.setResultTask(obj.RegisterRequestAsync(iceP_account, iceP_info, current));
             }
 
             [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011")]

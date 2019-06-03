@@ -33,6 +33,7 @@
     <PackageReference Include="Microsoft.Orleans.Persistence.AdoNet" Version="2.2.4" />
     <PackageReference Include="Microsoft.Orleans.Server" Version="2.2.4" />
     <PackageReference Include="MySql.Data" Version="8.0.15" />
+    <PackageReference Include="sqlSugarCore" Version="5.0.0.3" />
   </ItemGroup>
 
   <ItemGroup>

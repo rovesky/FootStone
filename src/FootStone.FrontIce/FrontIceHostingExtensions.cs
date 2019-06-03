@@ -1,7 +1,8 @@
-﻿using Orleans.Hosting;
+﻿using FootStone.Core;
+using Orleans.Hosting;
 using System;
 
-namespace FootStone.Core.FrontIce
+namespace FootStone.FrontIce
 {
     public static class FrontIceHostingExtensions
     {

@@ -3,39 +3,75 @@
 // Copyright (c) 2003-2018 ZeroC, Inc. All rights reserved.
 //
 // **********************************************************************
-
-
 using FootStone.GrainInterfaces;
 using Ice;
+using IceGrid;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
-namespace FootStone.Core.FrontIce
+namespace FootStone.FrontIce
 {
     public class SessionFactoryI : ISessionFactoryDisp_
     {
         private string serverName;
         private IEnumerable<IServantBase> servants;
+        private QueryPrx query;
+        private AdminPrx admin;
 
-        public SessionFactoryI(string name, IEnumerable<IServantBase> servants)
+        public SessionFactoryI(string name, IEnumerable<IServantBase> servants, Communicator communicator)
         {
             this.serverName = name;
             this.servants = servants;
+            try
+            {
+                this.query = QueryPrxHelper.checkedCast(communicator.stringToProxy("FootStone/Query"));
+
+                var registry = RegistryPrxHelper.checkedCast(communicator.stringToProxy("FootStone/Registry"));          
+
+                var sessionPrx = registry.createAdminSession("foo", "bar");
+                this.admin = sessionPrx.getAdmin();
+
+            }
+            catch (Ice.Exception ex)
+            {
+                Console.Error.WriteLine(ex.Message);
+            }
+            
+
+        
+
         }
-        public override ISessionPrx CreateSession(string name, string password, Ice.Current current)
+        public async override Task<ISessionPrx> CreateSessionAsync(string account, string password, Current current = null)
+
         {
-            var sessionI = new SessionI(name);
+            var sessionId = Util.stringToIdentity(account);
+            //var sessionPrx = ISessionPrxHelper.uncheckedCast(await query.findObjectByIdAsync(sessionId));
+            //if (sessionPrx != null)
+            //{
+            //    await sessionPrx.DestroyAsync();
+            //}
+
+            var sessionI = new SessionI(account);
             var proxy = ISessionPrxHelper.uncheckedCast(current.adapter.addWithUUID(sessionI));
 
-            foreach(var servant in servants)
+            //try
+            //{
+            //    await admin.addObjectAsync(proxy);
+            //}
+            //catch (ObjectExistsException)
+            //{
+            //    await admin.updateObjectAsync(proxy);
+            //}
+
+
+            //Ìí¼Ófacet
+            foreach (var servant in servants)
             {
                 servant.setSessionI(sessionI);
                 current.adapter.addFacet((Ice.Object)servant, proxy.ice_getIdentity(), servant.GetFacet());
             }
 
-            var facets = current.adapter.findAllFacets(proxy.ice_getIdentity());
-
-            //Console.WriteLine("facets:"+facets);
 
            // Remove endpoints to ensure that calls are collocated-only
            // This way, if we invoke on the proxy during shutdown, the invocation fails immediately
@@ -60,6 +96,7 @@ namespace FootStone.Core.FrontIce
             return proxy;
         }
 
+     
 
         public override void Shutdown(Ice.Current current)
         {

@@ -150,15 +150,15 @@ namespace FootStone
         [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
         public interface ISessionFactoryPrx : Ice.ObjectPrx
         {
-            ISessionPrx CreateSession(string name, string password, Ice.OptionalContext context = new Ice.OptionalContext());
+            ISessionPrx CreateSession(string account, string password, Ice.OptionalContext context = new Ice.OptionalContext());
 
-            _System.Threading.Tasks.Task<ISessionPrx> CreateSessionAsync(string name, string password, Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken());
+            _System.Threading.Tasks.Task<ISessionPrx> CreateSessionAsync(string account, string password, Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken());
 
-            Ice.AsyncResult<Callback_ISessionFactory_CreateSession> begin_CreateSession(string name, string password, Ice.OptionalContext context = new Ice.OptionalContext());
+            Ice.AsyncResult<Callback_ISessionFactory_CreateSession> begin_CreateSession(string account, string password, Ice.OptionalContext context = new Ice.OptionalContext());
 
-            Ice.AsyncResult begin_CreateSession(string name, string password, Ice.AsyncCallback callback, object cookie);
+            Ice.AsyncResult begin_CreateSession(string account, string password, Ice.AsyncCallback callback, object cookie);
 
-            Ice.AsyncResult begin_CreateSession(string name, string password, Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie);
+            Ice.AsyncResult begin_CreateSession(string account, string password, Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie);
 
             ISessionPrx end_CreateSession(Ice.AsyncResult asyncResult);
 
@@ -202,7 +202,7 @@ namespace FootStone
         public interface ISessionFactoryOperations_
         {
             [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-            ISessionPrx CreateSession(string name, string password, Ice.Current current = null);
+            _System.Threading.Tasks.Task<ISessionPrx> CreateSessionAsync(string account, string password, Ice.Current current = null);
 
             [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
             void Shutdown(Ice.Current current = null);
@@ -784,11 +784,11 @@ namespace FootStone
 
             #region Synchronous operations
 
-            public ISessionPrx CreateSession(string name, string password, Ice.OptionalContext context = new Ice.OptionalContext())
+            public ISessionPrx CreateSession(string account, string password, Ice.OptionalContext context = new Ice.OptionalContext())
             {
                 try
                 {
-                    return _iceI_CreateSessionAsync(name, password, context, null, _System.Threading.CancellationToken.None, true).Result;
+                    return _iceI_CreateSessionAsync(account, password, context, null, _System.Threading.CancellationToken.None, true).Result;
                 }
                 catch(_System.AggregateException ex_)
                 {
@@ -812,22 +812,22 @@ namespace FootStone
 
             #region Async Task operations
 
-            public _System.Threading.Tasks.Task<ISessionPrx> CreateSessionAsync(string name, string password, Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken())
+            public _System.Threading.Tasks.Task<ISessionPrx> CreateSessionAsync(string account, string password, Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken())
             {
-                return _iceI_CreateSessionAsync(name, password, context, progress, cancel, false);
+                return _iceI_CreateSessionAsync(account, password, context, progress, cancel, false);
             }
 
-            private _System.Threading.Tasks.Task<ISessionPrx> _iceI_CreateSessionAsync(string iceP_name, string iceP_password, Ice.OptionalContext context, _System.IProgress<bool> progress, _System.Threading.CancellationToken cancel, bool synchronous)
+            private _System.Threading.Tasks.Task<ISessionPrx> _iceI_CreateSessionAsync(string iceP_account, string iceP_password, Ice.OptionalContext context, _System.IProgress<bool> progress, _System.Threading.CancellationToken cancel, bool synchronous)
             {
                 iceCheckTwowayOnly(_CreateSession_name);
                 var completed = new IceInternal.OperationTaskCompletionCallback<ISessionPrx>(progress, cancel);
-                _iceI_CreateSession(iceP_name, iceP_password, context, synchronous, completed);
+                _iceI_CreateSession(iceP_account, iceP_password, context, synchronous, completed);
                 return completed.Task;
             }
 
             private const string _CreateSession_name = "CreateSession";
 
-            private void _iceI_CreateSession(string iceP_name, string iceP_password, _System.Collections.Generic.Dictionary<string, string> context, bool synchronous, IceInternal.OutgoingAsyncCompletionCallback completed)
+            private void _iceI_CreateSession(string iceP_account, string iceP_password, _System.Collections.Generic.Dictionary<string, string> context, bool synchronous, IceInternal.OutgoingAsyncCompletionCallback completed)
             {
                 var outAsync = getOutgoingAsync<ISessionPrx>(completed);
                 outAsync.invoke(
@@ -838,7 +838,7 @@ namespace FootStone
                     synchronous,
                     write: (Ice.OutputStream ostr) =>
                     {
-                        ostr.writeString(iceP_name);
+                        ostr.writeString(iceP_account);
                         ostr.writeString(iceP_password);
                     },
                     read: (Ice.InputStream istr) =>
@@ -878,19 +878,19 @@ namespace FootStone
 
             #region Asynchronous operations
 
-            public Ice.AsyncResult<Callback_ISessionFactory_CreateSession> begin_CreateSession(string name, string password, Ice.OptionalContext context = new Ice.OptionalContext())
+            public Ice.AsyncResult<Callback_ISessionFactory_CreateSession> begin_CreateSession(string account, string password, Ice.OptionalContext context = new Ice.OptionalContext())
             {
-                return begin_CreateSession(name, password, context, null, null, false);
+                return begin_CreateSession(account, password, context, null, null, false);
             }
 
-            public Ice.AsyncResult begin_CreateSession(string name, string password, Ice.AsyncCallback callback, object cookie)
+            public Ice.AsyncResult begin_CreateSession(string account, string password, Ice.AsyncCallback callback, object cookie)
             {
-                return begin_CreateSession(name, password, new Ice.OptionalContext(), callback, cookie, false);
+                return begin_CreateSession(account, password, new Ice.OptionalContext(), callback, cookie, false);
             }
 
-            public Ice.AsyncResult begin_CreateSession(string name, string password, Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie)
+            public Ice.AsyncResult begin_CreateSession(string account, string password, Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie)
             {
-                return begin_CreateSession(name, password, context, callback, cookie, false);
+                return begin_CreateSession(account, password, context, callback, cookie, false);
             }
 
             public ISessionPrx end_CreateSession(Ice.AsyncResult asyncResult)
@@ -900,7 +900,7 @@ namespace FootStone
                 return outgoing_.getResult(resultI_.wait());
             }
 
-            private Ice.AsyncResult<Callback_ISessionFactory_CreateSession> begin_CreateSession(string iceP_name, string iceP_password, _System.Collections.Generic.Dictionary<string, string> context, Ice.AsyncCallback completedCallback, object cookie, bool synchronous)
+            private Ice.AsyncResult<Callback_ISessionFactory_CreateSession> begin_CreateSession(string iceP_account, string iceP_password, _System.Collections.Generic.Dictionary<string, string> context, Ice.AsyncCallback completedCallback, object cookie, bool synchronous)
             {
                 iceCheckAsyncTwowayOnly(_CreateSession_name);
                 var completed = new IceInternal.OperationAsyncResultCompletionCallback<Callback_ISessionFactory_CreateSession, ISessionPrx>(
@@ -912,7 +912,7 @@ namespace FootStone
                         }
                     },
                     this, _CreateSession_name, cookie, completedCallback);
-                _iceI_CreateSession(iceP_name, iceP_password, context, synchronous, completed);
+                _iceI_CreateSession(iceP_account, iceP_password, context, synchronous, completed);
                 return completed;
             }
 
@@ -1328,7 +1328,7 @@ namespace FootStone
         {
             #region Slice operations
 
-            public abstract ISessionPrx CreateSession(string name, string password, Ice.Current current = null);
+            public abstract _System.Threading.Tasks.Task<ISessionPrx> CreateSessionAsync(string account, string password, Ice.Current current = null);
 
             public abstract void Shutdown(Ice.Current current = null);
 
@@ -1372,16 +1372,16 @@ namespace FootStone
             {
                 Ice.ObjectImpl.iceCheckMode(Ice.OperationMode.Normal, current.mode);
                 var istr = inS.startReadParams();
-                string iceP_name;
+                string iceP_account;
                 string iceP_password;
-                iceP_name = istr.readString();
+                iceP_account = istr.readString();
                 iceP_password = istr.readString();
                 inS.endReadParams();
-                var ret = obj.CreateSession(iceP_name, iceP_password, current);
-                var ostr = inS.startWriteParams();
-                ISessionPrxHelper.write(ostr, ret);
-                inS.endWriteParams(ostr);
-                return inS.setResult(ostr);
+                return inS.setResultTask<ISessionPrx>(obj.CreateSessionAsync(iceP_account, iceP_password, current),
+                    (ostr, ret) =>
+                    {
+                        ISessionPrxHelper.write(ostr, ret);
+                    });
             }
 
             [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011")]

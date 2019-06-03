@@ -115,15 +115,24 @@ namespace FootStone.Core.Client
             }
         }
              
-        public async Task<ISessionPrx> CreateSession(string name)
+        public async Task<ISessionPrx> CreateSession(string account)
         {
-            var sessionFactoryPrx = (ISessionFactoryPrx)ISessionFactoryPrxHelper
-                .uncheckedCast(communicator.stringToProxy("sessionFactory"))
-                .ice_connectionId(name)
-                ;
+            ISessionFactoryPrx sessionFactoryPrx = null;
+            try
+            {
+                sessionFactoryPrx = (ISessionFactoryPrx)ISessionFactoryPrxHelper
+                   .uncheckedCast(communicator.stringToProxy("sessionFactory"))
+                   .ice_connectionId(account);
+            }
+            catch (Ice.NotRegisteredException)
+            {
+              //  var query = IceGrid.QueryPrxHelper.checkedCast(communicator.stringToProxy("FootStone/Query"));
+                //   hello = HelloPrxHelper.checkedCast(query.findObjectByType("::Demo::Hello"));
+            }
+
             await sessionFactoryPrx.ice_getConnectionAsync();
             var sessionPrx = (ISessionPrx)(await sessionFactoryPrx
-                .CreateSessionAsync(name, "")).ice_connectionId(name);
+                .CreateSessionAsync(account, "")).ice_connectionId(account);
           
             Connection connection = await sessionPrx.ice_getConnectionAsync();
             connection.setACM(30, Ice.ACMClose.CloseOff, Ice.ACMHeartbeat.HeartbeatAlways);
@@ -135,8 +144,8 @@ namespace FootStone.Core.Client
             // Register the callback receiver servant with the object adapter     
             
             var proxy = ISessionPushPrxHelper.uncheckedCast(Adapter.addWithUUID(new SessionPushI()));
-            Adapter.addFacet(new PlayerPushI(name), proxy.ice_getIdentity(), "playerPush");
-            Adapter.addFacet(new ZonePushI(name), proxy.ice_getIdentity(), "zonePush");
+            Adapter.addFacet(new PlayerPushI(account), proxy.ice_getIdentity(), "playerPush");
+            Adapter.addFacet(new ZonePushI(account), proxy.ice_getIdentity(), "zonePush");
             // Associate the object adapter with the bidirectional connection.
             connection.setAdapter(Adapter);
 

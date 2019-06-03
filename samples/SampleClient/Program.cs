@@ -146,79 +146,90 @@ namespace FootStone.Core.Client
 
         private static async Task runTest(int index,int count)
         {
-            var sessionId = "session" + index;
-            var account = "account"+index;
-            var password = "111111";
-            var playerName = "player"+index;
-         
-            var sessionPrx = await NetworkIce.Instance.CreateSession(sessionId);
-          //  Console.Out.WriteLine("NetworkIce.Instance.CreateSession ok:"+ account);
-
-            var accountPrx = AccountPrxHelper.uncheckedCast(sessionPrx, "account");
             try
             {
-                await accountPrx.RegisterRequestAsync(new RegisterInfo(account, password));
-                Console.Out.WriteLine("RegisterRequest ok:" + account);
+                var sessionId = "session" + index;
+                var account = "account" + index;
+                var password = "111111";
+                var playerName = "player" + index;
+
+                var sessionPrx = await NetworkIce.Instance.CreateSession(sessionId);
+                //  Console.Out.WriteLine("NetworkIce.Instance.CreateSession ok:"+ account);
+
+                var accountPrx = AccountPrxHelper.uncheckedCast(sessionPrx, "account");
+                try
+                {
+                    await accountPrx.RegisterRequestAsync(account,new RegisterInfo(account, password));
+                    Console.Out.WriteLine("RegisterRequest ok:" + account);
+                }
+                catch (Exception ex)
+                {
+                    Console.Out.WriteLine("RegisterRequest fail:" + ex.Message);
+                }
+
+             //   await accountPrx.TestLoginRequestAsync("11", "22", new Sample.SampleLoginData("code1"));
+
+                await accountPrx.LoginRequestAsync(account, password);
+                Console.Out.WriteLine("LoginRequest ok:" + account);
+
+                List<ServerInfo> servers = await accountPrx.GetServerListRequestAsync();
+
+                if (servers.Count == 0)
+                {
+                    Console.Error.WriteLine("server list is empty!");
+                    return;
+                }
+
+                var serverId = servers[0].id;
+
+                List<PlayerShortInfo> players = await accountPrx.GetPlayerListRequestAsync(serverId);
+                if (players.Count == 0)
+                {
+                    var playerId = await accountPrx.CreatePlayerRequestAsync(playerName, serverId);
+                    players = await accountPrx.GetPlayerListRequestAsync(serverId);
+                }
+
+                await accountPrx.SelectPlayerRequestAsync(players[0].playerId);
+
+                var playerPrx = IPlayerPrxHelper.uncheckedCast(sessionPrx, "player");
+                var roleMasterPrx = IRoleMasterPrxHelper.uncheckedCast(sessionPrx, "roleMaster");
+                var zonePrx = IZonePrxHelper.uncheckedCast(sessionPrx, "zone");
+
+                var playerInfo = await playerPrx.GetPlayerInfoAsync();
+                var endPoint = await zonePrx.PlayerEnterAsync(playerInfo.zoneId);
+                // Console.Out.WriteLine("ConnectNetty begin(" + endPoint.ip + ":" + endPoint.port + ")");
+
+                // var channel = await ConnectNettyAsync(endPoint.ip, endPoint.port, playerInfo.id);
+                //  Console.Out.WriteLine("ConnectNetty end(" + endPoint.ip + ":" + endPoint.port + ")");
+
+                //   Console.Out.WriteLine("PlayerBind begin:" + channel.Id.AsLongText());
+
+                //  await zonePrx.PlayerBindChannelAsync(channel.Id.AsLongText());
+                //  Console.Out.WriteLine("PlayerBind end:" + channel.Id.AsLongText());
+
+                // channel.Id.AsLongText
+
+                Console.Out.WriteLine("playerPrx begin!" );
+                MasterProperty property;
+                for (int i = 0; i < count; ++i)
+                {
+                    await playerPrx.SetPlayerNameAsync(playerName + "_" + i);
+                    await Task.Delay(3000);
+                    property = await roleMasterPrx.GetPropertyAsync();
+                    await Task.Delay(5000);
+                    //     Console.Out.WriteLine("property" + JsonConvert.SerializeObject(property));
+                    playerInfo = await playerPrx.GetPlayerInfoAsync();
+                    await Task.Delay(10000);
+                }
+                Console.Out.WriteLine("playerInfo:" + JsonConvert.SerializeObject(playerInfo));
+
+                Console.Out.WriteLine("playerPrx end!");
+                //  await channel.CloseAsync();
             }
-            catch(Exception ex)
+            catch(System.Exception e)
             {
-                Console.Out.WriteLine("RegisterRequest fail:" + ex.Message);
+                Console.WriteLine(e.Message);
             }
-
-            await accountPrx.TestLoginRequestAsync("11", "22", new Sample.SampleLoginData("code1"));
-
-            await accountPrx.LoginRequestAsync(new LoginInfo(account, password));
-            Console.Out.WriteLine("LoginRequest ok:" + account);
-
-            List<ServerInfo> servers = await accountPrx.GetServerListRequestAsync();
-
-            if(servers.Count == 0)
-            {
-                Console.Error.WriteLine("server list is empty!");
-                return ;
-            }
-
-            var serverId = servers[0].id;
-
-            List<PlayerShortInfo> players = await accountPrx.GetPlayerListRequestAsync(serverId);
-            if (players.Count == 0)
-            {
-                var playerId = await accountPrx.CreatePlayerRequestAsync(playerName, serverId);
-                players = await accountPrx.GetPlayerListRequestAsync(serverId);         
-            }
-
-            await accountPrx.SelectPlayerRequestAsync(players[0].playerId);
-
-            var playerPrx = IPlayerPrxHelper.uncheckedCast(sessionPrx, "player");
-            var roleMasterPrx = IRoleMasterPrxHelper.uncheckedCast(sessionPrx, "roleMaster");
-            var zonePrx = IZonePrxHelper.uncheckedCast(sessionPrx, "zone");
-
-            var playerInfo = await playerPrx.GetPlayerInfoAsync();
-            var endPoint = await zonePrx.PlayerEnterAsync(playerInfo.zoneId);
-            Console.Out.WriteLine("ConnectNetty begin(" + endPoint.ip+":"+endPoint.port+")");
-
-            var channel = await ConnectNettyAsync(endPoint.ip, endPoint.port, playerInfo.id);
-            Console.Out.WriteLine("ConnectNetty end(" + endPoint.ip + ":" + endPoint.port + ")");
-
-            //   Console.Out.WriteLine("PlayerBind begin:" + channel.Id.AsLongText());
-
-            //  await zonePrx.PlayerBindChannelAsync(channel.Id.AsLongText());
-            //  Console.Out.WriteLine("PlayerBind end:" + channel.Id.AsLongText());
-
-            // channel.Id.AsLongText
-            MasterProperty property;
-            for (int i = 0; i < count; ++i)
-            {              
-                await playerPrx.SetPlayerNameAsync(playerName + "_" + i);
-                await Task.Delay(3000);
-                property = await roleMasterPrx.GetPropertyAsync();
-                await Task.Delay(5000);
-                //     Console.Out.WriteLine("property" + JsonConvert.SerializeObject(property));
-                playerInfo = await playerPrx.GetPlayerInfoAsync();        
-                await Task.Delay(10000);
-            }
-            Console.Out.WriteLine("playerInfo:" + JsonConvert.SerializeObject(playerInfo));
-            await channel.CloseAsync();
         }
 
       

@@ -1,5 +1,6 @@
 using FootStone.Core.FrontIce;
 using FootStone.Core.GrainInterfaces;
+using FootStone.FrontIce;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -79,18 +80,18 @@ namespace FootStone.Core.GameServer
                         //  .Configure<EndpointOptions>(options => options.AdvertisedIPAddress = IPAddress.Any)
                         //.ConfigureApplicationParts(parts => parts.AddApplicationPart(typeof(RoomGrain).Assembly).WithReferences())
                         .ConfigureLogging(logging =>
-                        {
+                        {                           
                             logging.AddConsole();
                             logging.SetMinimumLevel(LogLevel.Warning);
                         })
                         .AddMemoryGrainStorage("memory1")
-                        //.AddAdoNetGrainStorage("ado1", options =>
-                        // {
-
-                        //     options.UseJsonFormat = true;
-                        //     options.ConnectionString = mysqlConnectStorage;           
-                        //     options.Invariant = "MySql.Data.MySqlClient";
-                        // })
+                        .AddAdoNetGrainStorage("ado1", options =>
+                         {
+                         
+                             options.UseJsonFormat = true;
+                             options.ConnectionString = mysqlConnectStorage;
+                             options.Invariant = "MySql.Data.MySqlClient";
+                         })
                         // .AddGrainService<IceService>()
                         .AddGrainService<NettyService>()
                         .Configure<NettyOptions>(options =>
@@ -140,7 +141,8 @@ namespace FootStone.Core.GameServer
             }
             catch (Exception ex)
             {
-                Console.Error.WriteLine(ex.Message);
+                Console.Error.WriteLine(ex);
+                Console.ReadLine();
             }
             return 0;
         }
@@ -152,15 +154,15 @@ namespace FootStone.Core.GameServer
 
             //ITestGrain test = Global.OrleansClient.GetGrain<ITestGrain>(0);
             //await test.Test();
-            ISampleGameGrain game = Global.OrleansClient.GetGrain<ISampleGameGrain>(1);
-            await game.PlayerLeave(Guid.NewGuid());
+       //     ISampleGameGrain game = Global.OrleansClient.GetGrain<ISampleGameGrain>(1);
+       //     await game.PlayerLeave(Guid.NewGuid());
 
-            var info = await game.GetGameState();
+      //      var info = await game.GetGameState();
 
-            await game.SampleBattleBegin();
+      //      await game.SampleBattleBegin();
 
-            IWorldGrain world = Global.OrleansClient.GetGrain<IWorldGrain>("1");
-            await world.Init(System.Environment.CurrentDirectory);
+        //    IWorldGrain world = Global.OrleansClient.GetGrain<IWorldGrain>("1");
+        //    await world.Init(System.Environment.CurrentDirectory);
 
             //Console.WriteLine("Map file name is '{0}'.", mapFileName);
             //Console.WriteLine("Setting up Adventure, please wait ...");

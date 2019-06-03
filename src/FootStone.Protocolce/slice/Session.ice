@@ -30,7 +30,7 @@ module FootStone
 		interface ISessionFactory
 		{
 		   
-			ISession* CreateSession(string name,string password);
+			["amd"] ISession* CreateSession(string account,string password);
 
 			void Shutdown();
 		}
