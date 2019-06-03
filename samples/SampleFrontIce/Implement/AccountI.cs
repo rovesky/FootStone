@@ -64,8 +64,7 @@ namespace FootStone.Core.FrontIce
             observer.Unsubscribe();
         }
 
-
-      
+             
 
 
         public async override Task LoginRequestAsync(string account,string pwd, Current current = null)

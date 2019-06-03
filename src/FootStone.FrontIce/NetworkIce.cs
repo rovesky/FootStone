@@ -15,11 +15,11 @@ namespace FootStone.FrontIce
              
         private Ice.Communicator communicator;
 
-        public void Init(string configFile, IEnumerable<IServantBase> servants)
+        public void Init(IceOptions options)
         {
             try
             {
-                communicator = Ice.Util.initialize(configFile);              
+                communicator = Ice.Util.initialize(options.ConfigFile);              
 
                 var adapter = communicator.createObjectAdapter("SessionFactoryAdapter");         
 
@@ -30,7 +30,7 @@ namespace FootStone.FrontIce
 
              
 
-                adapter.add(new SessionFactoryI(serverName, servants, communicator), id);
+                adapter.add(new SessionFactoryI(serverName, options.Facets, communicator), id);
 
                 adapter.activate();
                 Console.WriteLine("ice inited!");

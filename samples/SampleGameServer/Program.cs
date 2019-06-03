@@ -116,17 +116,23 @@ namespace FootStone.Core.GameServer
                     .AddFrontIce(options =>
                     {
                         options.ConfigFile = "config";
+
+                        options.Facets.Add(typeof(AccountI));
+                        options.Facets.Add(typeof(PlayerI));
+                        options.Facets.Add(typeof(RoleMasterI));
+                        options.Facets.Add(typeof(ZoneI));
+
                     })
-                    .ConfigureSilo(silo =>
-                    {
-                        silo.ConfigureServices(services =>
-                        {
-                            services.AddSingleton<IServantBase, AccountI>();
-                            services.AddSingleton<IServantBase, PlayerI>();
-                            services.AddSingleton<IServantBase, RoleMasterI>();
-                            services.AddSingleton<IServantBase, ZoneI>();
-                        });
-                    })
+                    //.ConfigureSilo(silo =>
+                    //{
+                    //    silo.ConfigureServices(services =>
+                    //    {
+                    //        services.AddSingleton<IServantBase, AccountI>();
+                    //        services.AddSingleton<IServantBase, PlayerI>();
+                    //        services.AddSingleton<IServantBase, RoleMasterI>();
+                    //        services.AddSingleton<IServantBase, ZoneI>();
+                    //    });
+                    //})
                     .Build();
 
                 Global.FSHost = footStone;

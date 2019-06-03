@@ -15,14 +15,14 @@ namespace FootStone.FrontIce
     public class SessionFactoryI : ISessionFactoryDisp_
     {
         private string serverName;
-        private IEnumerable<IServantBase> servants;
+        private List<Type> facets;
         private QueryPrx query;
         private AdminPrx admin;
 
-        public SessionFactoryI(string name, IEnumerable<IServantBase> servants, Communicator communicator)
+        public SessionFactoryI(string name, List<Type> facets, Communicator communicator)
         {
             this.serverName = name;
-            this.servants = servants;
+            this.facets = facets;
             try
             {
                 this.query = QueryPrxHelper.checkedCast(communicator.stringToProxy("FootStone/Query"));
@@ -66,8 +66,9 @@ namespace FootStone.FrontIce
 
 
             //Ìí¼Ófacet
-            foreach (var servant in servants)
+            foreach (var facetType in facets)
             {
+                var servant = (IServantBase)Activator.CreateInstance(facetType);
                 servant.setSessionI(sessionI);
                 current.adapter.addFacet((Ice.Object)servant, proxy.ice_getIdentity(), servant.GetFacet());
             }

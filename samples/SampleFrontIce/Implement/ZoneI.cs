@@ -77,21 +77,24 @@ namespace FootStone.Core.FrontIce
         
             // await AddObserver(zoneGuid);
             var zoneId = this.sessionI.Get<string>("zoneId");
-            var zoneGrain = Global.OrleansClient.GetGrain<IZoneGrain>(Guid.Parse(zoneId));
-
-            zoneGrain.PlayerLeave(this.sessionI.PlayerId);
-         
-
-            if (playerStreamHandler != null)
+            if (zoneId != null)
             {
-                playerStreamHandler.UnsubscribeAsync();
-                playerStreamHandler = null;
-            }
+                var zoneGrain = Global.OrleansClient.GetGrain<IZoneGrain>(Guid.Parse(zoneId));
 
-            if (zoneStreamHandler != null)
-            {
-                zoneStreamHandler.UnsubscribeAsync();
-                zoneStreamHandler = null;
+                zoneGrain.PlayerLeave(this.sessionI.PlayerId);
+
+
+                if (playerStreamHandler != null)
+                {
+                    playerStreamHandler.UnsubscribeAsync();
+                    playerStreamHandler = null;
+                }
+
+                if (zoneStreamHandler != null)
+                {
+                    zoneStreamHandler.UnsubscribeAsync();
+                    zoneStreamHandler = null;
+                }
             }
         }
 

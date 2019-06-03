@@ -42,7 +42,14 @@ namespace FootStone.FrontIce
                     foreach(Ice.Object e in allFacets.Values)
                     {
                         IServantBase dis = (IServantBase)e;
-                        dis.Destroy();                      
+                        try
+                        {
+                            dis.Destroy();
+                        }
+                        catch(System.Exception ex)
+                        {
+                            Console.WriteLine(ex);
+                        }
                     }
                     current.adapter.removeAllFacets(current.id);
 
@@ -68,6 +75,10 @@ namespace FootStone.FrontIce
 
         public T Get<T>(string key)
         {
+            if (!attributes.ContainsKey(key))
+            {
+                return default(T);
+            }
             return (T)attributes[key];
         }
 
