@@ -72,8 +72,7 @@ namespace FootStone.Core.GameServer
         {
             
         }
-
-    
+            
 
         public void Dispose()
         {
@@ -154,7 +153,7 @@ namespace FootStone.Core.GameServer
                         .ConfigureLogging(logging =>
                         {                            
                            // logging.AddConsole();
-                            logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Information);
+                            logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Warning);
 
                             logging.AddProvider(new NLogLoggerProvider());
                         })

@@ -19,14 +19,17 @@ namespace FootStone.FrontIce
         {
             try
             {
-                communicator = Ice.Util.initialize(options.ConfigFile);              
+                Ice.Util.setProcessLogger(new MyLoggerI());
 
-                var adapter = communicator.createObjectAdapter("SessionFactoryAdapter");         
+                communicator = Ice.Util.initialize(options.ConfigFile);
+
+                var adapter = communicator.createObjectAdapter("SessionFactoryAdapter");
 
                 var properties = communicator.getProperties();
-              
+
+
                 var id = Ice.Util.stringToIdentity(properties.getProperty("Identity"));
-                var serverName = properties.getProperty("Ice.ProgramName");             
+                var serverName = properties.getProperty("Ice.ProgramName");
 
                 adapter.add(new SessionFactoryI(serverName, options.FacetTypes, communicator), id);
 
