@@ -15,7 +15,7 @@ namespace FootStone.Core
 {
 
     [StorageProvider(ProviderName = "memory1")]
-    public abstract partial class GameGrain :  FootStoneGrain
+    public abstract partial class GameGrain :  FSGrain
     {
 
         public override  Task OnActivateAsync()
@@ -27,7 +27,7 @@ namespace FootStone.Core
         }
 
 
-        protected abstract IComponent CreateGameComponent();
+        protected abstract IFSComponent CreateGameComponent();
         
 
     }

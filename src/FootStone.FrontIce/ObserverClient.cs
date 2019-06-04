@@ -7,7 +7,7 @@ namespace FootStone.FrontIce
     public class ObserverClient<TObserver>
         where TObserver : IGrainObserver
     {
-        private IObserverComponent<TObserver> grain;
+        private IObserverManager<TObserver> grain;
         private TObserver observer;
         private TObserver observerRef;
         private IClusterClient client;
@@ -18,7 +18,7 @@ namespace FootStone.FrontIce
             this.client = client;
         }
 
-        public async Task Subscribe(IObserverComponent<TObserver> grain, TObserver observerObj)
+        public async Task Subscribe(IObserverManager<TObserver> grain, TObserver observerObj)
         {
             if (observer == null)
             {

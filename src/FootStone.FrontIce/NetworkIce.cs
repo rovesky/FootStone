@@ -26,11 +26,9 @@ namespace FootStone.FrontIce
                 var properties = communicator.getProperties();
               
                 var id = Ice.Util.stringToIdentity(properties.getProperty("Identity"));
-                var serverName = properties.getProperty("Ice.ProgramName");
+                var serverName = properties.getProperty("Ice.ProgramName");             
 
-             
-
-                adapter.add(new SessionFactoryI(serverName, options.Facets, communicator), id);
+                adapter.add(new SessionFactoryI(serverName, options.FacetTypes, communicator), id);
 
                 adapter.activate();
                 Console.WriteLine("ice inited!");

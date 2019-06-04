@@ -11,7 +11,7 @@ namespace SampleGameServer
     public class SampleBattleComponent : ComponentBase,ISampleBattle
     {
         
-        public SampleBattleComponent(FootStoneGrain grain) : base(grain)
+        public SampleBattleComponent(FSGrain grain) : base(grain)
         {
 
         }

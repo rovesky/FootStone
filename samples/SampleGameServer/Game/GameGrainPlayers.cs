@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 namespace FootStone.Core
 {
 
-    public abstract partial class GameGrain : FootStoneGrain, IPlayerManager, IPlayerObserver
+    public abstract partial class GameGrain : FSGrain, IPlayerManager, IPlayerObserver
     {
 
         public Task PlayerEnter(GamePlayerState info)

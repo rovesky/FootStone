@@ -16,55 +16,38 @@ namespace FootStone.FrontIce
     {
         private string serverName;
         private List<Type> facets;
-        private QueryPrx query;
-        private AdminPrx admin;
+        //private QueryPrx query;
+        //private AdminPrx admin;
 
         public SessionFactoryI(string name, List<Type> facets, Communicator communicator)
         {
             this.serverName = name;
             this.facets = facets;
-            try
-            {
-                this.query = QueryPrxHelper.checkedCast(communicator.stringToProxy("FootStone/Query"));
-
-                var registry = RegistryPrxHelper.checkedCast(communicator.stringToProxy("FootStone/Registry"));          
-
-                var sessionPrx = registry.createAdminSession("foo", "bar");
-                this.admin = sessionPrx.getAdmin();
-
-            }
-            catch (Ice.Exception ex)
-            {
-                Console.Error.WriteLine(ex.Message);
-            }
-            
-
-        
-
-        }
-        public async override Task<ISessionPrx> CreateSessionAsync(string account, string password, Current current = null)
-
-        {
-            var sessionId = Util.stringToIdentity(account);
-            //var sessionPrx = ISessionPrxHelper.uncheckedCast(await query.findObjectByIdAsync(sessionId));
-            //if (sessionPrx != null)
+            //try
             //{
-            //    await sessionPrx.DestroyAsync();
+            //    this.query = QueryPrxHelper.checkedCast(communicator.stringToProxy("FootStone/Query"));
+
+            //    var registry = RegistryPrxHelper.checkedCast(communicator.stringToProxy("FootStone/Registry"));          
+
+            //    var sessionPrx = registry.createAdminSession("foo", "bar");
+            //    this.admin = sessionPrx.getAdmin();
+
             //}
+            //catch (Ice.Exception ex)
+            //{
+            //    Console.Error.WriteLine(ex.Message);
+            //}
+        }
+
+
+        public async override Task<ISessionPrx> CreateSessionAsync(string account, string password, Current current = null)
+        {
+           // var sessionId = Util.stringToIdentity(account);
+           
 
             var sessionI = new SessionI(account);
             var proxy = ISessionPrxHelper.uncheckedCast(current.adapter.addWithUUID(sessionI));
-
-            //try
-            //{
-            //    await admin.addObjectAsync(proxy);
-            //}
-            //catch (ObjectExistsException)
-            //{
-            //    await admin.updateObjectAsync(proxy);
-            //}
-
-
+                       
             //Ìí¼Ófacet
             foreach (var facetType in facets)
             {

@@ -4,6 +4,8 @@ using FootStone.FrontIce;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using NLog;
+using NLog.Fluent;
 using Orleans;
 using Orleans.Configuration;
 using Orleans.Hosting;
@@ -12,11 +14,81 @@ using SampleGrainInterfaces;
 using System;
 using System.Net;
 using System.Threading.Tasks;
+using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace FootStone.Core.GameServer
 {
+
+    public class NLogLogger : ILogger
+    {
+        private static Logger logger = LogManager.GetCurrentClassLogger();
+
+        public IDisposable BeginScope<TState>(TState state)
+        {
+            return null;
+        }
+
+        public bool IsEnabled(Microsoft.Extensions.Logging.LogLevel logLevel)
+        {
+            return true;
+        }
+
+        public void Log<TState>(Microsoft.Extensions.Logging.LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
+        {
+            NLog.LogLevel level = NLog.LogLevel.Off;
+            switch (logLevel)
+            {
+                case Microsoft.Extensions.Logging.LogLevel.Trace:
+                    level = NLog.LogLevel.Trace;
+                    break;
+                case Microsoft.Extensions.Logging.LogLevel.Debug:
+                    level = NLog.LogLevel.Debug;
+                    break;
+                case Microsoft.Extensions.Logging.LogLevel.Information:
+                    level = NLog.LogLevel.Info;
+                    break;
+                case Microsoft.Extensions.Logging.LogLevel.Warning:
+                    level = NLog.LogLevel.Warn;
+                    break;
+                case Microsoft.Extensions.Logging.LogLevel.Error:
+                    level = NLog.LogLevel.Error;
+                    break;
+                case Microsoft.Extensions.Logging.LogLevel.Critical:
+                    level = NLog.LogLevel.Fatal;
+                    break;
+                case Microsoft.Extensions.Logging.LogLevel.None:
+                    level = NLog.LogLevel.Off;
+                    break;
+            }
+            logger.Log(level, formatter(state, exception));
+        }
+    }
+
+    public class NLogLoggerProvider : ILoggerProvider
+    {
+       
+
+        public NLogLoggerProvider()
+        {
+            
+        }
+
+    
+
+        public void Dispose()
+        {
+
+        }
+
+        ILogger ILoggerProvider.CreateLogger(string categoryName)
+        {
+            return new NLogLogger();
+        }
+    }
+
     class Program
     {
+        private static Logger logger = LogManager.GetCurrentClassLogger();
 
         static string IP_START = "192.168.0";
         static string mysqlConnectCluster = "server=192.168.0.128;user id=root;password=654321#;database=footstone;MaximumPoolsize=50";
@@ -80,9 +152,11 @@ namespace FootStone.Core.GameServer
                         //  .Configure<EndpointOptions>(options => options.AdvertisedIPAddress = IPAddress.Any)
                         //.ConfigureApplicationParts(parts => parts.AddApplicationPart(typeof(RoomGrain).Assembly).WithReferences())
                         .ConfigureLogging(logging =>
-                        {                           
-                            logging.AddConsole();
-                            logging.SetMinimumLevel(LogLevel.Warning);
+                        {                            
+                           // logging.AddConsole();
+                            logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Information);
+
+                            logging.AddProvider(new NLogLoggerProvider());
                         })
                         .AddMemoryGrainStorage("memory1")
                         .AddAdoNetGrainStorage("ado1", options =>
@@ -117,10 +191,10 @@ namespace FootStone.Core.GameServer
                     {
                         options.ConfigFile = "config";
 
-                        options.Facets.Add(typeof(AccountI));
-                        options.Facets.Add(typeof(PlayerI));
-                        options.Facets.Add(typeof(RoleMasterI));
-                        options.Facets.Add(typeof(ZoneI));
+                        options.FacetTypes.Add(typeof(AccountI));
+                        options.FacetTypes.Add(typeof(PlayerI));
+                        options.FacetTypes.Add(typeof(RoleMasterI));
+                        options.FacetTypes.Add(typeof(ZoneI));
 
                     })
                     //.ConfigureSilo(silo =>
@@ -135,15 +209,22 @@ namespace FootStone.Core.GameServer
                     //})
                     .Build();
 
+                logger.Error("after build!");
+            
                 Global.FSHost = footStone;
 
                 var iceService = footStone.Services.GetService<IceService>();
 
                 RunAsync(footStone).Wait();
 
-                Console.ReadLine();
-
-                StopAsync(footStone).Wait();
+                do
+                {
+                    string exit = Console.ReadLine();
+                    if (exit.Equals("exit"))
+                    {
+                        StopAsync(footStone).Wait();
+                    }
+                } while (true);
             }
             catch (Exception ex)
             {

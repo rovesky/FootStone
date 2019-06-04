@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace FootStone.Core.GrainInterfaces
 {
-    public interface IObserverComponent<T>
+    public interface IObserverManager<T> 
     {
 
         Task Subscribe(T subscriber);

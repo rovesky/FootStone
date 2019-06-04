@@ -13,7 +13,7 @@ namespace FootStone.Core
     {
         private Dictionary<Guid, GamePlayerState> players = new Dictionary<Guid, GamePlayerState>();
 
-        public PlayerManagerComponent(FootStoneGrain grain):
+        public PlayerManagerComponent(FSGrain grain):
             base(grain)
         {
            

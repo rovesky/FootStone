@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 namespace FootStone.Grains
 {
 
-    public class WorldGrain : FootStoneGrain, IWorldGrain
+    public class WorldGrain : FSGrain, IWorldGrain
     {
 
         class PlayerObserver : IPlayerObserver

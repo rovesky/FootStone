@@ -2,6 +2,7 @@
 using FootStone.Game;
 using FootStone.GrainInterfaces;
 using Newtonsoft.Json;
+using NLog;
 using Orleans;
 using Orleans.Providers;
 using System;
@@ -22,21 +23,21 @@ namespace FootStone.Core
     }
 
     [StorageProvider(ProviderName = "memory1")]
-    public class AccountGrain : FootStoneGrain<AccountState,IAccountObserver>, IAccountGrain
+    public class AccountGrain : FSGrain<AccountState,IAccountObserver>, IAccountGrain
     {
+
+        private static Logger logger = LogManager.GetCurrentClassLogger();
   
         public AccountGrain()
-        {         
+        {        
+            
         }
 
 
         public async override Task OnActivateAsync()
         {     
+
             await base.OnActivateAsync();
-
-           
-
-           // return Task.CompletedTask;
         }
 
         public override Task OnDeactivateAsync()
@@ -49,6 +50,7 @@ namespace FootStone.Core
         public Task Login(string sessionId,string account,string pwd)
         {
             
+
          //   var info = JsonConvert.DeserializeObject<LoginInfo>(infoJson);
             if (State.account == null)
             {

@@ -1,18 +1,20 @@
-﻿using Orleans;
+﻿using FootStone.Core.GrainInterfaces;
+using Orleans;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
-using FootStone.Core.GrainInterfaces;
 
 namespace FootStone.Game
 {
-    public class ObserverComponent<T> : ComponentBase, IObserverComponent<T> where T : IGrainObserver
+    /// <summary>
+    /// 观察者组件，包装了Orleans的ObserverSubscriptionManager类
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    public class ObserverManager<T> : ComponentBase, IObserverManager<T> where T : IGrainObserver
     {
         private ObserverSubscriptionManager<T> subscribers;
 
 
-        public ObserverComponent(IFSObject grain) : base(grain)
+        public ObserverManager(IFSGrain grain) : base(grain)
         {
 
         }
@@ -28,8 +30,7 @@ namespace FootStone.Game
             subscribers = new ObserverSubscriptionManager<T>();
             return Task.CompletedTask;
         }
-
-
+        
 
         public Task Subscribe(T subscriber)
         {
@@ -43,8 +44,7 @@ namespace FootStone.Game
         public Task Unsubscribe(T subscriber)
         {
             if (subscribers.IsSubscribed(subscriber))
-            {
-                Console.Out.WriteLine("accountObserver Unsubscribe end");
+            {            
                 subscribers.Unsubscribe(subscriber);
             }
             return Task.CompletedTask;

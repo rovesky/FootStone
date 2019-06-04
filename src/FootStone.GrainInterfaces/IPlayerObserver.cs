@@ -9,7 +9,6 @@ namespace FootStone.Core.GrainInterfaces
     {
         void HpChanged(int hp);
 
-
         void LevelChanged(Guid playerId, int newLevel);
     }
 }

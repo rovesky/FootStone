@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FootStone.GrainInterfaces
 {
-    public interface IAccountGrain :  IGrainWithStringKey, IObserverComponent<IAccountObserver>
+    public interface IAccountGrain :  IGrainWithStringKey, IObserverManager<IAccountObserver>
     {
         Task Login(string sessionId,string account,string pwd);
 

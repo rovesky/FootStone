@@ -8,7 +8,7 @@ namespace FootStone.Game
     public class LoginComponent : ComponentBase
     {
 
-        public LoginComponent(IFSObject grain) : base(grain)
+        public LoginComponent(IFSGrain grain) : base(grain)
         {
 
         }

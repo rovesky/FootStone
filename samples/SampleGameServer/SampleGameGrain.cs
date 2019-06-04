@@ -37,7 +37,7 @@ namespace SampleGameServer
             return FindComponent<ISampleBattle>().SampleBattleEnd();
         }
 
-        protected override IComponent CreateGameComponent()
+        protected override IFSComponent CreateGameComponent()
         {
             return new GameComponent<SampleGameState>(this,new SampleGameState(1));
         }

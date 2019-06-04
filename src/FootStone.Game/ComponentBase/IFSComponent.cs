@@ -2,7 +2,7 @@
 
 namespace FootStone.Game
 {
-    public interface IComponent
+    public interface IFSComponent
     {
         Task Fini();
         Task Init();

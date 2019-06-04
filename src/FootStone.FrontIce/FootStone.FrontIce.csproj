@@ -24,12 +24,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Grid1\config.grid.registry">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Grid1\StartGridRegistry.bat">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="Grid\application-netcore_with_replication.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

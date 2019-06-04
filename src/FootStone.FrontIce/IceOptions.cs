@@ -7,7 +7,7 @@ namespace FootStone.FrontIce
     {
         public string ConfigFile { get; set; }
 
-        public List<Type> Facets = new List<Type>();
+        public List<Type> FacetTypes = new List<Type>();
 
     }
 }

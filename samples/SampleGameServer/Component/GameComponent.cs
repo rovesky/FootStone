@@ -17,7 +17,7 @@ namespace FootStone.Core
     {
         private TState gameState;
 
-        public GameComponent(FootStoneGrain grain, TState state):
+        public GameComponent(FSGrain grain, TState state):
             base(grain)
         {
             this.gameState = state;
