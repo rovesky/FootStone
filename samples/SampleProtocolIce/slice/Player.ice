@@ -27,7 +27,8 @@ module FootStone
 	
 		struct PlayerInfo
 		{
-			string id;
+			string account;
+			string playerId;
 			string name;
 			int    gameId;
 			int    level;
@@ -37,13 +38,23 @@ module FootStone
 			ItemList items;
 		};
 
+		struct PlayerCreateInfo
+		{
+			string name;
+			int    profession;
+		}
+
 		interface IPlayerPush
 		{
 			void hpChanged(int hp);
 		}
 
 		interface IPlayer
-		{
+		{  	
+	        ["amd"] string CreatePlayerRequest(int gameId,PlayerCreateInfo info);
+
+		    ["amd"] void SelectPlayerRequest(string playerId) throws PlayerNotExsit;		
+		
 			["amd"] idempotent PlayerInfo GetPlayerInfo() throws PlayerNotExsit;
 
 			["amd"] void SetPlayerName(string name)	throws PlayerNotExsit;

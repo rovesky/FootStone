@@ -35,22 +35,22 @@ namespace FootStone.FrontIce
                 try
                 {
                     current.adapter.remove(current.id);
-
                     var allFacets = current.adapter.findAllFacets(current.id);
                     foreach(Ice.Object e in allFacets.Values)
                     {
-                        IServantBase dis = (IServantBase)e;
+                        IDisposable dis = (IDisposable)e;
                         try
                         {
-                            dis.Destroy();
+                            dis.Dispose();
                         }
                         catch(System.Exception ex)
                         {
                             logger.error(ex.ToString());
                         }
                     }
-                    current.adapter.removeAllFacets(current.id);
-               
+                    current.adapter.removeAllFacets(current.id);              
+
+
                     logger.print("The session " + Id + " is now destroyed.");
                 }
                 catch (Ice.ObjectAdapterDeactivatedException)
@@ -60,7 +60,6 @@ namespace FootStone.FrontIce
                 }
             }
         }
-
 
         public string Id
         {
@@ -82,7 +81,7 @@ namespace FootStone.FrontIce
         }
 
         public void Bind<T>(string key,T value)
-        {
+        {            
              attributes.Add(key, value);
         }
 
@@ -101,6 +100,5 @@ namespace FootStone.FrontIce
         private Dictionary<String, object> attributes = new Dictionary<string, object>();
 
     }
-
        
 }

@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace FootStone.FrontIce
 {
-    public interface IServantBase 
+    public interface IServantBase : IDisposable
     {
-        void Destroy();
+       // void Destroy();
 
         string GetFacet();
 

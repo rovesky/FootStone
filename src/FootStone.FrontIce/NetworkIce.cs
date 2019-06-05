@@ -1,4 +1,5 @@
-﻿using NLog;
+﻿using Ice;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -7,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace FootStone.FrontIce
 {
+  
     public class NetworkIce
     {
         public NetworkIce()
@@ -20,13 +22,22 @@ namespace FootStone.FrontIce
         {         
             try
             {
-                //设置日志输出       
-                var logger = options.Logger;
-                if (logger == null)
-                    logger = new NLoggerI(LogManager.GetLogger("Ice"));
-                Ice.Util.setProcessLogger(logger);
+               
+              //  Ice.Util.setProcessLogger(logger);
 
-                communicator = Ice.Util.initialize(options.ConfigFile);
+                var initData = new InitializationData();
+                initData.properties = Util.createProperties();
+                initData.properties.load(options.ConfigFile);
+
+                //设置日志输出              
+                if (options.Logger == null)
+                    options.Logger = new NLoggerI(LogManager.GetLogger("Ice"));
+                initData.logger = options.Logger;
+
+                // initData.dispatcher = new
+
+                communicator = Ice.Util.initialize(initData);
+
                 var adapter = communicator.createObjectAdapter("SessionFactoryAdapter");
 
                 var properties = communicator.getProperties();
@@ -34,10 +45,11 @@ namespace FootStone.FrontIce
                 var id = Ice.Util.stringToIdentity(properties.getProperty("Identity"));
 
                 var serverName = properties.getProperty("Ice.ProgramName");
-
+              
                 adapter.add(new SessionFactoryI(serverName, options.FacetTypes), id);
 
                 adapter.activate();
+         
                 communicator.getLogger().print("Ice inited!");
             }
             catch (Ice.Exception ex)

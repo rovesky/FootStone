@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using FootStone.Core.GrainInterfaces;
+using Orleans.Providers;
 
 namespace FootStone.Game
 {
@@ -59,6 +60,7 @@ namespace FootStone.Game
     /// <summary>
     /// 无存储版本的FootStoneGrain
     /// </summary>
+    [StorageProvider(ProviderName = "memory1")]
     public class FSGrain : FSGrain<EmptyState>
     {
     

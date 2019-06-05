@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FootStone.Core.GrainInterfaces;
+using FootStone.Game;
 using FootStone.GrainInterfaces;
 using Orleans;
 using Orleans.Providers;
@@ -10,7 +12,7 @@ using Orleans.Providers;
 namespace FootStone.Core
 {
 
-    public partial class PlayerGrain : Grain<PlayerInfo>, IRoleMasterGrain
+    public partial class PlayerGrain : FSGrain<PlayerInfo, IPlayerObserver>, IRoleMasterGrain
     {
         public Task<MasterProperty> GetProperty()
         {

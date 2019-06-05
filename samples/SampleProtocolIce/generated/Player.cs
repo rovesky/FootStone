@@ -232,7 +232,10 @@ namespace FootStone
             #region Slice data members
 
             [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-            public string id;
+            public string account;
+
+            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
+            public string playerId;
 
             [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
             public string name;
@@ -261,7 +264,8 @@ namespace FootStone
             [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
             public PlayerInfo()
             {
-                this.id = "";
+                this.account = "";
+                this.playerId = "";
                 this.name = "";
                 this.zoneId = "";
                 this.roleMaster = new RoleMaster();
@@ -269,9 +273,10 @@ namespace FootStone
             }
 
             [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-            public PlayerInfo(string id, string name, int gameId, int level, string zoneId, RoleMaster roleMaster, _System.Collections.Generic.List<Item> items)
+            public PlayerInfo(string account, string playerId, string name, int gameId, int level, string zoneId, RoleMaster roleMaster, _System.Collections.Generic.List<Item> items)
             {
-                this.id = id;
+                this.account = account;
+                this.playerId = playerId;
                 this.name = name;
                 this.gameId = gameId;
                 this.level = level;
@@ -300,7 +305,8 @@ namespace FootStone
             {
                 int h_ = 5381;
                 IceInternal.HashUtil.hashAdd(ref h_, "::FootStone::GrainInterfaces::PlayerInfo");
-                IceInternal.HashUtil.hashAdd(ref h_, id);
+                IceInternal.HashUtil.hashAdd(ref h_, account);
+                IceInternal.HashUtil.hashAdd(ref h_, playerId);
                 IceInternal.HashUtil.hashAdd(ref h_, name);
                 IceInternal.HashUtil.hashAdd(ref h_, gameId);
                 IceInternal.HashUtil.hashAdd(ref h_, level);
@@ -326,16 +332,30 @@ namespace FootStone
                     return false;
                 }
                 PlayerInfo o = (PlayerInfo)other;
-                if(this.id == null)
+                if(this.account == null)
                 {
-                    if(o.id != null)
+                    if(o.account != null)
                     {
                         return false;
                     }
                 }
                 else
                 {
-                    if(!this.id.Equals(o.id))
+                    if(!this.account.Equals(o.account))
+                    {
+                        return false;
+                    }
+                }
+                if(this.playerId == null)
+                {
+                    if(o.playerId != null)
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    if(!this.playerId.Equals(o.playerId))
                     {
                         return false;
                     }
@@ -420,7 +440,8 @@ namespace FootStone
             [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
             public void ice_writeMembers(Ice.OutputStream ostr)
             {
-                ostr.writeString(this.id);
+                ostr.writeString(this.account);
+                ostr.writeString(this.playerId);
                 ostr.writeString(this.name);
                 ostr.writeInt(this.gameId);
                 ostr.writeInt(this.level);
@@ -432,7 +453,8 @@ namespace FootStone
             [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
             public void ice_readMembers(Ice.InputStream istr)
             {
-                this.id = istr.readString();
+                this.account = istr.readString();
+                this.playerId = istr.readString();
                 this.name = istr.readString();
                 this.gameId = istr.readInt();
                 this.level = istr.readInt();
@@ -463,6 +485,169 @@ namespace FootStone
             }
 
             private static readonly PlayerInfo _nullMarshalValue = new PlayerInfo();
+
+            #endregion
+        }
+
+        [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704")]
+        [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707")]
+        [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709")]
+        [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1710")]
+        [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1711")]
+        [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1715")]
+        [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1716")]
+        [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1720")]
+        [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1722")]
+        [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1724")]
+        [_System.Serializable]
+        public partial class PlayerCreateInfo : _System.ICloneable
+        {
+            #region Slice data members
+
+            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
+            public string name;
+
+            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
+            public int profession;
+
+            #endregion
+
+            partial void ice_initialize();
+
+            #region Constructors
+
+            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
+            public PlayerCreateInfo()
+            {
+                this.name = "";
+                ice_initialize();
+            }
+
+            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
+            public PlayerCreateInfo(string name, int profession)
+            {
+                this.name = name;
+                this.profession = profession;
+                ice_initialize();
+            }
+
+            #endregion
+
+            #region ICloneable members
+
+            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
+            public object Clone()
+            {
+                return MemberwiseClone();
+            }
+
+            #endregion
+
+            #region Object members
+
+            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
+            public override int GetHashCode()
+            {
+                int h_ = 5381;
+                IceInternal.HashUtil.hashAdd(ref h_, "::FootStone::GrainInterfaces::PlayerCreateInfo");
+                IceInternal.HashUtil.hashAdd(ref h_, name);
+                IceInternal.HashUtil.hashAdd(ref h_, profession);
+                return h_;
+            }
+
+            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
+            public override bool Equals(object other)
+            {
+                if(object.ReferenceEquals(this, other))
+                {
+                    return true;
+                }
+                if(other == null)
+                {
+                    return false;
+                }
+                if(GetType() != other.GetType())
+                {
+                    return false;
+                }
+                PlayerCreateInfo o = (PlayerCreateInfo)other;
+                if(this.name == null)
+                {
+                    if(o.name != null)
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    if(!this.name.Equals(o.name))
+                    {
+                        return false;
+                    }
+                }
+                if(!this.profession.Equals(o.profession))
+                {
+                    return false;
+                }
+                return true;
+            }
+
+            #endregion
+
+            #region Comparison members
+
+            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
+            public static bool operator==(PlayerCreateInfo lhs, PlayerCreateInfo rhs)
+            {
+                return Equals(lhs, rhs);
+            }
+
+            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
+            public static bool operator!=(PlayerCreateInfo lhs, PlayerCreateInfo rhs)
+            {
+                return !Equals(lhs, rhs);
+            }
+
+            #endregion
+
+            #region Marshaling support
+
+            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
+            public void ice_writeMembers(Ice.OutputStream ostr)
+            {
+                ostr.writeString(this.name);
+                ostr.writeInt(this.profession);
+            }
+
+            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
+            public void ice_readMembers(Ice.InputStream istr)
+            {
+                this.name = istr.readString();
+                this.profession = istr.readInt();
+            }
+
+            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
+            public static void ice_write(Ice.OutputStream ostr, PlayerCreateInfo v)
+            {
+                if(v == null)
+                {
+                    _nullMarshalValue.ice_writeMembers(ostr);
+                }
+                else
+                {
+                    v.ice_writeMembers(ostr);
+                }
+            }
+
+            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
+            public static PlayerCreateInfo ice_read(Ice.InputStream istr)
+            {
+                var v = new PlayerCreateInfo();
+                v.ice_readMembers(istr);
+                return v;
+            }
+
+            private static readonly PlayerCreateInfo _nullMarshalValue = new PlayerCreateInfo();
 
             #endregion
         }
@@ -507,6 +692,12 @@ namespace FootStone
         public delegate void Callback_IPlayerPush_hpChanged();
 
         [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
+        public delegate void Callback_IPlayer_CreatePlayerRequest(string ret);
+
+        [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
+        public delegate void Callback_IPlayer_SelectPlayerRequest();
+
+        [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
         public delegate void Callback_IPlayer_GetPlayerInfo(PlayerInfo ret);
 
         [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
@@ -537,6 +728,30 @@ namespace FootStone
         [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
         public interface IPlayerPrx : Ice.ObjectPrx
         {
+            string CreatePlayerRequest(int gameId, PlayerCreateInfo info, Ice.OptionalContext context = new Ice.OptionalContext());
+
+            _System.Threading.Tasks.Task<string> CreatePlayerRequestAsync(int gameId, PlayerCreateInfo info, Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken());
+
+            Ice.AsyncResult<Callback_IPlayer_CreatePlayerRequest> begin_CreatePlayerRequest(int gameId, PlayerCreateInfo info, Ice.OptionalContext context = new Ice.OptionalContext());
+
+            Ice.AsyncResult begin_CreatePlayerRequest(int gameId, PlayerCreateInfo info, Ice.AsyncCallback callback, object cookie);
+
+            Ice.AsyncResult begin_CreatePlayerRequest(int gameId, PlayerCreateInfo info, Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie);
+
+            string end_CreatePlayerRequest(Ice.AsyncResult asyncResult);
+
+            void SelectPlayerRequest(string playerId, Ice.OptionalContext context = new Ice.OptionalContext());
+
+            _System.Threading.Tasks.Task SelectPlayerRequestAsync(string playerId, Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken());
+
+            Ice.AsyncResult<Callback_IPlayer_SelectPlayerRequest> begin_SelectPlayerRequest(string playerId, Ice.OptionalContext context = new Ice.OptionalContext());
+
+            Ice.AsyncResult begin_SelectPlayerRequest(string playerId, Ice.AsyncCallback callback, object cookie);
+
+            Ice.AsyncResult begin_SelectPlayerRequest(string playerId, Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie);
+
+            void end_SelectPlayerRequest(Ice.AsyncResult asyncResult);
+
             PlayerInfo GetPlayerInfo(Ice.OptionalContext context = new Ice.OptionalContext());
 
             _System.Threading.Tasks.Task<PlayerInfo> GetPlayerInfoAsync(Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken());
@@ -578,6 +793,12 @@ namespace FootStone
         [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
         public interface IPlayerOperations_
         {
+            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
+            _System.Threading.Tasks.Task<string> CreatePlayerRequestAsync(int gameId, PlayerCreateInfo info, Ice.Current current = null);
+
+            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
+            _System.Threading.Tasks.Task SelectPlayerRequestAsync(string playerId, Ice.Current current = null);
+
             [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
             _System.Threading.Tasks.Task<PlayerInfo> GetPlayerInfoAsync(Ice.Current current = null);
 
@@ -885,11 +1106,35 @@ namespace FootStone
 
             #region Synchronous operations
 
+            public string CreatePlayerRequest(int gameId, PlayerCreateInfo info, Ice.OptionalContext context = new Ice.OptionalContext())
+            {
+                try
+                {
+                    return _iceI_CreatePlayerRequestAsync(gameId, info, context, null, _System.Threading.CancellationToken.None, true).Result;
+                }
+                catch(_System.AggregateException ex_)
+                {
+                    throw ex_.InnerException;
+                }
+            }
+
             public PlayerInfo GetPlayerInfo(Ice.OptionalContext context = new Ice.OptionalContext())
             {
                 try
                 {
                     return _iceI_GetPlayerInfoAsync(context, null, _System.Threading.CancellationToken.None, true).Result;
+                }
+                catch(_System.AggregateException ex_)
+                {
+                    throw ex_.InnerException;
+                }
+            }
+
+            public void SelectPlayerRequest(string playerId, Ice.OptionalContext context = new Ice.OptionalContext())
+            {
+                try
+                {
+                    _iceI_SelectPlayerRequestAsync(playerId, context, null, _System.Threading.CancellationToken.None, true).Wait();
                 }
                 catch(_System.AggregateException ex_)
                 {
@@ -912,6 +1157,43 @@ namespace FootStone
             #endregion
 
             #region Async Task operations
+
+            public _System.Threading.Tasks.Task<string> CreatePlayerRequestAsync(int gameId, PlayerCreateInfo info, Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken())
+            {
+                return _iceI_CreatePlayerRequestAsync(gameId, info, context, progress, cancel, false);
+            }
+
+            private _System.Threading.Tasks.Task<string> _iceI_CreatePlayerRequestAsync(int iceP_gameId, PlayerCreateInfo iceP_info, Ice.OptionalContext context, _System.IProgress<bool> progress, _System.Threading.CancellationToken cancel, bool synchronous)
+            {
+                iceCheckTwowayOnly(_CreatePlayerRequest_name);
+                var completed = new IceInternal.OperationTaskCompletionCallback<string>(progress, cancel);
+                _iceI_CreatePlayerRequest(iceP_gameId, iceP_info, context, synchronous, completed);
+                return completed.Task;
+            }
+
+            private const string _CreatePlayerRequest_name = "CreatePlayerRequest";
+
+            private void _iceI_CreatePlayerRequest(int iceP_gameId, PlayerCreateInfo iceP_info, _System.Collections.Generic.Dictionary<string, string> context, bool synchronous, IceInternal.OutgoingAsyncCompletionCallback completed)
+            {
+                var outAsync = getOutgoingAsync<string>(completed);
+                outAsync.invoke(
+                    _CreatePlayerRequest_name,
+                    Ice.OperationMode.Normal,
+                    Ice.FormatType.DefaultFormat,
+                    context,
+                    synchronous,
+                    write: (Ice.OutputStream ostr) =>
+                    {
+                        ostr.writeInt(iceP_gameId);
+                        PlayerCreateInfo.ice_write(ostr, iceP_info);
+                    },
+                    read: (Ice.InputStream istr) =>
+                    {
+                        string ret;
+                        ret = istr.readString();
+                        return ret;
+                    });
+            }
 
             public _System.Threading.Tasks.Task<PlayerInfo> GetPlayerInfoAsync(Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken())
             {
@@ -956,6 +1238,50 @@ namespace FootStone
                         PlayerInfo ret = null;
                         ret = PlayerInfo.ice_read(istr);
                         return ret;
+                    });
+            }
+
+            public _System.Threading.Tasks.Task SelectPlayerRequestAsync(string playerId, Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken())
+            {
+                return _iceI_SelectPlayerRequestAsync(playerId, context, progress, cancel, false);
+            }
+
+            private _System.Threading.Tasks.Task _iceI_SelectPlayerRequestAsync(string iceP_playerId, Ice.OptionalContext context, _System.IProgress<bool> progress, _System.Threading.CancellationToken cancel, bool synchronous)
+            {
+                iceCheckTwowayOnly(_SelectPlayerRequest_name);
+                var completed = new IceInternal.OperationTaskCompletionCallback<object>(progress, cancel);
+                _iceI_SelectPlayerRequest(iceP_playerId, context, synchronous, completed);
+                return completed.Task;
+            }
+
+            private const string _SelectPlayerRequest_name = "SelectPlayerRequest";
+
+            private void _iceI_SelectPlayerRequest(string iceP_playerId, _System.Collections.Generic.Dictionary<string, string> context, bool synchronous, IceInternal.OutgoingAsyncCompletionCallback completed)
+            {
+                var outAsync = getOutgoingAsync<object>(completed);
+                outAsync.invoke(
+                    _SelectPlayerRequest_name,
+                    Ice.OperationMode.Normal,
+                    Ice.FormatType.DefaultFormat,
+                    context,
+                    synchronous,
+                    write: (Ice.OutputStream ostr) =>
+                    {
+                        ostr.writeString(iceP_playerId);
+                    },
+                    userException: (Ice.UserException ex) =>
+                    {
+                        try
+                        {
+                            throw ex;
+                        }
+                        catch(PlayerNotExsit)
+                        {
+                            throw;
+                        }
+                        catch(Ice.UserException)
+                        {
+                        }
                     });
             }
 
@@ -1007,6 +1333,44 @@ namespace FootStone
 
             #region Asynchronous operations
 
+            public Ice.AsyncResult<Callback_IPlayer_CreatePlayerRequest> begin_CreatePlayerRequest(int gameId, PlayerCreateInfo info, Ice.OptionalContext context = new Ice.OptionalContext())
+            {
+                return begin_CreatePlayerRequest(gameId, info, context, null, null, false);
+            }
+
+            public Ice.AsyncResult begin_CreatePlayerRequest(int gameId, PlayerCreateInfo info, Ice.AsyncCallback callback, object cookie)
+            {
+                return begin_CreatePlayerRequest(gameId, info, new Ice.OptionalContext(), callback, cookie, false);
+            }
+
+            public Ice.AsyncResult begin_CreatePlayerRequest(int gameId, PlayerCreateInfo info, Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie)
+            {
+                return begin_CreatePlayerRequest(gameId, info, context, callback, cookie, false);
+            }
+
+            public string end_CreatePlayerRequest(Ice.AsyncResult asyncResult)
+            {
+                var resultI_ = IceInternal.AsyncResultI.check(asyncResult, this, _CreatePlayerRequest_name);
+                var outgoing_ = (IceInternal.OutgoingAsyncT<string>)resultI_.OutgoingAsync;
+                return outgoing_.getResult(resultI_.wait());
+            }
+
+            private Ice.AsyncResult<Callback_IPlayer_CreatePlayerRequest> begin_CreatePlayerRequest(int iceP_gameId, PlayerCreateInfo iceP_info, _System.Collections.Generic.Dictionary<string, string> context, Ice.AsyncCallback completedCallback, object cookie, bool synchronous)
+            {
+                iceCheckAsyncTwowayOnly(_CreatePlayerRequest_name);
+                var completed = new IceInternal.OperationAsyncResultCompletionCallback<Callback_IPlayer_CreatePlayerRequest, string>(
+                    (Callback_IPlayer_CreatePlayerRequest cb, string ret) =>
+                    {
+                        if(cb != null)
+                        {
+                            cb.Invoke(ret);
+                        }
+                    },
+                    this, _CreatePlayerRequest_name, cookie, completedCallback);
+                _iceI_CreatePlayerRequest(iceP_gameId, iceP_info, context, synchronous, completed);
+                return completed;
+            }
+
             public Ice.AsyncResult<Callback_IPlayer_GetPlayerInfo> begin_GetPlayerInfo(Ice.OptionalContext context = new Ice.OptionalContext())
             {
                 return begin_GetPlayerInfo(context, null, null, false);
@@ -1042,6 +1406,43 @@ namespace FootStone
                     },
                     this, _GetPlayerInfo_name, cookie, completedCallback);
                 _iceI_GetPlayerInfo(context, synchronous, completed);
+                return completed;
+            }
+
+            public Ice.AsyncResult<Callback_IPlayer_SelectPlayerRequest> begin_SelectPlayerRequest(string playerId, Ice.OptionalContext context = new Ice.OptionalContext())
+            {
+                return begin_SelectPlayerRequest(playerId, context, null, null, false);
+            }
+
+            public Ice.AsyncResult begin_SelectPlayerRequest(string playerId, Ice.AsyncCallback callback, object cookie)
+            {
+                return begin_SelectPlayerRequest(playerId, new Ice.OptionalContext(), callback, cookie, false);
+            }
+
+            public Ice.AsyncResult begin_SelectPlayerRequest(string playerId, Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie)
+            {
+                return begin_SelectPlayerRequest(playerId, context, callback, cookie, false);
+            }
+
+            public void end_SelectPlayerRequest(Ice.AsyncResult asyncResult)
+            {
+                var resultI_ = IceInternal.AsyncResultI.check(asyncResult, this, _SelectPlayerRequest_name);
+                ((IceInternal.OutgoingAsyncT<object>)resultI_.OutgoingAsync).getResult(resultI_.wait());
+            }
+
+            private Ice.AsyncResult<Callback_IPlayer_SelectPlayerRequest> begin_SelectPlayerRequest(string iceP_playerId, _System.Collections.Generic.Dictionary<string, string> context, Ice.AsyncCallback completedCallback, object cookie, bool synchronous)
+            {
+                iceCheckAsyncTwowayOnly(_SelectPlayerRequest_name);
+                var completed = new IceInternal.OperationAsyncResultCompletionCallback<Callback_IPlayer_SelectPlayerRequest, object>(
+                    (Callback_IPlayer_SelectPlayerRequest cb, object ret) =>
+                    {
+                        if(cb != null)
+                        {
+                            cb.Invoke();
+                        }
+                    },
+                    this, _SelectPlayerRequest_name, cookie, completedCallback);
+                _iceI_SelectPlayerRequest(iceP_playerId, context, synchronous, completed);
                 return completed;
             }
 
@@ -1341,6 +1742,10 @@ namespace FootStone
         {
             #region Slice operations
 
+            public abstract _System.Threading.Tasks.Task<string> CreatePlayerRequestAsync(int gameId, PlayerCreateInfo info, Ice.Current current = null);
+
+            public abstract _System.Threading.Tasks.Task SelectPlayerRequestAsync(string playerId, Ice.Current current = null);
+
             public abstract _System.Threading.Tasks.Task<PlayerInfo> GetPlayerInfoAsync(Ice.Current current = null);
 
             public abstract _System.Threading.Tasks.Task SetPlayerNameAsync(string name, Ice.Current current = null);
@@ -1381,6 +1786,37 @@ namespace FootStone
 
             [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011")]
             public static _System.Threading.Tasks.Task<Ice.OutputStream>
+            iceD_CreatePlayerRequest(IPlayer obj, IceInternal.Incoming inS, Ice.Current current)
+            {
+                Ice.ObjectImpl.iceCheckMode(Ice.OperationMode.Normal, current.mode);
+                var istr = inS.startReadParams();
+                int iceP_gameId;
+                PlayerCreateInfo iceP_info;
+                iceP_info = null;
+                iceP_gameId = istr.readInt();
+                iceP_info = PlayerCreateInfo.ice_read(istr);
+                inS.endReadParams();
+                return inS.setResultTask<string>(obj.CreatePlayerRequestAsync(iceP_gameId, iceP_info, current),
+                    (ostr, ret) =>
+                    {
+                        ostr.writeString(ret);
+                    });
+            }
+
+            [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011")]
+            public static _System.Threading.Tasks.Task<Ice.OutputStream>
+            iceD_SelectPlayerRequest(IPlayer obj, IceInternal.Incoming inS, Ice.Current current)
+            {
+                Ice.ObjectImpl.iceCheckMode(Ice.OperationMode.Normal, current.mode);
+                var istr = inS.startReadParams();
+                string iceP_playerId;
+                iceP_playerId = istr.readString();
+                inS.endReadParams();
+                return inS.setResultTask(obj.SelectPlayerRequestAsync(iceP_playerId, current));
+            }
+
+            [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011")]
+            public static _System.Threading.Tasks.Task<Ice.OutputStream>
             iceD_GetPlayerInfo(IPlayer obj, IceInternal.Incoming inS, Ice.Current current)
             {
                 Ice.ObjectImpl.iceCheckMode(Ice.OperationMode.Idempotent, current.mode);
@@ -1406,7 +1842,9 @@ namespace FootStone
 
             private static readonly string[] _all =
             {
+                "CreatePlayerRequest",
                 "GetPlayerInfo",
+                "SelectPlayerRequest",
                 "SetPlayerName",
                 "ice_id",
                 "ice_ids",
@@ -1427,25 +1865,33 @@ namespace FootStone
                 {
                     case 0:
                     {
-                        return iceD_GetPlayerInfo(this, inS, current);
+                        return iceD_CreatePlayerRequest(this, inS, current);
                     }
                     case 1:
                     {
-                        return iceD_SetPlayerName(this, inS, current);
+                        return iceD_GetPlayerInfo(this, inS, current);
                     }
                     case 2:
                     {
-                        return Ice.ObjectImpl.iceD_ice_id(this, inS, current);
+                        return iceD_SelectPlayerRequest(this, inS, current);
                     }
                     case 3:
                     {
-                        return Ice.ObjectImpl.iceD_ice_ids(this, inS, current);
+                        return iceD_SetPlayerName(this, inS, current);
                     }
                     case 4:
                     {
-                        return Ice.ObjectImpl.iceD_ice_isA(this, inS, current);
+                        return Ice.ObjectImpl.iceD_ice_id(this, inS, current);
                     }
                     case 5:
+                    {
+                        return Ice.ObjectImpl.iceD_ice_ids(this, inS, current);
+                    }
+                    case 6:
+                    {
+                        return Ice.ObjectImpl.iceD_ice_isA(this, inS, current);
+                    }
+                    case 7:
                     {
                         return Ice.ObjectImpl.iceD_ice_ping(this, inS, current);
                     }

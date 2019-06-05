@@ -17,9 +17,9 @@ namespace FootStone.Core
     {
         public string account;
         public string password;
-        public string curPlayerId;
+      //  public string curPlayerId;
         public string token;
-        public Dictionary<int,List<PlayerShortInfo>> players;      
+      //  public Dictionary<int,List<PlayerShortInfo>> players;      
     }
 
     [StorageProvider(ProviderName = "memory1")]
@@ -27,13 +27,12 @@ namespace FootStone.Core
     {
 
         private static Logger logger = LogManager.GetCurrentClassLogger();
-  
+        private string curPlayerId;
+
         public AccountGrain()
         {        
             
         }
-
-
         public async override Task OnActivateAsync()
         {     
 
@@ -44,18 +43,15 @@ namespace FootStone.Core
         {
             return base.OnDeactivateAsync();
         }
-
-
-
+               
         public Task Login(string sessionId,string account,string pwd)
-        {
-            
+        {           
 
-         //   var info = JsonConvert.DeserializeObject<LoginInfo>(infoJson);
             if (State.account == null)
             {
                 throw new AccountException("account is not registered!");
             }
+
             if(!(State.account.Equals(account)
                 && State.password.Equals(pwd)))
             {
@@ -74,7 +70,7 @@ namespace FootStone.Core
 
         public Task Register(RegisterInfo info)
         {
-            Console.WriteLine("Begin RegisterRequest:"+ info.account);
+            logger.Debug("Begin RegisterRequest:"+ info.account);
             if (State.account != null)
             {
                 throw new AccountException("account is registered!");
@@ -83,51 +79,15 @@ namespace FootStone.Core
             State.account = info.account;
             State.password = info.password;
 
+           // throw new AccountException("test Exception!");
             return WriteStateAsync();
         }
 
-        public async Task<string> CreatePlayer(string name, int gameId)
+        public Task setCurPlayerId(string playerId)
         {
-            var playerId = Guid.NewGuid();
-            var playerGrain = GrainFactory.GetGrain<IPlayerGrain>(playerId);
-            await playerGrain.InitPlayer(name, gameId);
-
-            if(State.players == null)
-            {
-                State.players = new Dictionary<int, List<PlayerShortInfo>>();               
-            }
-            if (!State.players.ContainsKey(gameId))
-            {                
-                State.players.Add(gameId, new List<PlayerShortInfo>());
-            }
-            State.players[gameId].Add(new PlayerShortInfo(playerId.ToString(), name,0,0));
-
-            return playerId.ToString();
-        }
-
-        public Task<List<ServerInfo>> GetServerList()
-        {
-            var serveList = new List<ServerInfo>();
-            serveList.Add(new ServerInfo(1, "server1", 0));
-            return Task.FromResult(serveList);
-
-        }
-
-        public Task<List<PlayerShortInfo>> GetPlayerInfoShortList(int serverId)
-        {
-            if (State.players == null || !State.players.ContainsKey(serverId))
-            {
-                return Task.FromResult(new List<PlayerShortInfo>());
-            }
-            return Task.FromResult(State.players[serverId]);
-        }
-
-        public Task SelectPlayer(string playerId)
-        {
-            State.curPlayerId = playerId;
+            curPlayerId = playerId;
             return Task.CompletedTask;
+            
         }
-
-     
-    }
+    }    
 }

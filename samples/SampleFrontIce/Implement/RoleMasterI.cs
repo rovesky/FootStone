@@ -22,7 +22,7 @@ namespace FootStone.Core.FrontIce
             this.sessionI = sessionI;
         }
 
-        public void Destroy()
+        public  void Dispose()
         {
            
         }

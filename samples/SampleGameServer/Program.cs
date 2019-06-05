@@ -115,6 +115,7 @@ namespace FootStone.Core.GameServer
                         options.ConfigFile = "config";
 
                         options.FacetTypes.Add(typeof(AccountI));
+                        options.FacetTypes.Add(typeof(WorldI));
                         options.FacetTypes.Add(typeof(PlayerI));
                         options.FacetTypes.Add(typeof(RoleMasterI));
                         options.FacetTypes.Add(typeof(ZoneI));

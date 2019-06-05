@@ -21,26 +21,7 @@ module FootStone
 		{
 			string account;
 			string password;
-		}
-
-
-		struct ServerInfo
-		{
-			int    id;
-			string name;
-			int    status;
-		}
-		["clr:generic:List"]sequence<ServerInfo> ServerList;
-
-		struct PlayerShortInfo
-		{
-			string playerId;
-			string name;
-			int    gender;
-			int    modelId;
-		}
-
-		["clr:generic:List"]sequence<PlayerShortInfo> PlayerList;
+		}	
 
 		class LoginData
 		{
@@ -52,14 +33,6 @@ module FootStone
 		  ["amd"] void LoginRequest(string account,string pwd) throws AccountException;
 
 		  ["amd"] void RegisterRequest(string account,RegisterInfo info) throws AccountException;
-
-		  ["amd"] ServerList GetServerListRequest() throws AccountException;
-
-		  ["amd"] PlayerList GetPlayerListRequest(int serverId) throws AccountException;
-		
-	  	  ["amd"] void SelectPlayerRequest(string playerId) throws AccountException;		
-		
-	      ["amd"] string CreatePlayerRequest(string name,int serverId) throws AccountException;
 
 		  ["amd"] void TestLoginRequest(string account,string pwd,LoginData data) throws AccountException;
 

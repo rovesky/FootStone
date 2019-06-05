@@ -2,6 +2,7 @@
 using FootStone.FrontIce;
 using FootStone.GrainInterfaces;
 using Ice;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,12 +12,12 @@ using System.Threading.Tasks;
 namespace FootStone.Core.FrontIce
 {
 
-
     /// <summary>
     /// Observer class that implements the observer interface. Need to pass a grain reference to an instance of this class to subscribe for updates.
     /// </summary>
     class PlayerObserver : IPlayerObserver
     {
+        private NLog.Logger logger = LogManager.GetCurrentClassLogger();
         readonly IPlayerPushPrx playerPush;
         public PlayerObserver(IPlayerPushPrx playerPush)
         {
@@ -24,31 +25,24 @@ namespace FootStone.Core.FrontIce
         }
         public void HpChanged(int hp)
         {
-            //try
-            //{
-             //   Console.Out.WriteLine("hp changed:"+hp);
-                playerPush.begin_hpChanged(hp);
-            //}
-            //catch(Ice.Exception e)
-            //{
-            //    Console.Error.WriteLine(e.Message);
-            //}
-         
+            logger.Debug("HpChanged:" + hp);
+            playerPush.begin_hpChanged(hp);
         }
 
         public void LevelChanged(Guid id, int newLevel)
         {
-          //  throw new NotImplementedException();
+
         }
     }
 
     public class PlayerI : IPlayerDisp_, IServantBase
     {
-        private SessionI sessionI;
-        private IPlayerObserver playerObserver;
-        private IPlayerObserver playerObserverRef;
+        private SessionI session;
 
-     
+        private ObserverClient<IPlayerObserver> observer = new ObserverClient<IPlayerObserver>(Global.OrleansClient);
+        private IPlayerGrain playerGrain;
+        private NLog.Logger logger = LogManager.GetCurrentClassLogger();
+
         public PlayerI()
         {
            
@@ -61,69 +55,48 @@ namespace FootStone.Core.FrontIce
 
         public void setSessionI(SessionI sessionI)
         {
-            this.sessionI = sessionI;
+            this.session = sessionI;
+        }
+             
+
+        public async override Task<string> CreatePlayerRequestAsync(int gameId, PlayerCreateInfo info,Current current = null)
+        {
+            var playerId = Guid.NewGuid();
+            var playerGrain = Global.OrleansClient.GetGrain<IPlayerGrain>(playerId);
+            await playerGrain.CreatePlayer(session.Account, gameId, info);
+            return playerId.ToString();
         }
 
-        public async Task AddObserver()
+        public async override Task SelectPlayerRequestAsync(string playerId, Current current = null)
         {
-            if (playerObserver == null)
-            {
-                Console.Out.WriteLine("add playerPush:" + sessionI.Account);
-                IPlayerPushPrx push = (IPlayerPushPrx)IPlayerPushPrxHelper.uncheckedCast(sessionI.SessionPushPrx, "playerPush").ice_oneway();
-                playerObserver = new PlayerObserver(push);
-                playerObserverRef = await Global.OrleansClient.CreateObjectReference<IPlayerObserver>(playerObserver);
-                var playerGrain = Global.OrleansClient.GetGrain<IPlayerGrain>(sessionI.PlayerId);
-                await playerGrain.SubscribeForPlayerUpdates(playerObserverRef);
-            }
+            var gpid = Guid.Parse(playerId);
+            playerGrain = Global.OrleansClient.GetGrain<IPlayerGrain>(gpid);
+
+            await observer.Subscribe(playerGrain, new PlayerObserver(IPlayerPushPrxHelper.uncheckedCast(session.SessionPushPrx,"playerPush")));
+
+            await playerGrain.PlayerOnline();
+
+            session.PlayerId = gpid;
+
+            logger.Debug($"Bind Session ${session.Account}:${session.PlayerId}");
         }
 
         public async override Task<PlayerInfo> GetPlayerInfoAsync(Current current = null)
-        {
-            try
-            {
-                if(sessionI.PlayerId == null)
-                {
-                    throw new PlayerNotExsit();
-                }
-                
-                var player = Global.OrleansClient.GetGrain<IPlayerGrain>(sessionI.PlayerId);
-                var playerInfo = await player.GetPlayerInfo();
-       
-           //     Console.Out.WriteLine("----------------GetPlayerInfo:" + playerInfo.name+"---------------------");
-                return playerInfo;
-            }
-            catch (System.Exception ex)
-            {
-                Console.Error.WriteLine(ex);
-                throw ex;
-            }
+        {        
+            return await playerGrain.GetPlayerInfo();           
         }
 
         public async override Task SetPlayerNameAsync(string name, Current current = null)
-        {
-            try
-            {
-                var player = Global.OrleansClient.GetGrain<IPlayerGrain>(sessionI.PlayerId);
+        {       
 
-                await player.SetPlayerName(name);
-            }
-            catch (System.Exception ex)
-            {
-                Console.Error.WriteLine(ex.Message);
-                throw ex;
-            }
+            await playerGrain.SetPlayerName(name);
         }
 
 
-        public void Destroy()
+        public async void Dispose()
         {
-            if (playerObserver != null)
-            {
-                Console.Out.WriteLine("playerObserver Unsubscribe");
-                var player = Global.OrleansClient.GetGrain<IPlayerGrain>(sessionI.PlayerId);
-                player.UnsubscribeForPlayerUpdates(playerObserverRef);
-                playerObserver = null;
-            }
+            await observer.Unsubscribe();
         }
+
     }
 }

@@ -35,16 +35,14 @@ namespace FootStone.Core.FrontIce
             }           
         }
     }
-
-
+    
 
     public class AccountI : AccountDisp_, IServantBase
     {
         private SessionI session;
-
-        private ObserverClient<IAccountObserver> observer = new ObserverClient<IAccountObserver>(Global.OrleansClient);
-       
+        private ObserverClient<IAccountObserver> observer = new ObserverClient<IAccountObserver>(Global.OrleansClient);       
         private IAccountGrain accountGrain;
+        private NLog.Logger logger = LogManager.GetCurrentClassLogger();
 
         public AccountI()
         {
@@ -62,12 +60,10 @@ namespace FootStone.Core.FrontIce
         }
 
 
-        public void Destroy()
+        public async void Dispose()
         {
-            observer.Unsubscribe();
-        }
-
-             
+           await observer.Unsubscribe();
+        }       
 
 
         public async override Task LoginRequestAsync(string account,string pwd, Current current = null)
@@ -79,77 +75,17 @@ namespace FootStone.Core.FrontIce
 
             await accountGrain.Login(session.Id, account,pwd);
 
-            session.Bind("account", account);
+            session.Account = account;
         }
 
-        public async override Task RegisterRequestAsync(string account ,RegisterInfo info, Current current = null)
+        public async override Task RegisterRequestAsync(string account, RegisterInfo info, Current current = null)
         {
-            try
-            {
-                var accountGrain = Global.OrleansClient.GetGrain<IAccountGrain>(account);
-                //      Console.WriteLine("------"+serverName+ ":Register Account="+info.account);
-                await accountGrain.Register(info);
-            }
-            catch (System.Exception ex)
-            {
-                Console.Error.WriteLine(ex.Message);
-                throw ex;
-            }
+            var accountGrain = Global.OrleansClient.GetGrain<IAccountGrain>(account);
+            await accountGrain.Register(info);
         }
-
-      
-
-
-        public async override Task<List<ServerInfo>> GetServerListRequestAsync(Current current = null)
-        {
-            return await accountGrain.GetServerList();
-        }
-
-
-        public async override Task<string> CreatePlayerRequestAsync(string name, int serverId, Current current = null)
-        {
-            try
-            {
-                var playerId = await accountGrain.CreatePlayer(name, serverId);
-                return playerId;
-            }
-            catch(System.Exception ex)
-            {
-                Console.WriteLine(ex);
-                throw ex;
-            }
-
-        }
-
-
-        public async override Task<List<PlayerShortInfo>> GetPlayerListRequestAsync(int serverId, Current current = null)
-        {
-            return await this.accountGrain.GetPlayerInfoShortList(serverId);
-        }
-
-        public async override Task SelectPlayerRequestAsync(string PlayerId, Current current = null)
-        {
-            try
-            {
-              //  var accountGrain = Global.OrleansClient.GetGrain<IAccountGrain>(session.Account);
-                await this.accountGrain.SelectPlayer(PlayerId);
-
-                session.Bind("PlayerId", Guid.Parse(PlayerId));
-                session.PlayerId = session.Get<Guid>("PlayerId");
-
-                PlayerI playerI = (PlayerI)current.adapter.findFacet(current.id, "player");
-                await playerI.AddObserver();
-            }
-            catch (System.Exception ex)
-            {
-                Console.Error.WriteLine(ex.Message);
-                throw ex;
-            }
-        }
-
+                     
         public override Task TestLoginRequestAsync(string account, string pwd, LoginData data, Current current = null)
         {
-
             var type = data.GetType();
 
             Console.WriteLine("TestLoginRequestAsync:" + type.Name);

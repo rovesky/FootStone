@@ -190,7 +190,7 @@ namespace FootStone.Core.Client
 
         public override void hpChanged(int hp, Current current = null)
         {
-           // Console.Out.WriteLine(name+" hp changed:" + hp);
+            Console.Out.WriteLine(name+" hp changed:" + hp);
         }
     }
 

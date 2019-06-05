@@ -27,6 +27,9 @@
     </Compile>
     <Compile Update="generated\Zone.cs">
       <SliceCompileSource>slice\Zone.ice</SliceCompileSource>
+    </Compile>
+    <Compile Update="generated\World.cs">
+      <SliceCompileSource>slice\World.ice</SliceCompileSource>
     </Compile>  
   </ItemGroup>
 

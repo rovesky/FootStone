@@ -370,376 +370,6 @@ namespace FootStone
             #endregion
         }
 
-        [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704")]
-        [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707")]
-        [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709")]
-        [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1710")]
-        [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1711")]
-        [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1715")]
-        [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1716")]
-        [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1720")]
-        [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1722")]
-        [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1724")]
-        [_System.Serializable]
-        public partial class ServerInfo : _System.ICloneable
-        {
-            #region Slice data members
-
-            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-            public int id;
-
-            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-            public string name;
-
-            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-            public int status;
-
-            #endregion
-
-            partial void ice_initialize();
-
-            #region Constructors
-
-            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-            public ServerInfo()
-            {
-                this.name = "";
-                ice_initialize();
-            }
-
-            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-            public ServerInfo(int id, string name, int status)
-            {
-                this.id = id;
-                this.name = name;
-                this.status = status;
-                ice_initialize();
-            }
-
-            #endregion
-
-            #region ICloneable members
-
-            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-            public object Clone()
-            {
-                return MemberwiseClone();
-            }
-
-            #endregion
-
-            #region Object members
-
-            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-            public override int GetHashCode()
-            {
-                int h_ = 5381;
-                IceInternal.HashUtil.hashAdd(ref h_, "::FootStone::GrainInterfaces::ServerInfo");
-                IceInternal.HashUtil.hashAdd(ref h_, id);
-                IceInternal.HashUtil.hashAdd(ref h_, name);
-                IceInternal.HashUtil.hashAdd(ref h_, status);
-                return h_;
-            }
-
-            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-            public override bool Equals(object other)
-            {
-                if(object.ReferenceEquals(this, other))
-                {
-                    return true;
-                }
-                if(other == null)
-                {
-                    return false;
-                }
-                if(GetType() != other.GetType())
-                {
-                    return false;
-                }
-                ServerInfo o = (ServerInfo)other;
-                if(!this.id.Equals(o.id))
-                {
-                    return false;
-                }
-                if(this.name == null)
-                {
-                    if(o.name != null)
-                    {
-                        return false;
-                    }
-                }
-                else
-                {
-                    if(!this.name.Equals(o.name))
-                    {
-                        return false;
-                    }
-                }
-                if(!this.status.Equals(o.status))
-                {
-                    return false;
-                }
-                return true;
-            }
-
-            #endregion
-
-            #region Comparison members
-
-            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-            public static bool operator==(ServerInfo lhs, ServerInfo rhs)
-            {
-                return Equals(lhs, rhs);
-            }
-
-            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-            public static bool operator!=(ServerInfo lhs, ServerInfo rhs)
-            {
-                return !Equals(lhs, rhs);
-            }
-
-            #endregion
-
-            #region Marshaling support
-
-            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-            public void ice_writeMembers(Ice.OutputStream ostr)
-            {
-                ostr.writeInt(this.id);
-                ostr.writeString(this.name);
-                ostr.writeInt(this.status);
-            }
-
-            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-            public void ice_readMembers(Ice.InputStream istr)
-            {
-                this.id = istr.readInt();
-                this.name = istr.readString();
-                this.status = istr.readInt();
-            }
-
-            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-            public static void ice_write(Ice.OutputStream ostr, ServerInfo v)
-            {
-                if(v == null)
-                {
-                    _nullMarshalValue.ice_writeMembers(ostr);
-                }
-                else
-                {
-                    v.ice_writeMembers(ostr);
-                }
-            }
-
-            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-            public static ServerInfo ice_read(Ice.InputStream istr)
-            {
-                var v = new ServerInfo();
-                v.ice_readMembers(istr);
-                return v;
-            }
-
-            private static readonly ServerInfo _nullMarshalValue = new ServerInfo();
-
-            #endregion
-        }
-
-        [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704")]
-        [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707")]
-        [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709")]
-        [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1710")]
-        [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1711")]
-        [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1715")]
-        [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1716")]
-        [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1720")]
-        [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1722")]
-        [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1724")]
-        [_System.Serializable]
-        public partial class PlayerShortInfo : _System.ICloneable
-        {
-            #region Slice data members
-
-            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-            public string playerId;
-
-            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-            public string name;
-
-            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-            public int gender;
-
-            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-            public int modelId;
-
-            #endregion
-
-            partial void ice_initialize();
-
-            #region Constructors
-
-            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-            public PlayerShortInfo()
-            {
-                this.playerId = "";
-                this.name = "";
-                ice_initialize();
-            }
-
-            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-            public PlayerShortInfo(string playerId, string name, int gender, int modelId)
-            {
-                this.playerId = playerId;
-                this.name = name;
-                this.gender = gender;
-                this.modelId = modelId;
-                ice_initialize();
-            }
-
-            #endregion
-
-            #region ICloneable members
-
-            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-            public object Clone()
-            {
-                return MemberwiseClone();
-            }
-
-            #endregion
-
-            #region Object members
-
-            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-            public override int GetHashCode()
-            {
-                int h_ = 5381;
-                IceInternal.HashUtil.hashAdd(ref h_, "::FootStone::GrainInterfaces::PlayerShortInfo");
-                IceInternal.HashUtil.hashAdd(ref h_, playerId);
-                IceInternal.HashUtil.hashAdd(ref h_, name);
-                IceInternal.HashUtil.hashAdd(ref h_, gender);
-                IceInternal.HashUtil.hashAdd(ref h_, modelId);
-                return h_;
-            }
-
-            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-            public override bool Equals(object other)
-            {
-                if(object.ReferenceEquals(this, other))
-                {
-                    return true;
-                }
-                if(other == null)
-                {
-                    return false;
-                }
-                if(GetType() != other.GetType())
-                {
-                    return false;
-                }
-                PlayerShortInfo o = (PlayerShortInfo)other;
-                if(this.playerId == null)
-                {
-                    if(o.playerId != null)
-                    {
-                        return false;
-                    }
-                }
-                else
-                {
-                    if(!this.playerId.Equals(o.playerId))
-                    {
-                        return false;
-                    }
-                }
-                if(this.name == null)
-                {
-                    if(o.name != null)
-                    {
-                        return false;
-                    }
-                }
-                else
-                {
-                    if(!this.name.Equals(o.name))
-                    {
-                        return false;
-                    }
-                }
-                if(!this.gender.Equals(o.gender))
-                {
-                    return false;
-                }
-                if(!this.modelId.Equals(o.modelId))
-                {
-                    return false;
-                }
-                return true;
-            }
-
-            #endregion
-
-            #region Comparison members
-
-            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-            public static bool operator==(PlayerShortInfo lhs, PlayerShortInfo rhs)
-            {
-                return Equals(lhs, rhs);
-            }
-
-            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-            public static bool operator!=(PlayerShortInfo lhs, PlayerShortInfo rhs)
-            {
-                return !Equals(lhs, rhs);
-            }
-
-            #endregion
-
-            #region Marshaling support
-
-            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-            public void ice_writeMembers(Ice.OutputStream ostr)
-            {
-                ostr.writeString(this.playerId);
-                ostr.writeString(this.name);
-                ostr.writeInt(this.gender);
-                ostr.writeInt(this.modelId);
-            }
-
-            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-            public void ice_readMembers(Ice.InputStream istr)
-            {
-                this.playerId = istr.readString();
-                this.name = istr.readString();
-                this.gender = istr.readInt();
-                this.modelId = istr.readInt();
-            }
-
-            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-            public static void ice_write(Ice.OutputStream ostr, PlayerShortInfo v)
-            {
-                if(v == null)
-                {
-                    _nullMarshalValue.ice_writeMembers(ostr);
-                }
-                else
-                {
-                    v.ice_writeMembers(ostr);
-                }
-            }
-
-            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-            public static PlayerShortInfo ice_read(Ice.InputStream istr)
-            {
-                var v = new PlayerShortInfo();
-                v.ice_readMembers(istr);
-                return v;
-            }
-
-            private static readonly PlayerShortInfo _nullMarshalValue = new PlayerShortInfo();
-
-            #endregion
-        }
-
         [_System.Runtime.InteropServices.ComVisible(false)]
         [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704")]
         [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707")]
@@ -824,18 +454,6 @@ namespace FootStone
         public delegate void Callback_Account_RegisterRequest();
 
         [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-        public delegate void Callback_Account_GetServerListRequest(_System.Collections.Generic.List<ServerInfo> ret);
-
-        [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-        public delegate void Callback_Account_GetPlayerListRequest(_System.Collections.Generic.List<PlayerShortInfo> ret);
-
-        [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-        public delegate void Callback_Account_SelectPlayerRequest();
-
-        [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-        public delegate void Callback_Account_CreatePlayerRequest(string ret);
-
-        [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
         public delegate void Callback_Account_TestLoginRequest();
     }
 }
@@ -871,54 +489,6 @@ namespace FootStone
 
             void end_RegisterRequest(Ice.AsyncResult asyncResult);
 
-            _System.Collections.Generic.List<ServerInfo> GetServerListRequest(Ice.OptionalContext context = new Ice.OptionalContext());
-
-            _System.Threading.Tasks.Task<_System.Collections.Generic.List<ServerInfo>> GetServerListRequestAsync(Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken());
-
-            Ice.AsyncResult<Callback_Account_GetServerListRequest> begin_GetServerListRequest(Ice.OptionalContext context = new Ice.OptionalContext());
-
-            Ice.AsyncResult begin_GetServerListRequest(Ice.AsyncCallback callback, object cookie);
-
-            Ice.AsyncResult begin_GetServerListRequest(Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie);
-
-            _System.Collections.Generic.List<ServerInfo> end_GetServerListRequest(Ice.AsyncResult asyncResult);
-
-            _System.Collections.Generic.List<PlayerShortInfo> GetPlayerListRequest(int serverId, Ice.OptionalContext context = new Ice.OptionalContext());
-
-            _System.Threading.Tasks.Task<_System.Collections.Generic.List<PlayerShortInfo>> GetPlayerListRequestAsync(int serverId, Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken());
-
-            Ice.AsyncResult<Callback_Account_GetPlayerListRequest> begin_GetPlayerListRequest(int serverId, Ice.OptionalContext context = new Ice.OptionalContext());
-
-            Ice.AsyncResult begin_GetPlayerListRequest(int serverId, Ice.AsyncCallback callback, object cookie);
-
-            Ice.AsyncResult begin_GetPlayerListRequest(int serverId, Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie);
-
-            _System.Collections.Generic.List<PlayerShortInfo> end_GetPlayerListRequest(Ice.AsyncResult asyncResult);
-
-            void SelectPlayerRequest(string playerId, Ice.OptionalContext context = new Ice.OptionalContext());
-
-            _System.Threading.Tasks.Task SelectPlayerRequestAsync(string playerId, Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken());
-
-            Ice.AsyncResult<Callback_Account_SelectPlayerRequest> begin_SelectPlayerRequest(string playerId, Ice.OptionalContext context = new Ice.OptionalContext());
-
-            Ice.AsyncResult begin_SelectPlayerRequest(string playerId, Ice.AsyncCallback callback, object cookie);
-
-            Ice.AsyncResult begin_SelectPlayerRequest(string playerId, Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie);
-
-            void end_SelectPlayerRequest(Ice.AsyncResult asyncResult);
-
-            string CreatePlayerRequest(string name, int serverId, Ice.OptionalContext context = new Ice.OptionalContext());
-
-            _System.Threading.Tasks.Task<string> CreatePlayerRequestAsync(string name, int serverId, Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken());
-
-            Ice.AsyncResult<Callback_Account_CreatePlayerRequest> begin_CreatePlayerRequest(string name, int serverId, Ice.OptionalContext context = new Ice.OptionalContext());
-
-            Ice.AsyncResult begin_CreatePlayerRequest(string name, int serverId, Ice.AsyncCallback callback, object cookie);
-
-            Ice.AsyncResult begin_CreatePlayerRequest(string name, int serverId, Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie);
-
-            string end_CreatePlayerRequest(Ice.AsyncResult asyncResult);
-
             void TestLoginRequest(string account, string pwd, LoginData data, Ice.OptionalContext context = new Ice.OptionalContext());
 
             _System.Threading.Tasks.Task TestLoginRequestAsync(string account, string pwd, LoginData data, Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken());
@@ -948,18 +518,6 @@ namespace FootStone
             _System.Threading.Tasks.Task RegisterRequestAsync(string account, RegisterInfo info, Ice.Current current = null);
 
             [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-            _System.Threading.Tasks.Task<_System.Collections.Generic.List<ServerInfo>> GetServerListRequestAsync(Ice.Current current = null);
-
-            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-            _System.Threading.Tasks.Task<_System.Collections.Generic.List<PlayerShortInfo>> GetPlayerListRequestAsync(int serverId, Ice.Current current = null);
-
-            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-            _System.Threading.Tasks.Task SelectPlayerRequestAsync(string playerId, Ice.Current current = null);
-
-            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-            _System.Threading.Tasks.Task<string> CreatePlayerRequestAsync(string name, int serverId, Ice.Current current = null);
-
-            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
             _System.Threading.Tasks.Task TestLoginRequestAsync(string account, string pwd, LoginData data, Ice.Current current = null);
         }
     }
@@ -969,78 +527,6 @@ namespace FootStone
 {
     namespace GrainInterfaces
     {
-        [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-        public sealed class ServerListHelper
-        {
-            public static void write(Ice.OutputStream ostr, _System.Collections.Generic.List<ServerInfo> v)
-            {
-                if(v == null)
-                {
-                    ostr.writeSize(0);
-                }
-                else
-                {
-                    ostr.writeSize(v.Count);
-                    for(int ix = 0; ix < v.Count; ++ix)
-                    {
-                        (v[ix] == null ? new ServerInfo() : v[ix]).ice_writeMembers(ostr);
-                    }
-                }
-            }
-
-            public static _System.Collections.Generic.List<ServerInfo> read(Ice.InputStream istr)
-            {
-                _System.Collections.Generic.List<ServerInfo> v;
-                {
-                    int szx = istr.readAndCheckSeqSize(9);
-                    v = new _System.Collections.Generic.List<ServerInfo>(szx);
-                    for(int ix = 0; ix < szx; ++ix)
-                    {
-                        ServerInfo val = new ServerInfo();
-                        val.ice_readMembers(istr);
-                        v.Add(val);
-                    }
-                }
-                return v;
-            }
-        }
-
-        [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-        public sealed class PlayerListHelper
-        {
-            public static void write(Ice.OutputStream ostr, _System.Collections.Generic.List<PlayerShortInfo> v)
-            {
-                if(v == null)
-                {
-                    ostr.writeSize(0);
-                }
-                else
-                {
-                    ostr.writeSize(v.Count);
-                    for(int ix = 0; ix < v.Count; ++ix)
-                    {
-                        (v[ix] == null ? new PlayerShortInfo() : v[ix]).ice_writeMembers(ostr);
-                    }
-                }
-            }
-
-            public static _System.Collections.Generic.List<PlayerShortInfo> read(Ice.InputStream istr)
-            {
-                _System.Collections.Generic.List<PlayerShortInfo> v;
-                {
-                    int szx = istr.readAndCheckSeqSize(10);
-                    v = new _System.Collections.Generic.List<PlayerShortInfo>(szx);
-                    for(int ix = 0; ix < szx; ++ix)
-                    {
-                        PlayerShortInfo val = new PlayerShortInfo();
-                        val.ice_readMembers(istr);
-                        v.Add(val);
-                    }
-                }
-                return v;
-            }
-        }
-
         [_System.Runtime.InteropServices.ComVisible(false)]
         [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
         [_System.Serializable]
@@ -1055,42 +541,6 @@ namespace FootStone
             }
 
             #region Synchronous operations
-
-            public string CreatePlayerRequest(string name, int serverId, Ice.OptionalContext context = new Ice.OptionalContext())
-            {
-                try
-                {
-                    return _iceI_CreatePlayerRequestAsync(name, serverId, context, null, _System.Threading.CancellationToken.None, true).Result;
-                }
-                catch(_System.AggregateException ex_)
-                {
-                    throw ex_.InnerException;
-                }
-            }
-
-            public _System.Collections.Generic.List<PlayerShortInfo> GetPlayerListRequest(int serverId, Ice.OptionalContext context = new Ice.OptionalContext())
-            {
-                try
-                {
-                    return _iceI_GetPlayerListRequestAsync(serverId, context, null, _System.Threading.CancellationToken.None, true).Result;
-                }
-                catch(_System.AggregateException ex_)
-                {
-                    throw ex_.InnerException;
-                }
-            }
-
-            public _System.Collections.Generic.List<ServerInfo> GetServerListRequest(Ice.OptionalContext context = new Ice.OptionalContext())
-            {
-                try
-                {
-                    return _iceI_GetServerListRequestAsync(context, null, _System.Threading.CancellationToken.None, true).Result;
-                }
-                catch(_System.AggregateException ex_)
-                {
-                    throw ex_.InnerException;
-                }
-            }
 
             public void LoginRequest(string account, string pwd, Ice.OptionalContext context = new Ice.OptionalContext())
             {
@@ -1116,18 +566,6 @@ namespace FootStone
                 }
             }
 
-            public void SelectPlayerRequest(string playerId, Ice.OptionalContext context = new Ice.OptionalContext())
-            {
-                try
-                {
-                    _iceI_SelectPlayerRequestAsync(playerId, context, null, _System.Threading.CancellationToken.None, true).Wait();
-                }
-                catch(_System.AggregateException ex_)
-                {
-                    throw ex_.InnerException;
-                }
-            }
-
             public void TestLoginRequest(string account, string pwd, LoginData data, Ice.OptionalContext context = new Ice.OptionalContext())
             {
                 try
@@ -1143,153 +581,6 @@ namespace FootStone
             #endregion
 
             #region Async Task operations
-
-            public _System.Threading.Tasks.Task<string> CreatePlayerRequestAsync(string name, int serverId, Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken())
-            {
-                return _iceI_CreatePlayerRequestAsync(name, serverId, context, progress, cancel, false);
-            }
-
-            private _System.Threading.Tasks.Task<string> _iceI_CreatePlayerRequestAsync(string iceP_name, int iceP_serverId, Ice.OptionalContext context, _System.IProgress<bool> progress, _System.Threading.CancellationToken cancel, bool synchronous)
-            {
-                iceCheckTwowayOnly(_CreatePlayerRequest_name);
-                var completed = new IceInternal.OperationTaskCompletionCallback<string>(progress, cancel);
-                _iceI_CreatePlayerRequest(iceP_name, iceP_serverId, context, synchronous, completed);
-                return completed.Task;
-            }
-
-            private const string _CreatePlayerRequest_name = "CreatePlayerRequest";
-
-            private void _iceI_CreatePlayerRequest(string iceP_name, int iceP_serverId, _System.Collections.Generic.Dictionary<string, string> context, bool synchronous, IceInternal.OutgoingAsyncCompletionCallback completed)
-            {
-                var outAsync = getOutgoingAsync<string>(completed);
-                outAsync.invoke(
-                    _CreatePlayerRequest_name,
-                    Ice.OperationMode.Normal,
-                    Ice.FormatType.DefaultFormat,
-                    context,
-                    synchronous,
-                    write: (Ice.OutputStream ostr) =>
-                    {
-                        ostr.writeString(iceP_name);
-                        ostr.writeInt(iceP_serverId);
-                    },
-                    userException: (Ice.UserException ex) =>
-                    {
-                        try
-                        {
-                            throw ex;
-                        }
-                        catch(AccountException)
-                        {
-                            throw;
-                        }
-                        catch(Ice.UserException)
-                        {
-                        }
-                    },
-                    read: (Ice.InputStream istr) =>
-                    {
-                        string ret;
-                        ret = istr.readString();
-                        return ret;
-                    });
-            }
-
-            public _System.Threading.Tasks.Task<_System.Collections.Generic.List<PlayerShortInfo>> GetPlayerListRequestAsync(int serverId, Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken())
-            {
-                return _iceI_GetPlayerListRequestAsync(serverId, context, progress, cancel, false);
-            }
-
-            private _System.Threading.Tasks.Task<_System.Collections.Generic.List<PlayerShortInfo>> _iceI_GetPlayerListRequestAsync(int iceP_serverId, Ice.OptionalContext context, _System.IProgress<bool> progress, _System.Threading.CancellationToken cancel, bool synchronous)
-            {
-                iceCheckTwowayOnly(_GetPlayerListRequest_name);
-                var completed = new IceInternal.OperationTaskCompletionCallback<_System.Collections.Generic.List<PlayerShortInfo>>(progress, cancel);
-                _iceI_GetPlayerListRequest(iceP_serverId, context, synchronous, completed);
-                return completed.Task;
-            }
-
-            private const string _GetPlayerListRequest_name = "GetPlayerListRequest";
-
-            private void _iceI_GetPlayerListRequest(int iceP_serverId, _System.Collections.Generic.Dictionary<string, string> context, bool synchronous, IceInternal.OutgoingAsyncCompletionCallback completed)
-            {
-                var outAsync = getOutgoingAsync<_System.Collections.Generic.List<PlayerShortInfo>>(completed);
-                outAsync.invoke(
-                    _GetPlayerListRequest_name,
-                    Ice.OperationMode.Normal,
-                    Ice.FormatType.DefaultFormat,
-                    context,
-                    synchronous,
-                    write: (Ice.OutputStream ostr) =>
-                    {
-                        ostr.writeInt(iceP_serverId);
-                    },
-                    userException: (Ice.UserException ex) =>
-                    {
-                        try
-                        {
-                            throw ex;
-                        }
-                        catch(AccountException)
-                        {
-                            throw;
-                        }
-                        catch(Ice.UserException)
-                        {
-                        }
-                    },
-                    read: (Ice.InputStream istr) =>
-                    {
-                        _System.Collections.Generic.List<PlayerShortInfo> ret;
-                        ret = PlayerListHelper.read(istr);
-                        return ret;
-                    });
-            }
-
-            public _System.Threading.Tasks.Task<_System.Collections.Generic.List<ServerInfo>> GetServerListRequestAsync(Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken())
-            {
-                return _iceI_GetServerListRequestAsync(context, progress, cancel, false);
-            }
-
-            private _System.Threading.Tasks.Task<_System.Collections.Generic.List<ServerInfo>> _iceI_GetServerListRequestAsync(Ice.OptionalContext context, _System.IProgress<bool> progress, _System.Threading.CancellationToken cancel, bool synchronous)
-            {
-                iceCheckTwowayOnly(_GetServerListRequest_name);
-                var completed = new IceInternal.OperationTaskCompletionCallback<_System.Collections.Generic.List<ServerInfo>>(progress, cancel);
-                _iceI_GetServerListRequest(context, synchronous, completed);
-                return completed.Task;
-            }
-
-            private const string _GetServerListRequest_name = "GetServerListRequest";
-
-            private void _iceI_GetServerListRequest(_System.Collections.Generic.Dictionary<string, string> context, bool synchronous, IceInternal.OutgoingAsyncCompletionCallback completed)
-            {
-                var outAsync = getOutgoingAsync<_System.Collections.Generic.List<ServerInfo>>(completed);
-                outAsync.invoke(
-                    _GetServerListRequest_name,
-                    Ice.OperationMode.Normal,
-                    Ice.FormatType.DefaultFormat,
-                    context,
-                    synchronous,
-                    userException: (Ice.UserException ex) =>
-                    {
-                        try
-                        {
-                            throw ex;
-                        }
-                        catch(AccountException)
-                        {
-                            throw;
-                        }
-                        catch(Ice.UserException)
-                        {
-                        }
-                    },
-                    read: (Ice.InputStream istr) =>
-                    {
-                        _System.Collections.Generic.List<ServerInfo> ret;
-                        ret = ServerListHelper.read(istr);
-                        return ret;
-                    });
-            }
 
             public _System.Threading.Tasks.Task LoginRequestAsync(string account, string pwd, Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken())
             {
@@ -1381,50 +672,6 @@ namespace FootStone
                     });
             }
 
-            public _System.Threading.Tasks.Task SelectPlayerRequestAsync(string playerId, Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken())
-            {
-                return _iceI_SelectPlayerRequestAsync(playerId, context, progress, cancel, false);
-            }
-
-            private _System.Threading.Tasks.Task _iceI_SelectPlayerRequestAsync(string iceP_playerId, Ice.OptionalContext context, _System.IProgress<bool> progress, _System.Threading.CancellationToken cancel, bool synchronous)
-            {
-                iceCheckTwowayOnly(_SelectPlayerRequest_name);
-                var completed = new IceInternal.OperationTaskCompletionCallback<object>(progress, cancel);
-                _iceI_SelectPlayerRequest(iceP_playerId, context, synchronous, completed);
-                return completed.Task;
-            }
-
-            private const string _SelectPlayerRequest_name = "SelectPlayerRequest";
-
-            private void _iceI_SelectPlayerRequest(string iceP_playerId, _System.Collections.Generic.Dictionary<string, string> context, bool synchronous, IceInternal.OutgoingAsyncCompletionCallback completed)
-            {
-                var outAsync = getOutgoingAsync<object>(completed);
-                outAsync.invoke(
-                    _SelectPlayerRequest_name,
-                    Ice.OperationMode.Normal,
-                    Ice.FormatType.DefaultFormat,
-                    context,
-                    synchronous,
-                    write: (Ice.OutputStream ostr) =>
-                    {
-                        ostr.writeString(iceP_playerId);
-                    },
-                    userException: (Ice.UserException ex) =>
-                    {
-                        try
-                        {
-                            throw ex;
-                        }
-                        catch(AccountException)
-                        {
-                            throw;
-                        }
-                        catch(Ice.UserException)
-                        {
-                        }
-                    });
-            }
-
             public _System.Threading.Tasks.Task TestLoginRequestAsync(string account, string pwd, LoginData data, Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken())
             {
                 return _iceI_TestLoginRequestAsync(account, pwd, data, context, progress, cancel, false);
@@ -1475,120 +722,6 @@ namespace FootStone
             #endregion
 
             #region Asynchronous operations
-
-            public Ice.AsyncResult<Callback_Account_CreatePlayerRequest> begin_CreatePlayerRequest(string name, int serverId, Ice.OptionalContext context = new Ice.OptionalContext())
-            {
-                return begin_CreatePlayerRequest(name, serverId, context, null, null, false);
-            }
-
-            public Ice.AsyncResult begin_CreatePlayerRequest(string name, int serverId, Ice.AsyncCallback callback, object cookie)
-            {
-                return begin_CreatePlayerRequest(name, serverId, new Ice.OptionalContext(), callback, cookie, false);
-            }
-
-            public Ice.AsyncResult begin_CreatePlayerRequest(string name, int serverId, Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie)
-            {
-                return begin_CreatePlayerRequest(name, serverId, context, callback, cookie, false);
-            }
-
-            public string end_CreatePlayerRequest(Ice.AsyncResult asyncResult)
-            {
-                var resultI_ = IceInternal.AsyncResultI.check(asyncResult, this, _CreatePlayerRequest_name);
-                var outgoing_ = (IceInternal.OutgoingAsyncT<string>)resultI_.OutgoingAsync;
-                return outgoing_.getResult(resultI_.wait());
-            }
-
-            private Ice.AsyncResult<Callback_Account_CreatePlayerRequest> begin_CreatePlayerRequest(string iceP_name, int iceP_serverId, _System.Collections.Generic.Dictionary<string, string> context, Ice.AsyncCallback completedCallback, object cookie, bool synchronous)
-            {
-                iceCheckAsyncTwowayOnly(_CreatePlayerRequest_name);
-                var completed = new IceInternal.OperationAsyncResultCompletionCallback<Callback_Account_CreatePlayerRequest, string>(
-                    (Callback_Account_CreatePlayerRequest cb, string ret) =>
-                    {
-                        if(cb != null)
-                        {
-                            cb.Invoke(ret);
-                        }
-                    },
-                    this, _CreatePlayerRequest_name, cookie, completedCallback);
-                _iceI_CreatePlayerRequest(iceP_name, iceP_serverId, context, synchronous, completed);
-                return completed;
-            }
-
-            public Ice.AsyncResult<Callback_Account_GetPlayerListRequest> begin_GetPlayerListRequest(int serverId, Ice.OptionalContext context = new Ice.OptionalContext())
-            {
-                return begin_GetPlayerListRequest(serverId, context, null, null, false);
-            }
-
-            public Ice.AsyncResult begin_GetPlayerListRequest(int serverId, Ice.AsyncCallback callback, object cookie)
-            {
-                return begin_GetPlayerListRequest(serverId, new Ice.OptionalContext(), callback, cookie, false);
-            }
-
-            public Ice.AsyncResult begin_GetPlayerListRequest(int serverId, Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie)
-            {
-                return begin_GetPlayerListRequest(serverId, context, callback, cookie, false);
-            }
-
-            public _System.Collections.Generic.List<PlayerShortInfo> end_GetPlayerListRequest(Ice.AsyncResult asyncResult)
-            {
-                var resultI_ = IceInternal.AsyncResultI.check(asyncResult, this, _GetPlayerListRequest_name);
-                var outgoing_ = (IceInternal.OutgoingAsyncT<_System.Collections.Generic.List<PlayerShortInfo>>)resultI_.OutgoingAsync;
-                return outgoing_.getResult(resultI_.wait());
-            }
-
-            private Ice.AsyncResult<Callback_Account_GetPlayerListRequest> begin_GetPlayerListRequest(int iceP_serverId, _System.Collections.Generic.Dictionary<string, string> context, Ice.AsyncCallback completedCallback, object cookie, bool synchronous)
-            {
-                iceCheckAsyncTwowayOnly(_GetPlayerListRequest_name);
-                var completed = new IceInternal.OperationAsyncResultCompletionCallback<Callback_Account_GetPlayerListRequest, _System.Collections.Generic.List<PlayerShortInfo>>(
-                    (Callback_Account_GetPlayerListRequest cb, _System.Collections.Generic.List<PlayerShortInfo> ret) =>
-                    {
-                        if(cb != null)
-                        {
-                            cb.Invoke(ret);
-                        }
-                    },
-                    this, _GetPlayerListRequest_name, cookie, completedCallback);
-                _iceI_GetPlayerListRequest(iceP_serverId, context, synchronous, completed);
-                return completed;
-            }
-
-            public Ice.AsyncResult<Callback_Account_GetServerListRequest> begin_GetServerListRequest(Ice.OptionalContext context = new Ice.OptionalContext())
-            {
-                return begin_GetServerListRequest(context, null, null, false);
-            }
-
-            public Ice.AsyncResult begin_GetServerListRequest(Ice.AsyncCallback callback, object cookie)
-            {
-                return begin_GetServerListRequest(new Ice.OptionalContext(), callback, cookie, false);
-            }
-
-            public Ice.AsyncResult begin_GetServerListRequest(Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie)
-            {
-                return begin_GetServerListRequest(context, callback, cookie, false);
-            }
-
-            public _System.Collections.Generic.List<ServerInfo> end_GetServerListRequest(Ice.AsyncResult asyncResult)
-            {
-                var resultI_ = IceInternal.AsyncResultI.check(asyncResult, this, _GetServerListRequest_name);
-                var outgoing_ = (IceInternal.OutgoingAsyncT<_System.Collections.Generic.List<ServerInfo>>)resultI_.OutgoingAsync;
-                return outgoing_.getResult(resultI_.wait());
-            }
-
-            private Ice.AsyncResult<Callback_Account_GetServerListRequest> begin_GetServerListRequest(_System.Collections.Generic.Dictionary<string, string> context, Ice.AsyncCallback completedCallback, object cookie, bool synchronous)
-            {
-                iceCheckAsyncTwowayOnly(_GetServerListRequest_name);
-                var completed = new IceInternal.OperationAsyncResultCompletionCallback<Callback_Account_GetServerListRequest, _System.Collections.Generic.List<ServerInfo>>(
-                    (Callback_Account_GetServerListRequest cb, _System.Collections.Generic.List<ServerInfo> ret) =>
-                    {
-                        if(cb != null)
-                        {
-                            cb.Invoke(ret);
-                        }
-                    },
-                    this, _GetServerListRequest_name, cookie, completedCallback);
-                _iceI_GetServerListRequest(context, synchronous, completed);
-                return completed;
-            }
 
             public Ice.AsyncResult<Callback_Account_LoginRequest> begin_LoginRequest(string account, string pwd, Ice.OptionalContext context = new Ice.OptionalContext())
             {
@@ -1661,43 +794,6 @@ namespace FootStone
                     },
                     this, _RegisterRequest_name, cookie, completedCallback);
                 _iceI_RegisterRequest(iceP_account, iceP_info, context, synchronous, completed);
-                return completed;
-            }
-
-            public Ice.AsyncResult<Callback_Account_SelectPlayerRequest> begin_SelectPlayerRequest(string playerId, Ice.OptionalContext context = new Ice.OptionalContext())
-            {
-                return begin_SelectPlayerRequest(playerId, context, null, null, false);
-            }
-
-            public Ice.AsyncResult begin_SelectPlayerRequest(string playerId, Ice.AsyncCallback callback, object cookie)
-            {
-                return begin_SelectPlayerRequest(playerId, new Ice.OptionalContext(), callback, cookie, false);
-            }
-
-            public Ice.AsyncResult begin_SelectPlayerRequest(string playerId, Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie)
-            {
-                return begin_SelectPlayerRequest(playerId, context, callback, cookie, false);
-            }
-
-            public void end_SelectPlayerRequest(Ice.AsyncResult asyncResult)
-            {
-                var resultI_ = IceInternal.AsyncResultI.check(asyncResult, this, _SelectPlayerRequest_name);
-                ((IceInternal.OutgoingAsyncT<object>)resultI_.OutgoingAsync).getResult(resultI_.wait());
-            }
-
-            private Ice.AsyncResult<Callback_Account_SelectPlayerRequest> begin_SelectPlayerRequest(string iceP_playerId, _System.Collections.Generic.Dictionary<string, string> context, Ice.AsyncCallback completedCallback, object cookie, bool synchronous)
-            {
-                iceCheckAsyncTwowayOnly(_SelectPlayerRequest_name);
-                var completed = new IceInternal.OperationAsyncResultCompletionCallback<Callback_Account_SelectPlayerRequest, object>(
-                    (Callback_Account_SelectPlayerRequest cb, object ret) =>
-                    {
-                        if(cb != null)
-                        {
-                            cb.Invoke();
-                        }
-                    },
-                    this, _SelectPlayerRequest_name, cookie, completedCallback);
-                _iceI_SelectPlayerRequest(iceP_playerId, context, synchronous, completed);
                 return completed;
             }
 
@@ -1897,14 +993,6 @@ namespace FootStone
 
             public abstract _System.Threading.Tasks.Task RegisterRequestAsync(string account, RegisterInfo info, Ice.Current current = null);
 
-            public abstract _System.Threading.Tasks.Task<_System.Collections.Generic.List<ServerInfo>> GetServerListRequestAsync(Ice.Current current = null);
-
-            public abstract _System.Threading.Tasks.Task<_System.Collections.Generic.List<PlayerShortInfo>> GetPlayerListRequestAsync(int serverId, Ice.Current current = null);
-
-            public abstract _System.Threading.Tasks.Task SelectPlayerRequestAsync(string playerId, Ice.Current current = null);
-
-            public abstract _System.Threading.Tasks.Task<string> CreatePlayerRequestAsync(string name, int serverId, Ice.Current current = null);
-
             public abstract _System.Threading.Tasks.Task TestLoginRequestAsync(string account, string pwd, LoginData data, Ice.Current current = null);
 
             #endregion
@@ -1972,65 +1060,6 @@ namespace FootStone
 
             [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011")]
             public static _System.Threading.Tasks.Task<Ice.OutputStream>
-            iceD_GetServerListRequest(Account obj, IceInternal.Incoming inS, Ice.Current current)
-            {
-                Ice.ObjectImpl.iceCheckMode(Ice.OperationMode.Normal, current.mode);
-                inS.readEmptyParams();
-                return inS.setResultTask<_System.Collections.Generic.List<ServerInfo>>(obj.GetServerListRequestAsync(current),
-                    (ostr, ret) =>
-                    {
-                        ServerListHelper.write(ostr, ret);
-                    });
-            }
-
-            [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011")]
-            public static _System.Threading.Tasks.Task<Ice.OutputStream>
-            iceD_GetPlayerListRequest(Account obj, IceInternal.Incoming inS, Ice.Current current)
-            {
-                Ice.ObjectImpl.iceCheckMode(Ice.OperationMode.Normal, current.mode);
-                var istr = inS.startReadParams();
-                int iceP_serverId;
-                iceP_serverId = istr.readInt();
-                inS.endReadParams();
-                return inS.setResultTask<_System.Collections.Generic.List<PlayerShortInfo>>(obj.GetPlayerListRequestAsync(iceP_serverId, current),
-                    (ostr, ret) =>
-                    {
-                        PlayerListHelper.write(ostr, ret);
-                    });
-            }
-
-            [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011")]
-            public static _System.Threading.Tasks.Task<Ice.OutputStream>
-            iceD_SelectPlayerRequest(Account obj, IceInternal.Incoming inS, Ice.Current current)
-            {
-                Ice.ObjectImpl.iceCheckMode(Ice.OperationMode.Normal, current.mode);
-                var istr = inS.startReadParams();
-                string iceP_playerId;
-                iceP_playerId = istr.readString();
-                inS.endReadParams();
-                return inS.setResultTask(obj.SelectPlayerRequestAsync(iceP_playerId, current));
-            }
-
-            [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011")]
-            public static _System.Threading.Tasks.Task<Ice.OutputStream>
-            iceD_CreatePlayerRequest(Account obj, IceInternal.Incoming inS, Ice.Current current)
-            {
-                Ice.ObjectImpl.iceCheckMode(Ice.OperationMode.Normal, current.mode);
-                var istr = inS.startReadParams();
-                string iceP_name;
-                int iceP_serverId;
-                iceP_name = istr.readString();
-                iceP_serverId = istr.readInt();
-                inS.endReadParams();
-                return inS.setResultTask<string>(obj.CreatePlayerRequestAsync(iceP_name, iceP_serverId, current),
-                    (ostr, ret) =>
-                    {
-                        ostr.writeString(ret);
-                    });
-            }
-
-            [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011")]
-            public static _System.Threading.Tasks.Task<Ice.OutputStream>
             iceD_TestLoginRequest(Account obj, IceInternal.Incoming inS, Ice.Current current)
             {
                 Ice.ObjectImpl.iceCheckMode(Ice.OperationMode.Normal, current.mode);
@@ -2049,12 +1078,8 @@ namespace FootStone
 
             private static readonly string[] _all =
             {
-                "CreatePlayerRequest",
-                "GetPlayerListRequest",
-                "GetServerListRequest",
                 "LoginRequest",
                 "RegisterRequest",
-                "SelectPlayerRequest",
                 "TestLoginRequest",
                 "ice_id",
                 "ice_ids",
@@ -2075,45 +1100,29 @@ namespace FootStone
                 {
                     case 0:
                     {
-                        return iceD_CreatePlayerRequest(this, inS, current);
+                        return iceD_LoginRequest(this, inS, current);
                     }
                     case 1:
                     {
-                        return iceD_GetPlayerListRequest(this, inS, current);
+                        return iceD_RegisterRequest(this, inS, current);
                     }
                     case 2:
                     {
-                        return iceD_GetServerListRequest(this, inS, current);
+                        return iceD_TestLoginRequest(this, inS, current);
                     }
                     case 3:
                     {
-                        return iceD_LoginRequest(this, inS, current);
+                        return Ice.ObjectImpl.iceD_ice_id(this, inS, current);
                     }
                     case 4:
                     {
-                        return iceD_RegisterRequest(this, inS, current);
+                        return Ice.ObjectImpl.iceD_ice_ids(this, inS, current);
                     }
                     case 5:
                     {
-                        return iceD_SelectPlayerRequest(this, inS, current);
-                    }
-                    case 6:
-                    {
-                        return iceD_TestLoginRequest(this, inS, current);
-                    }
-                    case 7:
-                    {
-                        return Ice.ObjectImpl.iceD_ice_id(this, inS, current);
-                    }
-                    case 8:
-                    {
-                        return Ice.ObjectImpl.iceD_ice_ids(this, inS, current);
-                    }
-                    case 9:
-                    {
                         return Ice.ObjectImpl.iceD_ice_isA(this, inS, current);
                     }
-                    case 10:
+                    case 6:
                     {
                         return Ice.ObjectImpl.iceD_ice_ping(this, inS, current);
                     }

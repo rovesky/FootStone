@@ -10,11 +10,13 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace FootStone.FrontIce
-{
+{  
+
     public class SessionFactoryI : ISessionFactoryDisp_
     {
         private string serverName;
         private List<Type> facets;
+       
 
         public SessionFactoryI(string name, List<Type> facets)
         {
@@ -23,16 +25,20 @@ namespace FootStone.FrontIce
         }
 
         public async override Task<ISessionPrx> CreateSessionAsync(string account, string password, Current current = null)
-        {         
+        {
+            var logger = current.adapter.getCommunicator().getLogger();
+
             var sessionI = new SessionI(account);
-            var proxy = ISessionPrxHelper.uncheckedCast(current.adapter.addWithUUID(sessionI));
-                       
+            // var proxy = ISessionPrxHelper.uncheckedCast(current.adapter.addWithUUID(sessionI));
+
+            var proxy = ISessionPrxHelper.uncheckedCast(current.adapter.addWithUUID(new FSInterceptor(sessionI, logger)));
             //Ìí¼Ófacet
             foreach (var facetType in facets)
             {
                 var servant = (IServantBase)Activator.CreateInstance(facetType);
                 servant.setSessionI(sessionI);
-                current.adapter.addFacet((Ice.Object)servant, proxy.ice_getIdentity(), servant.GetFacet());
+                //  current.adapter.addFacet((Ice.Object)servant, proxy.ice_getIdentity(), servant.GetFacet());
+                current.adapter.addFacet(new FSInterceptor((Ice.Object)servant,logger), proxy.ice_getIdentity(), servant.GetFacet());
             }
 
 
@@ -48,19 +54,17 @@ namespace FootStone.FrontIce
                     try
                     {
                         collocProxy.Destroy();
-                        Console.Out.WriteLine("Cleaned up dead client.");
+                        logger.print("Cleaned up dead client.");
                     }
                     catch (Ice.LocalException)
                     {
                         // The client already destroyed this session, or the server is shutting down
                     }
                 });
-
-            var logger = current.adapter.getCommunicator().getLogger();
-            logger.print("create session :" + current.con.getInfo().connectionId);
+           
+            logger.print("Create session :" + account);
             return proxy;
         }
-
      
 
         public override void Shutdown(Ice.Current current)

@@ -13,13 +13,7 @@ namespace FootStone.GrainInterfaces
 
         Task Register(RegisterInfo info);
 
-        Task<List<ServerInfo>> GetServerList();
-
-        Task<List<PlayerShortInfo>> GetPlayerInfoShortList(int serverId);
-
-        Task  SelectPlayer(string playerId);
-
-        Task<string> CreatePlayer(string name, int serverId);
+        Task setCurPlayerId(string playerId);
       
     }
 }

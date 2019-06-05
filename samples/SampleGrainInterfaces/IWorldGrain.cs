@@ -1,7 +1,6 @@
-﻿using Orleans;
-using System;
+﻿using FootStone.GrainInterfaces;
+using Orleans;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace FootStone.Core.GrainInterfaces
@@ -11,6 +10,8 @@ namespace FootStone.Core.GrainInterfaces
 
         Task Init(string configRoot);
 
-      
+        Task<List<ServerInfo>> GetServerList();
+
+        Task<List<PlayerShortInfo>> GetPlayerInfoShortList(string account,int gameId);
     }
 }

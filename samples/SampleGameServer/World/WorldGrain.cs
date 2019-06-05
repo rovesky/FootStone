@@ -34,24 +34,25 @@ namespace FootStone.Grains
         private List<GameState> gameInfos = new List<GameState>();
 
 
-        public override async Task OnActivateAsync()
-        {
-            //try {
-            //    var obj = await Global.OrleansClient.CreateObjectReference<IPlayerObserver>(new PlayerObserver());
-            //}
-            //catch ( Exception e)
-            //{
-            //    Console.WriteLine(e.StackTrace);
-            //}
+        //public override async Task OnActivateAsync()
+        //{
+        //    //try {
+        //    //    var obj = await Global.OrleansClient.CreateObjectReference<IPlayerObserver>(new PlayerObserver());
+        //    //}
+        //    //catch ( Exception e)
+        //    //{
+        //    //    Console.WriteLine(e.StackTrace);
+        //    //}
 
-            //  return Task.CompletedTask;
-        }
+        //    //  return Task.CompletedTask;
+        //    base.OnActivateAsync
+        //}
 
-        public override Task OnDeactivateAsync()
-        {
+        //public override Task OnDeactivateAsync()
+        //{
 
-            return Task.CompletedTask;
-        }
+        //    return Task.CompletedTask;
+        //}
 
 
 
@@ -122,6 +123,29 @@ namespace FootStone.Grains
             }        
             
 
+        }
+
+
+        public Task<List<ServerInfo>> GetServerList()
+        {
+            var serveList = new List<ServerInfo>();
+            serveList.Add(new ServerInfo(1, "server1", 0));
+            return Task.FromResult(serveList);
+
+        }
+
+        public Task<List<PlayerShortInfo>> GetPlayerInfoShortList(string account,int gameId)
+        {
+            IGameGrain gameGrain = GrainFactory.GetGrain<IGameGrain>(gameId);
+
+            
+
+            //if (State.players == null || !State.players.ContainsKey(serverId))
+            //{
+            //    return Task.FromResult(new List<PlayerShortInfo>());
+            //}
+            //return Task.FromResult(State.players[serverId]);
+            return Task.FromResult(new List<PlayerShortInfo>());
         }
     }
   

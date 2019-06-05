@@ -172,7 +172,8 @@ namespace FootStone.Core.Client
                 await accountPrx.LoginRequestAsync(account, password);
                 Console.Out.WriteLine("LoginRequest ok:" + account);
 
-                List<ServerInfo> servers = await accountPrx.GetServerListRequestAsync();
+                var worldPrx = WorldPrxHelper.uncheckedCast(sessionPrx, "world");
+                List<ServerInfo> servers = await worldPrx.GetServerListRequestAsync();
 
                 if (servers.Count == 0)
                 {
@@ -182,16 +183,21 @@ namespace FootStone.Core.Client
 
                 var serverId = servers[0].id;
 
-                List<PlayerShortInfo> players = await accountPrx.GetPlayerListRequestAsync(serverId);
-                if (players.Count == 0)
-                {
-                    var playerId = await accountPrx.CreatePlayerRequestAsync(playerName, serverId);
-                    players = await accountPrx.GetPlayerListRequestAsync(serverId);
-                }
-
-                await accountPrx.SelectPlayerRequestAsync(players[0].playerId);
-
+                List<PlayerShortInfo> players = await worldPrx.GetPlayerListRequestAsync(serverId);
                 var playerPrx = IPlayerPrxHelper.uncheckedCast(sessionPrx, "player");
+
+                //if (players.Count == 0)
+                //{
+                //    var playerId = await playerPrx.CreatePlayerRequestAsync(serverId,new PlayerCreateInfo(playerName,1));
+                //    players = await worldPrx.GetPlayerListRequestAsync(serverId);
+                //}
+
+                var playerId = await playerPrx.CreatePlayerRequestAsync(serverId, new PlayerCreateInfo(playerName, 1));
+                await playerPrx.SelectPlayerRequestAsync(playerId);
+
+                //         await playerPrx.SelectPlayerRequestAsync(players[0].playerId);
+
+
                 var roleMasterPrx = IRoleMasterPrxHelper.uncheckedCast(sessionPrx, "roleMaster");
                 var zonePrx = IZonePrxHelper.uncheckedCast(sessionPrx, "zone");
 
