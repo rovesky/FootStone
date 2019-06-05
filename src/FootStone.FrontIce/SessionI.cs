@@ -1,9 +1,7 @@
-﻿using FootStone.Core.GrainInterfaces;
-using FootStone.GrainInterfaces;
+﻿using FootStone.GrainInterfaces;
 using Ice;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace FootStone.FrontIce
@@ -33,7 +31,7 @@ namespace FootStone.FrontIce
 
                 _destroy = true;
 
-                Console.Out.WriteLine("The session " + Id + " is now destroyed.");
+                var logger = current.adapter.getCommunicator().getLogger();
                 try
                 {
                     current.adapter.remove(current.id);
@@ -48,11 +46,12 @@ namespace FootStone.FrontIce
                         }
                         catch(System.Exception ex)
                         {
-                            Console.WriteLine(ex);
+                            logger.error(ex.ToString());
                         }
                     }
                     current.adapter.removeAllFacets(current.id);
-
+               
+                    logger.print("The session " + Id + " is now destroyed.");
                 }
                 catch (Ice.ObjectAdapterDeactivatedException)
                 {

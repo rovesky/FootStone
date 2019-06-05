@@ -5,7 +5,6 @@
 // **********************************************************************
 using FootStone.GrainInterfaces;
 using Ice;
-using IceGrid;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -16,35 +15,15 @@ namespace FootStone.FrontIce
     {
         private string serverName;
         private List<Type> facets;
-        //private QueryPrx query;
-        //private AdminPrx admin;
 
-        public SessionFactoryI(string name, List<Type> facets, Communicator communicator)
+        public SessionFactoryI(string name, List<Type> facets)
         {
             this.serverName = name;
-            this.facets = facets;
-            //try
-            //{
-            //    this.query = QueryPrxHelper.checkedCast(communicator.stringToProxy("FootStone/Query"));
-
-            //    var registry = RegistryPrxHelper.checkedCast(communicator.stringToProxy("FootStone/Registry"));          
-
-            //    var sessionPrx = registry.createAdminSession("foo", "bar");
-            //    this.admin = sessionPrx.getAdmin();
-
-            //}
-            //catch (Ice.Exception ex)
-            //{
-            //    Console.Error.WriteLine(ex.Message);
-            //}
+            this.facets = facets;          
         }
 
-
         public async override Task<ISessionPrx> CreateSessionAsync(string account, string password, Current current = null)
-        {
-           // var sessionId = Util.stringToIdentity(account);
-           
-
+        {         
             var sessionI = new SessionI(account);
             var proxy = ISessionPrxHelper.uncheckedCast(current.adapter.addWithUUID(sessionI));
                        
@@ -76,16 +55,20 @@ namespace FootStone.FrontIce
                         // The client already destroyed this session, or the server is shutting down
                     }
                 });
-            Console.Out.WriteLine("create session :" + current.con.getInfo().connectionId);
+
+            var logger = current.adapter.getCommunicator().getLogger();
+            logger.print("create session :" + current.con.getInfo().connectionId);
             return proxy;
         }
 
      
 
         public override void Shutdown(Ice.Current current)
-        {
-            Console.Out.WriteLine("Shutting down...");
+        {        
             current.adapter.getCommunicator().shutdown();
+
+            var logger = current.adapter.getCommunicator().getLogger();
+            logger.print("Ice Shutting downed!");
         }
     }
 

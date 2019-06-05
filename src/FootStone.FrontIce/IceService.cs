@@ -2,7 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Orleans;
+using NLog;
 using Orleans.Concurrency;
 using Orleans.Core;
 using Orleans.Runtime;
@@ -14,41 +14,34 @@ namespace FootStone.FrontIce
     [Reentrant]
     public class IceService : GrainService, IIceService
     {
-        readonly IGrainFactory GrainFactory;
-
+        private NLog.Logger logger = LogManager.GetCurrentClassLogger();
         private NetworkIce network = new NetworkIce();
 
-        public IceService(IServiceProvider services, IGrainIdentity id, Silo silo, ILoggerFactory loggerFactory, IGrainFactory grainFactory)
+        public IceService(IServiceProvider services, IGrainIdentity id, Silo silo, ILoggerFactory loggerFactory)
             : base(id, silo, loggerFactory)
         {
-            GrainFactory = grainFactory;
+
         }
 
         public override Task Init(IServiceProvider serviceProvider)
         {
-            
-            Console.WriteLine("----------IceService Init!");
+            logger.Info("----------IceService Init!");
             var options =  serviceProvider.GetService<IOptions<IceOptions>>().Value;
-
-        //    var servants = serviceProvider.GetServices<IServantBase>();
-
             network.Init(options);
 
             return base.Init(serviceProvider);
         }
 
         public override async Task Start()
-        {
-
-            Console.WriteLine("-----------IceService Start!");
+        {       
             await base.Start();
+            logger.Info("-----------IceService Started!");
         }
 
         public override Task Stop()
-        {
-            Console.WriteLine("-----------IceService Stop!");
-
+        {        
             network.Stop();
+            logger.Info("-----------IceService Stopped!");
             return base.Stop();
         }
     }

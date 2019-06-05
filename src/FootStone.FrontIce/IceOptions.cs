@@ -9,5 +9,6 @@ namespace FootStone.FrontIce
 
         public List<Type> FacetTypes = new List<Type>();
 
+        public Ice.Logger Logger { get; set; }
     }
 }

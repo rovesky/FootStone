@@ -1,89 +1,19 @@
 using FootStone.Core.FrontIce;
-using FootStone.Core.GrainInterfaces;
 using FootStone.FrontIce;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using NLog;
-using NLog.Fluent;
 using Orleans;
 using Orleans.Configuration;
 using Orleans.Hosting;
-using Orleans.Services;
-using SampleGrainInterfaces;
 using System;
 using System.Net;
 using System.Threading.Tasks;
-using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace FootStone.Core.GameServer
 {
 
-    public class NLogLogger : ILogger
-    {
-        private static Logger logger = LogManager.GetCurrentClassLogger();
 
-        public IDisposable BeginScope<TState>(TState state)
-        {
-            return null;
-        }
-
-        public bool IsEnabled(Microsoft.Extensions.Logging.LogLevel logLevel)
-        {
-            return true;
-        }
-
-        public void Log<TState>(Microsoft.Extensions.Logging.LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
-        {
-            NLog.LogLevel level = NLog.LogLevel.Off;
-            switch (logLevel)
-            {
-                case Microsoft.Extensions.Logging.LogLevel.Trace:
-                    level = NLog.LogLevel.Trace;
-                    break;
-                case Microsoft.Extensions.Logging.LogLevel.Debug:
-                    level = NLog.LogLevel.Debug;
-                    break;
-                case Microsoft.Extensions.Logging.LogLevel.Information:
-                    level = NLog.LogLevel.Info;
-                    break;
-                case Microsoft.Extensions.Logging.LogLevel.Warning:
-                    level = NLog.LogLevel.Warn;
-                    break;
-                case Microsoft.Extensions.Logging.LogLevel.Error:
-                    level = NLog.LogLevel.Error;
-                    break;
-                case Microsoft.Extensions.Logging.LogLevel.Critical:
-                    level = NLog.LogLevel.Fatal;
-                    break;
-                case Microsoft.Extensions.Logging.LogLevel.None:
-                    level = NLog.LogLevel.Off;
-                    break;
-            }
-            logger.Log(level, formatter(state, exception));
-        }
-    }
-
-    public class NLogLoggerProvider : ILoggerProvider
-    {
-       
-
-        public NLogLoggerProvider()
-        {
-            
-        }
-            
-
-        public void Dispose()
-        {
-
-        }
-
-        ILogger ILoggerProvider.CreateLogger(string categoryName)
-        {
-            return new NLogLogger();
-        }
-    }
 
     class Program
     {
@@ -116,11 +46,6 @@ namespace FootStone.Core.GameServer
         {
             try
             {
-                //PlayerManagerComponent v = new PlayerManagerComponent(null);
-                //Type type = v.GetType();
-                //Console.WriteLine(type.Name);
-
-                //Global.MainArgs = args;
 
                 var footStone = new FSHostBuilder()
 
@@ -154,7 +79,6 @@ namespace FootStone.Core.GameServer
                         {                            
                            // logging.AddConsole();
                             logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Warning);
-
                             logging.AddProvider(new NLogLoggerProvider());
                         })
                         .AddMemoryGrainStorage("memory1")
@@ -195,17 +119,11 @@ namespace FootStone.Core.GameServer
                         options.FacetTypes.Add(typeof(RoleMasterI));
                         options.FacetTypes.Add(typeof(ZoneI));
 
-                    })
-                    //.ConfigureSilo(silo =>
-                    //{
-                    //    silo.ConfigureServices(services =>
-                    //    {
-                    //        services.AddSingleton<IServantBase, AccountI>();
-                    //        services.AddSingleton<IServantBase, PlayerI>();
-                    //        services.AddSingleton<IServantBase, RoleMasterI>();
-                    //        services.AddSingleton<IServantBase, ZoneI>();
-                    //    });
-                    //})
+                        //var logger = LogManager.GetLogger("Ice");
+                        //logger.Info("ICE ERROR!!!!");
+                        //options.Logger = new NLoggerI(logger);
+
+                    })                
                     .Build();
 
                 logger.Error("after build!");

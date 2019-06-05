@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NLog;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
@@ -12,50 +13,52 @@ namespace FootStone.FrontIce
         {
 
         }
-             
+     
         private Ice.Communicator communicator;
 
         public void Init(IceOptions options)
-        {
+        {         
             try
             {
-                Ice.Util.setProcessLogger(new MyLoggerI());
+                //设置日志输出       
+                var logger = options.Logger;
+                if (logger == null)
+                    logger = new NLoggerI(LogManager.GetLogger("Ice"));
+                Ice.Util.setProcessLogger(logger);
 
                 communicator = Ice.Util.initialize(options.ConfigFile);
-
                 var adapter = communicator.createObjectAdapter("SessionFactoryAdapter");
 
                 var properties = communicator.getProperties();
 
-
                 var id = Ice.Util.stringToIdentity(properties.getProperty("Identity"));
+
                 var serverName = properties.getProperty("Ice.ProgramName");
 
-                adapter.add(new SessionFactoryI(serverName, options.FacetTypes, communicator), id);
+                adapter.add(new SessionFactoryI(serverName, options.FacetTypes), id);
 
                 adapter.activate();
-                Console.WriteLine("ice inited!");
+                communicator.getLogger().print("Ice inited!");
             }
-            catch (Exception ex)
+            catch (Ice.Exception ex)
             {
-                Console.WriteLine("ice init failed!");
-                Console.Error.WriteLine(ex);
+                communicator.getLogger().error("Ice init failed:" + ex.ToString());          
             }
         }
 
         public void Start()
         {
-            Console.WriteLine("ice start!");
+           
             Task t1 = Task.Run(() =>
              {
                  communicator.waitForShutdown();
              });
-
+            communicator.getLogger().print("Ice started!");
         }
 
         public void Stop()
         {
-            Console.WriteLine("ice shutdown!");
+            communicator.getLogger().print("Ice shutdown!");
             communicator.shutdown();
         }
 
