@@ -2,6 +2,7 @@
 using FootStone.FrontIce;
 using FootStone.GrainInterfaces;
 using Ice;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -16,6 +17,8 @@ namespace FootStone.Core.FrontIce
     {
         private SessionI sessionI;
 
+        private NLog.Logger logger = LogManager.GetCurrentClassLogger();
+
         public AccountObserver(SessionI sessionI)
         {
 
@@ -24,10 +27,10 @@ namespace FootStone.Core.FrontIce
 
         public void AccountLogined(string id)
         {
-            Console.Out.WriteLine("AccountLogined:" + id);
+            logger.Debug("AccountLogined:" + id);
             if (!id.Equals(sessionI.Id))
             {
-                Console.Out.WriteLine("sessionI.CollocProxy.Destroy");
+                logger.Debug("sessionI.CollocProxy.Destroy");
                 sessionI.SessionPushPrx.ice_getConnection().close(ConnectionClose.Forcefully);
             }           
         }

@@ -25,7 +25,7 @@ namespace FootStone.FrontIce
 
         public override Task Init(IServiceProvider serviceProvider)
         {
-            logger.Info("----------IceService Init!");
+            logger.Info("IceService Init!");
             var options =  serviceProvider.GetService<IOptions<IceOptions>>().Value;
             network.Init(options);
 
@@ -35,13 +35,13 @@ namespace FootStone.FrontIce
         public override async Task Start()
         {       
             await base.Start();
-            logger.Info("-----------IceService Started!");
+            logger.Info("IceService Started!");
         }
 
         public override Task Stop()
         {        
             network.Stop();
-            logger.Info("-----------IceService Stopped!");
+            logger.Info("IceService Stopped!");
             return base.Stop();
         }
     }

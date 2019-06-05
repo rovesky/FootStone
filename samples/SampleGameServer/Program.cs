@@ -76,15 +76,15 @@ namespace FootStone.Core.GameServer
                         //  .Configure<EndpointOptions>(options => options.AdvertisedIPAddress = IPAddress.Any)
                         //.ConfigureApplicationParts(parts => parts.AddApplicationPart(typeof(RoomGrain).Assembly).WithReferences())
                         .ConfigureLogging(logging =>
-                        {                            
-                           // logging.AddConsole();
-                            logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Warning);
+                        {
+                            // logging.AddConsole();
+                            //logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Warning);
                             logging.AddProvider(new NLogLoggerProvider());
                         })
                         .AddMemoryGrainStorage("memory1")
                         .AddAdoNetGrainStorage("ado1", options =>
                          {
-                         
+
                              options.UseJsonFormat = true;
                              options.ConnectionString = mysqlConnectStorage;
                              options.Invariant = "MySql.Data.MySqlClient";
@@ -123,29 +123,31 @@ namespace FootStone.Core.GameServer
                         //logger.Info("ICE ERROR!!!!");
                         //options.Logger = new NLoggerI(logger);
 
-                    })                
+                    })
                     .Build();
 
-                logger.Error("after build!");
-            
+                logger.Info("FSHost builded!");
+
+                //throw new Exception("test");
+                //logger.Error(new Exception("test").ToString());
                 Global.FSHost = footStone;
 
                 var iceService = footStone.Services.GetService<IceService>();
 
                 RunAsync(footStone).Wait();
-
                 do
                 {
                     string exit = Console.ReadLine();
                     if (exit.Equals("exit"))
                     {
                         StopAsync(footStone).Wait();
+                        break;
                     }
                 } while (true);
             }
             catch (Exception ex)
             {
-                Console.Error.WriteLine(ex);
+                logger.Error(ex);
                 Console.ReadLine();
             }
             return 0;
@@ -172,7 +174,7 @@ namespace FootStone.Core.GameServer
             //Console.WriteLine("Setting up Adventure, please wait ...");
             //Adventure adventure = new Adventure(client);
             //adventure.Configure(mapFileName).Wait();
-            Console.WriteLine("FootStone Start completed.");
+            logger.Info("FSHost start completed!");
         }
 
         static async Task StopAsync(IFSHost fs)

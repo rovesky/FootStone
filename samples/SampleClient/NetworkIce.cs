@@ -136,6 +136,7 @@ namespace FootStone.Core.Client
           
             Connection connection = await sessionPrx.ice_getConnectionAsync();
             connection.setACM(30, Ice.ACMClose.CloseOff, Ice.ACMHeartbeat.HeartbeatAlways);
+
             Console.WriteLine(connection.getInfo().connectionId+" session connection: ACM=" +
                 JsonConvert.SerializeObject(connection.getACM())
                 + ",Endpoint=" + JsonConvert.SerializeObject(connection.getEndpoint()));

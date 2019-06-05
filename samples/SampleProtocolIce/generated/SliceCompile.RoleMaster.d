@@ -4,7 +4,7 @@
     <options>
       <IceHome>C:\Users\luson\.nuget\packages\zeroc.ice.net\3.7.1\build\..</IceHome>
       <IceToolsPath>C:\Users\luson\.nuget\packages\zeroc.ice.net\3.7.1\build\..\tools</IceToolsPath>
-      <OutputDir>D:\work\footstone\FootStone\samples\SampleProtocolIce\generated</OutputDir>
+      <OutputDir>D:\work\footstone\footstone\samples\SampleProtocolIce\generated</OutputDir>
       <IncludeDirectories>D:\work\footstone\FootStone\src\FootStone.Protocolce\slice</IncludeDirectories>
     </options>
   </source>

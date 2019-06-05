@@ -8,6 +8,7 @@ using FootStone.Core.GrainInterfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using NLog;
 using Orleans;
 using Orleans.Concurrency;
 using Orleans.Core;
@@ -24,12 +25,12 @@ namespace FootStone.Core.GameServer
     {
         readonly IGrainFactory GrainFactory;
 
-   
-    //    private int operationTimes = 0;
         private IStreamProvider streamProvider;
         private IChannel boundChannel;
         private MultithreadEventLoopGroup bossGroup;
         private MultithreadEventLoopGroup workerGroup;
+
+        private NLog.Logger logger = LogManager.GetCurrentClassLogger();
 
         public NettyService(IServiceProvider services, IGrainIdentity id, Silo silo, ILoggerFactory loggerFactory, IGrainFactory grainFactory) 
             : base(id, silo, loggerFactory)
@@ -39,22 +40,15 @@ namespace FootStone.Core.GameServer
 
         public NettyOptions options { get; private set; }
 
-        public Task AddOptionTime(int time)
-        {
-          //  operationTimes += time;
-            return Task.CompletedTask;
-        }
+        //public Task AddOptionTime(int time)
+        //{
+        //  //  operationTimes += time;
+        //    return Task.CompletedTask;
+        //}
 
         public override Task Init(IServiceProvider serviceProvider)
         {
-            Console.WriteLine("----------netty Init!");
-
-            ////启动FastStream
-            //FastStreamConfig fastStreamConfig = new FastStreamConfig();       
-            //fastStreamConfig.host = this.Silo.Endpoint.Address.ToString();
-            //fastStreamConfig.port = 20010;
-            //FastStream.Instance.Init(fastStreamConfig);
-           // var ret = serviceProvider.GetRequiredService<EndpointOptions>();
+            logger.Info("DotNetty Init!");           
 
             this.options = serviceProvider.GetService<IOptions<NettyOptions>>().Value;
 
@@ -93,7 +87,7 @@ namespace FootStone.Core.GameServer
                 boundChannel = await bootstrap.BindAsync(
                      // host,
                      options.Port);
-                Console.Out.WriteLine("netty started:"+ options.Port);
+                logger.Info("DotNetty started:"+ options.Port);
             }
             catch(Exception ex)
             {
@@ -110,7 +104,7 @@ namespace FootStone.Core.GameServer
 
         public async override Task Stop()
         {
-            Console.Out.WriteLine("netty stopped!");
+            logger.Info("DotNetty stopped!");
             await boundChannel.CloseAsync();
             await Task.WhenAll(
                  bossGroup.ShutdownGracefullyAsync(TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(1)),
@@ -125,9 +119,11 @@ namespace FootStone.Core.GameServer
 
     class SocketServerHandler : ChannelHandlerAdapter
     {
+        private NLog.Logger logger = LogManager.GetCurrentClassLogger();
+
         public override void ChannelRead(IChannelHandlerContext context, object message)
         {
-            Console.Out.WriteLine("ChannelRead:" + message);
+            logger.Info("ChannelRead:" + message);
             //if (message is MsgHandShakeRequest handshake)
             //{
             //    Console.Out.WriteLine("handshake:" + handshake.playerId);
@@ -178,7 +174,7 @@ namespace FootStone.Core.GameServer
 
         public override void ExceptionCaught(IChannelHandlerContext context, Exception exception)
         {
-            Console.WriteLine("Exception: " + exception);
+            logger.Error(exception);
             context.CloseAsync();
         }
     }
