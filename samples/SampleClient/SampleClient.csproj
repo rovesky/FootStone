@@ -12,6 +12,7 @@
   <ItemGroup>
     <PackageReference Include="DotNetty.Handlers" Version="0.6.0" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+    <PackageReference Include="NLog" Version="4.6.4" />
     <PackageReference Include="zeroc.ice.net" Version="3.7.1" />
   </ItemGroup>
 
@@ -22,6 +23,9 @@
   <ItemGroup>
     <None Update="config.client">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="NLog.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="StartClient.bat">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

@@ -1,13 +1,12 @@
-﻿using FootStone.Core.GrainInterfaces;
+﻿using FootStone.Core;
 using FootStone.FrontIce;
 using FootStone.GrainInterfaces;
 using Ice;
 using NLog;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace FootStone.Core.FrontIce
+namespace SampleFrontIce
 {
 
     /// <summary>
@@ -21,7 +20,6 @@ namespace FootStone.Core.FrontIce
 
         public AccountObserver(SessionI sessionI)
         {
-
             this.sessionI = sessionI;
         }
 
@@ -35,12 +33,12 @@ namespace FootStone.Core.FrontIce
             }           
         }
     }
-    
+
 
     public class AccountI : AccountDisp_, IServantBase
     {
         private SessionI session;
-        private ObserverClient<IAccountObserver> observer = new ObserverClient<IAccountObserver>(Global.OrleansClient);       
+        private ObserverClient<IAccountObserver> observer = new ObserverClient<IAccountObserver>(Global.OrleansClient);
         private IAccountGrain accountGrain;
         private NLog.Logger logger = LogManager.GetCurrentClassLogger();
 
@@ -62,18 +60,18 @@ namespace FootStone.Core.FrontIce
 
         public async void Dispose()
         {
-           await observer.Unsubscribe();
-        }       
+            await observer.Unsubscribe();
+        }
 
 
-        public async override Task LoginRequestAsync(string account,string pwd, Current current = null)
+        public async override Task LoginRequestAsync(string account, string pwd, Current current = null)
         {
             //获取accountGrain
             accountGrain = Global.OrleansClient.GetGrain<IAccountGrain>(account);
-           
+
             await observer.Subscribe(accountGrain, new AccountObserver(session));
 
-            await accountGrain.Login(session.Id, account,pwd);
+            await accountGrain.Login(session.Id, account, pwd);
 
             session.Account = account;
         }
@@ -81,9 +79,10 @@ namespace FootStone.Core.FrontIce
         public async override Task RegisterRequestAsync(string account, RegisterInfo info, Current current = null)
         {
             var accountGrain = Global.OrleansClient.GetGrain<IAccountGrain>(account);
+
             await accountGrain.Register(info);
         }
-                     
+
         public override Task TestLoginRequestAsync(string account, string pwd, LoginData data, Current current = null)
         {
             var type = data.GetType();
@@ -92,6 +91,5 @@ namespace FootStone.Core.FrontIce
             return Task.CompletedTask;
         }
 
-     
     }
 }

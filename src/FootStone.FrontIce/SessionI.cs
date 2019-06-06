@@ -6,61 +6,24 @@ using System.Threading.Tasks;
 
 namespace FootStone.FrontIce
 {
-    public class SessionI : ISessionDisp_
+    public class SessionI : ISessionDisp_,IDisposable
     {
          public SessionI(string account)
         {
             this.Account = account;  
-            _destroy = false;       
+          //  _destroy = false;       
         }
 
-        public  override Task AddPushAsync(ISessionPushPrx sessionPush, Current current = null)
+        public  override void AddPush(ISessionPushPrx sessionPush, Current current = null)
         {
             SessionPushPrx = (ISessionPushPrx)sessionPush.ice_fixed(current.con);
-            return Task.CompletedTask;
-        } 
+        }
 
         public override void Destroy(Current current = null)
         {
-            lock (this)
-            {
-                if (_destroy)
-                {
-                    throw new Ice.ObjectNotExistException();
-                }
-
-                _destroy = true;
-
-                var logger = current.adapter.getCommunicator().getLogger();
-                try
-                {
-                    current.adapter.remove(current.id);
-                    var allFacets = current.adapter.findAllFacets(current.id);
-                    foreach(Ice.Object e in allFacets.Values)
-                    {
-                        IDisposable dis = (IDisposable)e;
-                        try
-                        {
-                            dis.Dispose();
-                        }
-                        catch(System.Exception ex)
-                        {
-                            logger.error(ex.ToString());
-                        }
-                    }
-                    current.adapter.removeAllFacets(current.id);              
-
-
-                    logger.print("The session " + Id + " is now destroyed.");
-                }
-                catch (Ice.ObjectAdapterDeactivatedException)
-                {
-                    // This method is called on shutdown of the server, in which
-                    // case this exception is expected.
-                }
-            }
+            SessionPushPrx.ice_getConnection().close(ConnectionClose.Forcefully);         
         }
-
+         
         public string Id
         {
             get
@@ -90,13 +53,18 @@ namespace FootStone.FrontIce
             attributes.Remove(key);
         }
 
+        public void Dispose()
+        {
+            
+        }
+       
+
         public string Account { set; get; }
         public Guid   PlayerId { set; get; }
 
-        public ISessionPushPrx SessionPushPrx { get; private set; }
-             
+        public ISessionPushPrx SessionPushPrx { get; private set; }  
      
-        private bool _destroy;
+       // private bool _destroy;
         private Dictionary<String, object> attributes = new Dictionary<string, object>();
 
     }

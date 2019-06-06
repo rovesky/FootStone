@@ -1,12 +1,10 @@
 ﻿using Ice;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace FootStone.FrontIce
 {
-    public class FSInterceptor : Ice.DispatchInterceptor,IDisposable
+    public class FSInterceptor : DispatchInterceptor,IDisposable
     {
         private Ice.Object servant;
         private Logger logger;
@@ -15,18 +13,21 @@ namespace FootStone.FrontIce
         {
             this.servant = servant;
             this.logger = logger;
-        }
-            
+        }                   
 
         public async override Task<OutputStream> dispatch(Request request)
-        {           
-
+        {         
             try
-            {
-               //  logger.print("dispatch begein:" + request.getCurrent().operation);
+            {              
+               //  logger.print("dispatch begein:" + request.getCurrent().operation);        
                 var ret = await servant.ice_dispatch(request);
                //  logger.print("dispatch end:" + request.getCurrent().operation);
                 return ret;
+            }
+            catch(Ice.Exception e)
+            {
+                logger.warning(e.ToString());
+                throw e;
             }
             catch (System.Exception e)
             {
@@ -37,9 +38,10 @@ namespace FootStone.FrontIce
 
         public void Dispose()
         {
-            (servant as IDisposable).Dispose();
+            IDisposable dis = servant as IDisposable;
+            if(dis != null)
+                dis.Dispose();
         }
-
       
     }
 }

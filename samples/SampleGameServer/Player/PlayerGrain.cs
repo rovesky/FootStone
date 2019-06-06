@@ -20,6 +20,7 @@ namespace FootStone.Core
         //private bool isOnline;
 
         private NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        private IDisposable timer;
 
         public PlayerGrain(IGrainActivationContext grainActivationContext)
         {
@@ -80,9 +81,9 @@ namespace FootStone.Core
             IAccountGrain accountGrain = this.GrainFactory.GetGrain<IAccountGrain>(State.account);
             await accountGrain.setCurPlayerId(State.playerId);
 
-            RegisterTimer((s) =>
+            timer = RegisterTimer((s) =>
             {
-                logger.Debug($"${State.name} timeout!");
+                logger.Debug($"{State.name} timer triger!");
 
                 State.roleMaster.property.intel++;
                 State.level++;
@@ -102,6 +103,9 @@ namespace FootStone.Core
 
         public async Task PlayerOffline()
         {
+            if (timer != null)
+                timer.Dispose();
+
             IGameGrain gameGrain = this.GrainFactory.GetGrain<IGameGrain>(State.gameId);
             await gameGrain.PlayerLeave(Guid.Parse(State.playerId));
 

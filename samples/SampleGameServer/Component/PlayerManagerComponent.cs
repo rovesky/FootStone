@@ -62,8 +62,8 @@ namespace FootStone.Core
 
             //    await playerGrain.UnsubscribeForPlayerUpdates(Grain as IPlayerObserver);
 
-            //    players.Remove(playerId);
-            throw new NotImplementedException();
+              players.Remove(playerId);
+           // throw new NotImplementedException();
         }
 
         public Task<List<GamePlayerState>> GetOnlinePlayersByLevel(int level)

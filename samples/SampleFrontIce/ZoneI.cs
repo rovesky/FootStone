@@ -1,4 +1,5 @@
-﻿using FootStone.Core.GrainInterfaces;
+﻿using FootStone.Core;
+using FootStone.Core.GrainInterfaces;
 using FootStone.FrontIce;
 using FootStone.GrainInterfaces;
 using Ice;
@@ -8,7 +9,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FootStone.Core.FrontIce
+namespace SampleFrontIce
 {
     internal class StreamObserver : IAsyncObserver<byte[]>
     {

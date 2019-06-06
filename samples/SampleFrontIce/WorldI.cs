@@ -1,4 +1,5 @@
-﻿using FootStone.Core.GrainInterfaces;
+﻿using FootStone.Core;
+using FootStone.Core.GrainInterfaces;
 using FootStone.FrontIce;
 using FootStone.GrainInterfaces;
 using Ice;
@@ -7,9 +8,8 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace FootStone.Core.FrontIce
-{
-       
+namespace SampleFrontIce
+{       
 
     public class WorldI :WorldDisp_, IServantBase
     {

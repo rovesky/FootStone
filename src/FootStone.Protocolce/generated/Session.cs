@@ -192,7 +192,7 @@ namespace FootStone
         public interface ISessionOperations_
         {
             [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-            _System.Threading.Tasks.Task AddPushAsync(ISessionPushPrx playerPush, Ice.Current current = null);
+            void AddPush(ISessionPushPrx playerPush, Ice.Current current = null);
 
             [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
             void Destroy(Ice.Current current = null);
@@ -202,7 +202,7 @@ namespace FootStone
         public interface ISessionFactoryOperations_
         {
             [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-            _System.Threading.Tasks.Task<ISessionPrx> CreateSessionAsync(string account, string password, Ice.Current current = null);
+            ISessionPrx CreateSession(string account, string password, Ice.Current current = null);
 
             [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
             void Shutdown(Ice.Current current = null);
@@ -1208,7 +1208,7 @@ namespace FootStone
         {
             #region Slice operations
 
-            public abstract _System.Threading.Tasks.Task AddPushAsync(ISessionPushPrx playerPush, Ice.Current current = null);
+            public abstract void AddPush(ISessionPushPrx playerPush, Ice.Current current = null);
 
             public abstract void Destroy(Ice.Current current = null);
 
@@ -1255,7 +1255,8 @@ namespace FootStone
                 ISessionPushPrx iceP_playerPush;
                 iceP_playerPush = ISessionPushPrxHelper.read(istr);
                 inS.endReadParams();
-                return inS.setResultTask(obj.AddPushAsync(iceP_playerPush, current));
+                obj.AddPush(iceP_playerPush, current);
+                return inS.setResult(inS.writeEmptyParams());
             }
 
             [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011")]
@@ -1328,7 +1329,7 @@ namespace FootStone
         {
             #region Slice operations
 
-            public abstract _System.Threading.Tasks.Task<ISessionPrx> CreateSessionAsync(string account, string password, Ice.Current current = null);
+            public abstract ISessionPrx CreateSession(string account, string password, Ice.Current current = null);
 
             public abstract void Shutdown(Ice.Current current = null);
 
@@ -1377,11 +1378,11 @@ namespace FootStone
                 iceP_account = istr.readString();
                 iceP_password = istr.readString();
                 inS.endReadParams();
-                return inS.setResultTask<ISessionPrx>(obj.CreateSessionAsync(iceP_account, iceP_password, current),
-                    (ostr, ret) =>
-                    {
-                        ISessionPrxHelper.write(ostr, ret);
-                    });
+                var ret = obj.CreateSession(iceP_account, iceP_password, current);
+                var ostr = inS.startWriteParams();
+                ISessionPrxHelper.write(ostr, ret);
+                inS.endWriteParams(ostr);
+                return inS.setResult(ostr);
             }
 
             [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011")]

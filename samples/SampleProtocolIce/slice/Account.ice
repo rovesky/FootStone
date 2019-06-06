@@ -7,11 +7,11 @@
 #pragma once
 #include "Player.ice"
 
-
 module FootStone
 {
 	module GrainInterfaces
-	{  
+	{
+	 
 		exception AccountException
 		{
 			string message;
@@ -27,17 +27,15 @@ module FootStone
 		{
 		}
 
-		interface Account
+		["amd"]interface Account
 		{
-      
-		  ["amd"] void LoginRequest(string account,string pwd) throws AccountException;
+  
+		   void LoginRequest(string account,string pwd) throws AccountException;
 
-		  ["amd"] void RegisterRequest(string account,RegisterInfo info) throws AccountException;
+		   void RegisterRequest(string account,RegisterInfo info) throws AccountException;
 
-		  ["amd"] void TestLoginRequest(string account,string pwd,LoginData data) throws AccountException;
+		   void TestLoginRequest(string account,string pwd,LoginData data) throws AccountException;
 
-		}
-    
+		}   	
 	}
-
 }

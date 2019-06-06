@@ -1,4 +1,5 @@
-﻿using FootStone.Core.GrainInterfaces;
+﻿using FootStone.Core;
+using FootStone.Core.GrainInterfaces;
 using FootStone.FrontIce;
 using FootStone.GrainInterfaces;
 using Ice;
@@ -9,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FootStone.Core.FrontIce
+namespace SampleFrontIce
 {
 
     /// <summary>
@@ -78,7 +79,7 @@ namespace FootStone.Core.FrontIce
 
             session.PlayerId = gpid;
 
-            logger.Debug($"Bind Session ${session.Account}:${session.PlayerId}");
+            logger.Debug($"Session Bind {session.Account}:{session.PlayerId}");
         }
 
         public async override Task<PlayerInfo> GetPlayerInfoAsync(Current current = null)
@@ -96,6 +97,8 @@ namespace FootStone.Core.FrontIce
         public async void Dispose()
         {
             await observer.Unsubscribe();
+            if(playerGrain != null)
+                await playerGrain.PlayerOffline();
         }
 
     }

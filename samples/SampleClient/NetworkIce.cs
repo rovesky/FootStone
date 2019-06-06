@@ -1,6 +1,7 @@
 ﻿using FootStone.GrainInterfaces;
 using Ice;
 using Newtonsoft.Json;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,8 @@ namespace FootStone.Core.Client
 {
     public class NetworkIce
     {
+        private static NLog.Logger logger = LogManager.GetCurrentClassLogger();
+
         private static NetworkIce _instance;
 
         /// <summary>
@@ -89,16 +92,16 @@ namespace FootStone.Core.Client
                 //    initData.properties.setProperty("SessionFactory.Proxy", "SessionFactory:default -h "+ IP + " -p " + port +" -t 10000");
                 initData.properties.setProperty("Ice.Default.Locator", "FootStone/Locator:default -h " + IP + " -p " + port);
 
-              
-                //initData.dispatcher = delegate (System.Action action, Ice.Connection connection)
-                //{
-                //    lock (this)
-                //    {
-                //        actions.Add(action);
-                //    }                
-                //};
+                initData.logger = new NLoggerI(LogManager.GetLogger("Ice"));
+                  //initData.dispatcher = delegate (System.Action action, Ice.Connection connection)
+                  //{
+                  //    lock (this)
+                  //    {
+                  //        actions.Add(action);
+                  //    }                
+                  //};
 
-                communicator = Ice.Util.initialize(initData);
+                  communicator = Ice.Util.initialize(initData);
                 Adapter = communicator.createObjectAdapter("");
 
 
@@ -137,7 +140,7 @@ namespace FootStone.Core.Client
             Connection connection = await sessionPrx.ice_getConnectionAsync();
             connection.setACM(30, Ice.ACMClose.CloseOff, Ice.ACMHeartbeat.HeartbeatAlways);
 
-            Console.WriteLine(connection.getInfo().connectionId+" session connection: ACM=" +
+            logger.Info(connection.getInfo().connectionId+" session connection: ACM=" +
                 JsonConvert.SerializeObject(connection.getACM())
                 + ",Endpoint=" + JsonConvert.SerializeObject(connection.getEndpoint()));
 
@@ -168,13 +171,14 @@ namespace FootStone.Core.Client
         {
             this.name = name;
         }
+        private  NLog.Logger logger = LogManager.GetCurrentClassLogger();
 
         public override void ZoneSync(byte[] data, Current current = null)
         {
             count++;
             if (count % 330 == 0)
             {
-                Console.Out.WriteLine(name + " zone sync:" + count);
+                logger.Info(name + " zone sync:" + count);
             }
         }
     }
@@ -182,7 +186,7 @@ namespace FootStone.Core.Client
     internal class PlayerPushI : IPlayerPushDisp_
     {
         private string name;
-
+        private NLog.Logger logger = LogManager.GetCurrentClassLogger();
         public PlayerPushI(string name)
         {
             this.name = name;
@@ -190,7 +194,7 @@ namespace FootStone.Core.Client
 
         public override void hpChanged(int hp, Current current = null)
         {
-            Console.Out.WriteLine(name+" hp changed:" + hp);
+            logger.Info(name+" hp changed:" + hp);
         }
     }
 

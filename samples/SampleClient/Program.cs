@@ -13,12 +13,14 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
+using NLog;
 
 namespace FootStone.Core.Client
 {
     class Program
     {
-        
+        private static Logger logger = LogManager.GetCurrentClassLogger();
+
         class SocketNettyHandler : ChannelHandlerAdapter
         {
             // private MsgHandShakeRequest initialMessage;
@@ -56,7 +58,7 @@ namespace FootStone.Core.Client
                     Interlocked.Increment(ref msgCount);
                     if (msgCount % 10000 == 0)                    {
 
-                        Console.WriteLine("Received from server msg count: " + msgCount + ",msg length:" + buffer.Capacity);
+                        logger.Info("Received from server msg count: " + msgCount + ",msg length:" + buffer.Capacity);
                     }
                 }
             }
@@ -65,7 +67,7 @@ namespace FootStone.Core.Client
 
             public override void ExceptionCaught(IChannelHandlerContext context, Exception exception)
             {
-                Console.WriteLine("Exception: " + exception);
+                logger.Error(exception);
                 context.CloseAsync();
             }
         }
@@ -115,7 +117,7 @@ namespace FootStone.Core.Client
         }
 
 
-        static void Main(string[] args)
+        static  void Main(string[] args)
         {
             //  Test();
             try
@@ -123,13 +125,13 @@ namespace FootStone.Core.Client
               //  ConnectNettyAsync("127.0.0.1", 8007,"11").Wait();
              
                 Test(1).Wait();
-                Console.WriteLine("OK!");
+                //logger.Info("Test OK!");
 
                 Console.ReadLine();
             }
             catch(Exception ex)
             {
-                Console.Error.WriteLine(ex.Message);
+                logger.Error(ex);
             }
         }
 
@@ -141,7 +143,7 @@ namespace FootStone.Core.Client
                 runTest(i, 1);
                 await Task.Delay(20);
             }
-            Console.Out.WriteLine("all session created:" + count);
+            logger.Info("all session created:" + count);
         }
 
         private static async Task runTest(int index,int count)
@@ -160,17 +162,17 @@ namespace FootStone.Core.Client
                 try
                 {
                     await accountPrx.RegisterRequestAsync(account,new RegisterInfo(account, password));
-                    Console.Out.WriteLine("RegisterRequest ok:" + account);
+                    logger.Info("RegisterRequest ok:" + account);
                 }
                 catch (Exception ex)
                 {
-                    Console.Out.WriteLine("RegisterRequest fail:" + ex.Message);
+                    logger.Info("RegisterRequest fail:" + ex.Message);
                 }
 
              //   await accountPrx.TestLoginRequestAsync("11", "22", new Sample.SampleLoginData("code1"));
 
                 await accountPrx.LoginRequestAsync(account, password);
-                Console.Out.WriteLine("LoginRequest ok:" + account);
+                logger.Info("LoginRequest ok:" + account);
 
                 var worldPrx = WorldPrxHelper.uncheckedCast(sessionPrx, "world");
                 List<ServerInfo> servers = await worldPrx.GetServerListRequestAsync();
@@ -193,10 +195,11 @@ namespace FootStone.Core.Client
                 //}
 
                 var playerId = await playerPrx.CreatePlayerRequestAsync(serverId, new PlayerCreateInfo(playerName, 1));
+
+              //  await playerPrx.GetPlayerInfoAsync();
+
                 await playerPrx.SelectPlayerRequestAsync(playerId);
-
                 //         await playerPrx.SelectPlayerRequestAsync(players[0].playerId);
-
 
                 var roleMasterPrx = IRoleMasterPrxHelper.uncheckedCast(sessionPrx, "roleMaster");
                 var zonePrx = IZonePrxHelper.uncheckedCast(sessionPrx, "zone");
@@ -215,7 +218,7 @@ namespace FootStone.Core.Client
 
                 // channel.Id.AsLongText
 
-                Console.Out.WriteLine("playerPrx begin!" );
+                logger.Info("playerPrx begin!" );
                 MasterProperty property;
                 for (int i = 0; i < count; ++i)
                 {
@@ -227,14 +230,14 @@ namespace FootStone.Core.Client
                     playerInfo = await playerPrx.GetPlayerInfoAsync();
                     await Task.Delay(10000);
                 }
-                Console.Out.WriteLine("playerInfo:" + JsonConvert.SerializeObject(playerInfo));
+                logger.Info("playerInfo:" + JsonConvert.SerializeObject(playerInfo));
 
-                Console.Out.WriteLine("playerPrx end!");
+                logger.Info("playerPrx end!");
                 //  await channel.CloseAsync();
             }
             catch(System.Exception e)
             {
-                Console.WriteLine(e.Message);
+                logger.Error(e);
             }
         }
 

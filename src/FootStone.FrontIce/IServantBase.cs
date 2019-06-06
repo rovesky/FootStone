@@ -7,7 +7,6 @@ namespace FootStone.FrontIce
 {
     public interface IServantBase : IDisposable
     {
-       // void Destroy();
 
         string GetFacet();
 

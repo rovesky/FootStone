@@ -6,9 +6,6 @@
 // **********************************************************************
 #pragma once
 
-
-
-
 module FootStone
 {
 	module GrainInterfaces
@@ -20,17 +17,15 @@ module FootStone
 		}
    
 		interface ISession
-		{      
-		
-		   ["amd"] void AddPush(ISessionPush* playerPush);
+		{      		
+		    void AddPush(ISessionPush* playerPush);
 		
 			void Destroy();
 		}  
 
 		interface ISessionFactory
-		{
-		   
-			["amd"] ISession* CreateSession(string account,string password);
+		{		   
+			ISession* CreateSession(string account,string password);
 
 			void Shutdown();
 		}

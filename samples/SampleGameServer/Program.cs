@@ -1,4 +1,3 @@
-using FootStone.Core.FrontIce;
 using FootStone.FrontIce;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -6,6 +5,7 @@ using NLog;
 using Orleans;
 using Orleans.Configuration;
 using Orleans.Hosting;
+using SampleFrontIce;
 using System;
 using System.Net;
 using System.Threading.Tasks;
