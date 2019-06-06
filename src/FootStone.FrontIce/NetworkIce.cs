@@ -24,7 +24,6 @@ namespace FootStone.FrontIce
             {
                
               //  Ice.Util.setProcessLogger(logger);
-
                 var initData = new InitializationData();
                 initData.properties = Util.createProperties();
                 initData.properties.load(options.ConfigFile);
@@ -32,9 +31,7 @@ namespace FootStone.FrontIce
                 //设置日志输出              
                 if (options.Logger == null)
                     options.Logger = new NLoggerI(LogManager.GetLogger("Ice"));
-                initData.logger = options.Logger;
-
-                // initData.dispatcher = new
+                initData.logger = options.Logger; 
 
                 communicator = Ice.Util.initialize(initData);
 

@@ -13,8 +13,6 @@ using System.Threading.Tasks;
 namespace FootStone.Core.GameServer
 {
 
-
-
     class Program
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
@@ -110,21 +108,20 @@ namespace FootStone.Core.GameServer
                     })
 
                     //Ìí¼ÓIceÖ§³Ö
-                    .AddFrontIce(options =>
-                    {
-                        options.ConfigFile = "config";
+                    //.AddFrontIce(options =>
+                    //{
+                    //    options.ConfigFile = "config";
 
-                        options.FacetTypes.Add(typeof(AccountI));
-                        options.FacetTypes.Add(typeof(WorldI));
-                        options.FacetTypes.Add(typeof(PlayerI));
-                        options.FacetTypes.Add(typeof(RoleMasterI));
-                        options.FacetTypes.Add(typeof(ZoneI));
+                    //    options.FacetTypes.Add(typeof(AccountI));
+                    //    options.FacetTypes.Add(typeof(WorldI));
+                    //    options.FacetTypes.Add(typeof(PlayerI));
+                    //    options.FacetTypes.Add(typeof(RoleMasterI));
+                    //    options.FacetTypes.Add(typeof(ZoneI));
 
-                        //var logger = LogManager.GetLogger("Ice");
-                        //logger.Info("ICE ERROR!!!!");
-                        //options.Logger = new NLoggerI(logger);
-
-                    })
+                    //    //var logger = LogManager.GetLogger("Ice");
+                    //    //logger.Info("ICE ERROR!!!!");
+                    //    //options.Logger = new NLoggerI(logger);
+                    //})
                     .Build();
 
                 logger.Info("FSHost builded!");

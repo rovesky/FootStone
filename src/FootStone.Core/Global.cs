@@ -10,11 +10,18 @@ namespace FootStone.Core
 {
     public static class Global
     {
+        private static IClusterClient orleansClient;
+
         static public IClusterClient OrleansClient
         {
             get
             {
-                return FSHost == null ? null : FSHost.Services.GetRequiredService<IClusterClient>();
+                return FSHost == null ? orleansClient : FSHost.Services.GetRequiredService<IClusterClient>();
+            }
+
+            set
+            {
+                orleansClient = value;
             }
 
         }
