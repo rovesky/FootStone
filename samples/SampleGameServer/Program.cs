@@ -1,11 +1,10 @@
-using FootStone.FrontIce;
+using FootStone.GrainInterfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NLog;
 using Orleans;
 using Orleans.Configuration;
 using Orleans.Hosting;
-using SampleFrontIce;
 using System;
 using System.Net;
 using System.Threading.Tasks;
@@ -72,10 +71,9 @@ namespace FootStone.Core.GameServer
                             options.AdvertisedIPAddress = IPAddress.Parse(GetLocalIP());
                         })
                         //  .Configure<EndpointOptions>(options => options.AdvertisedIPAddress = IPAddress.Any)
-                        //.ConfigureApplicationParts(parts => parts.AddApplicationPart(typeof(RoomGrain).Assembly).WithReferences())
+                        .ConfigureApplicationParts(parts => parts.AddApplicationPart(typeof(IAccountGrain).Assembly).WithReferences())
                         .ConfigureLogging(logging =>
-                        {
-                            // logging.AddConsole();
+                        {               
                             //logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Warning);
                             logging.AddProvider(new NLogLoggerProvider());
                         })
@@ -86,19 +84,12 @@ namespace FootStone.Core.GameServer
                              options.UseJsonFormat = true;
                              options.ConnectionString = mysqlConnectStorage;
                              options.Invariant = "MySql.Data.MySqlClient";
-                         })
-                        // .AddGrainService<IceService>()
+                         })     
                         .AddGrainService<NettyService>()
                         .Configure<NettyOptions>(options =>
                         {
                             options.Port = 8007;
-                        })
-                        // .ConfigureServices(s =>
-                        // {
-                        //    // Register Client of GrainService
-                        //     s.AddSingleton<IIceService, IceService>();
-                        ////     s.AddSingleton<INettyServiceClient, NettyServiceClient>();
-                        // })
+                        })           
                         .AddMemoryGrainStorage("PubSubStore")
                         .AddSimpleMessageStreamProvider("Zone", cfg =>
                         {
@@ -108,29 +99,12 @@ namespace FootStone.Core.GameServer
                     })
 
                     //Ìí¼ÓIceÖ§³Ö
-                    //.AddFrontIce(options =>
-                    //{
-                    //    options.ConfigFile = "config";
-
-                    //    options.FacetTypes.Add(typeof(AccountI));
-                    //    options.FacetTypes.Add(typeof(WorldI));
-                    //    options.FacetTypes.Add(typeof(PlayerI));
-                    //    options.FacetTypes.Add(typeof(RoleMasterI));
-                    //    options.FacetTypes.Add(typeof(ZoneI));
-
-                    //    //var logger = LogManager.GetLogger("Ice");
-                    //    //logger.Info("ICE ERROR!!!!");
-                    //    //options.Logger = new NLoggerI(logger);
-                    //})
+                   // .AddFrontIce()
                     .Build();
 
                 logger.Info("FSHost builded!");
 
-                //throw new Exception("test");
-                //logger.Error(new Exception("test").ToString());
                 Global.FSHost = footStone;
-
-                var iceService = footStone.Services.GetService<IceService>();
 
                 RunAsync(footStone).Wait();
                 do

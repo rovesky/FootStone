@@ -8,9 +8,7 @@ namespace FootStone.Core
 
         IFSHostBuilder Configure<TOptions>(Action<TOptions> configureOptions) where TOptions : class;
 
-        IFSHostBuilder ConfigureSilo(Action<ISiloHostBuilder> configureSilo);
-
-      //  ISiloHostBuilder SiloHostBuilder { get; }
+        IFSHostBuilder ConfigureSilo(Action<ISiloHostBuilder> configureSilo);    
 
         IFSHost Build();
 
