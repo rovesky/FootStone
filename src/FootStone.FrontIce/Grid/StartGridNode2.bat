@@ -1,1 +1,1 @@
-icegridnode --Ice.Config=config.grid.node2
+icegridnode --Ice.Config=nfig.grid.node2

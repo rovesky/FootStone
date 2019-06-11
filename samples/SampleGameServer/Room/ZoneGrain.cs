@@ -40,8 +40,8 @@ namespace FootStone.Core.Grains
      
        
         private Dictionary<Guid, ZonePlayer> players = new Dictionary<Guid, ZonePlayer>();
-        private IStreamProvider streamProvider;
-        private IAsyncStream<byte[]> zoneStream;
+      //  private IStreamProvider streamProvider;
+     //   private IAsyncStream<byte[]> zoneStream;
 
 
         //public ZoneGrain(IGrainIdentity identity, IGrainRuntime runtime)
@@ -67,37 +67,37 @@ namespace FootStone.Core.Grains
 
         public override Task OnActivateAsync()
         {
-            streamProvider = GetStreamProvider("Zone");
-            zoneStream = streamProvider.GetStream<byte[]>(this.GetPrimaryKey(), "Zone");
-            int size = 200;
-            var bytes = new byte[size];
-            for (int i = 0; i < size; ++i) 
-            {
-                bytes[i] = 0x01;
-            }
-            RegisterTimer((s) =>
-                 {
+          //  streamProvider = GetStreamProvider("Zone");
+         //  zoneStream = streamProvider.GetStream<byte[]>(this.GetPrimaryKey(), "Zone");
+            //int size = 200;
+            //var bytes = new byte[size];
+            //for (int i = 0; i < size; ++i) 
+            //{
+            //    bytes[i] = 0x01;
+            //}
+            //RegisterTimer((s) =>
+            //     {
 
-                     try
-                     {
-                        // zoneStream.OnNextAsync(bytes);
-                         int i = 0;
-                         foreach (ZonePlayer player in players.Values)
-                         {
-                             ChannelManager.Instance.Send(player.id.ToString(), bytes);
-                             i++;
-                         }
-                     }
-                     catch(Exception e)
-                     {
-                       //  Console.Error.WriteLine(e.Message);
-                     }
+            //         try
+            //         {
+            //            // zoneStream.OnNextAsync(bytes);
+            //             int i = 0;
+            //             foreach (ZonePlayer player in players.Values)
+            //             {
+            //                 ChannelManager.Instance.Send(player.id.ToString(), bytes);
+            //                 i++;
+            //             }
+            //         }
+            //         catch(Exception e)
+            //         {
+            //           //  Console.Error.WriteLine(e.Message);
+            //         }
                     
-                     return Task.CompletedTask;
-                 }
-                 , null
-                 , TimeSpan.FromMilliseconds(33)
-                 , TimeSpan.FromMilliseconds(33));
+            //         return Task.CompletedTask;
+            //     }
+            //     , null
+            //     , TimeSpan.FromMilliseconds(33)
+            //     , TimeSpan.FromMilliseconds(33));
 
             return Task.CompletedTask;
         }
@@ -133,7 +133,7 @@ namespace FootStone.Core.Grains
 
             var siloAddress = (SiloAddress)SiloAddressInfo.GetValue(this);
 
-            Console.Out.WriteLine("zone silo addr:"+siloAddress.Endpoint.Address);
+          //  Console.Out.WriteLine("zone silo addr:"+siloAddress.Endpoint.Address);
           
             //   Console.Out.WriteLine(this.GetPrimaryKey() + " zone player count:" + players.Count);
 
@@ -144,7 +144,7 @@ namespace FootStone.Core.Grains
 
         public Task PlayerLeave(Guid playerId)
         {
-            Console.Out.WriteLine("zone PlayerLeave:" + playerId.ToString());
+          //  Console.Out.WriteLine("zone PlayerLeave:" + playerId.ToString());
 
             players.Remove(playerId);
             return Task.CompletedTask;

@@ -102,7 +102,7 @@ namespace SampleFrontIce
         public async Task AddObserver(Guid zoneId)
         {
   
-            Console.Out.WriteLine("add zonePush:" + sessionI.Account);
+          //  Console.Out.WriteLine("add zonePush:" + sessionI.Account);
             try
             {
                 // var t1 = Task.Run(async () => {

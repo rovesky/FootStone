@@ -9,21 +9,20 @@ using System.Threading.Tasks;
 namespace FootStone.FrontIce
 {
   
-    public class NetworkIce
+    public class NetworkIceServer
     {
-        public NetworkIce()
+        public NetworkIceServer()
         {
 
         }
      
-        private Ice.Communicator communicator;
+        private Communicator communicator;
 
         public void Init(IceOptions options)
         {         
             try
             {
-               
-              //  Ice.Util.setProcessLogger(logger);
+
                 var initData = new InitializationData();
                 initData.properties = Util.createProperties();
                 initData.properties.load(options.ConfigFile);
@@ -33,13 +32,13 @@ namespace FootStone.FrontIce
                     options.Logger = new NLoggerI(LogManager.GetLogger("Ice"));
                 initData.logger = options.Logger; 
 
-                communicator = Ice.Util.initialize(initData);
+                communicator = Util.initialize(initData);
 
                 var adapter = communicator.createObjectAdapter("SessionFactoryAdapter");
 
                 var properties = communicator.getProperties();
 
-                var id = Ice.Util.stringToIdentity(properties.getProperty("Identity"));
+                var id = Util.stringToIdentity(properties.getProperty("Identity"));
 
                 var serverName = properties.getProperty("Ice.ProgramName");
               
@@ -57,11 +56,10 @@ namespace FootStone.FrontIce
 
         public void Start()
         {
-           
-            Task t1 = Task.Run(() =>
-             {
-                 communicator.waitForShutdown();
-             });
+            Task.Run(() =>
+            {
+                communicator.waitForShutdown();
+            });
             communicator.getLogger().print("Ice started!");
         }
 

@@ -27,6 +27,8 @@ namespace FootStone.Core
 
             BuildSiloConfiguration();
 
+            Global.OrleansClient = clusterClient;
+
             return new FSClient(clusterClient);
         }
 

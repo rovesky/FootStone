@@ -8,6 +8,7 @@ using Orleans.Configuration;
 using Orleans.Hosting;
 using SampleFrontIce;
 using System;
+using System.Threading.Tasks;
 
 namespace FootStone.Core.FrontServer
 {
@@ -21,40 +22,57 @@ namespace FootStone.Core.FrontServer
         {
             try
             {
+                IFSClient client = null;
+                do
+                {
+                    try
+                    {
+                        client = new FSClientBuilder()
+                        .ConfigureOrleans(orleansBuilder =>
+                        {
+                            //.UseLocalhostClustering()
+                            // .UseStaticClustering(gateways)
+                            orleansBuilder.UseAdoNetClustering(options =>
+                              {
+                                  options.ConnectionString = mysqlConnectCluster;
+                                  options.Invariant = "MySql.Data.MySqlClient";
+                              })
+                              .Configure<ClusterOptions>(options =>
+                              {
+                                  options.ClusterId = "lsj";
+                                  options.ServiceId = "FootStone";
+                              })
+                              .ConfigureApplicationParts(parts => parts.AddApplicationPart(typeof(IAccountGrain).Assembly).WithReferences())
+                              .ConfigureLogging(logging =>
+                              {
+                                  logging.AddProvider(new NLogLoggerProvider());
+                              });
 
-                var client = new FSClientBuilder()
-                    .ConfigureOrleans( orleansBuilder => {
-                        //.UseLocalhostClustering()
-                        // .UseStaticClustering(gateways)
-                        orleansBuilder.UseAdoNetClustering(options =>
-                          {
-                              options.ConnectionString = mysqlConnectCluster;
-                              options.Invariant = "MySql.Data.MySqlClient";
-                          })
-                          .Configure<ClusterOptions>(options =>
-                          {
-                              options.ClusterId = "lsj";
-                              options.ServiceId = "FootStone";
-                          })
-                          .ConfigureApplicationParts(parts => parts.AddApplicationPart(typeof(IPlayerGrain).Assembly).WithReferences())
-                          .ConfigureLogging(logging =>
-                          {
-                              logging.AddProvider(new NLogLoggerProvider());
-                          })                        
+                            //.AddSimpleMessageStreamProvider("Zone", cfg =>
+                            //{
+                            //    cfg.FireAndForgetDelivery = true;
+                            //});
+                        })
+                        //添加ICE支持
+                        .AddFrontIce()
+                        .Build();
 
-                          .AddSimpleMessageStreamProvider("Zone", cfg =>
-                          {
-                              cfg.FireAndForgetDelivery = true;
-                          });
-                      })
-                      .AddFrontIce()
-                      .Build();
+                        //Global.OrleansClient = client.ClusterClient;
 
-                Global.OrleansClient = client.ClusterClient;           
-       
-                client.StartAsync().Wait();
+                        client.StartAsync().Wait();
+                        break;
+                    }
+                    catch (Exception e)
+                    {
+                        logger.Error(e);
+                        logger.Info("start failed ,try again!");
+                        Task.Delay(3000).Wait();
+                    }
+                }
+                while (true);
 
                 logger.Info("Front Server Started!");
+
              
                 do
                 {
@@ -67,9 +85,9 @@ namespace FootStone.Core.FrontServer
                 } while (true);
 
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
-                Console.Error.WriteLine(ex.Message);
+                logger.Error(ex);
             }
         }      
     }

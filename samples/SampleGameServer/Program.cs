@@ -28,8 +28,11 @@ namespace FootStone.Core.GameServer
 
             string name = Dns.GetHostName();
             IPAddress[] ipadrlist = Dns.GetHostAddresses(name);
+
+           
             foreach (IPAddress ipa in ipadrlist)
             {
+                logger.Info($"{ipa.ToString()}");
                 if (ipa.ToString().StartsWith(IP_START))
                 {
                     return ipa.ToString();
@@ -68,10 +71,12 @@ namespace FootStone.Core.GameServer
                             // Port to use for the gateway
                             options.GatewayPort = 30000;
                             // IP Address to advertise in the cluster
+
                             options.AdvertisedIPAddress = IPAddress.Parse(GetLocalIP());
+                            //    options.AdvertisedIPAddress = IPAddress.Parse(GetLocalIP());
                         })
                         //  .Configure<EndpointOptions>(options => options.AdvertisedIPAddress = IPAddress.Any)
-                        .ConfigureApplicationParts(parts => parts.AddApplicationPart(typeof(IAccountGrain).Assembly).WithReferences())
+                      //  .ConfigureApplicationParts(parts => parts.AddApplicationPart(typeof(IAccountGrain).Assembly).WithReferences())
                         .ConfigureLogging(logging =>
                         {               
                             //logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Warning);
@@ -90,11 +95,11 @@ namespace FootStone.Core.GameServer
                         {
                             options.Port = 8007;
                         })           
-                        .AddMemoryGrainStorage("PubSubStore")
-                        .AddSimpleMessageStreamProvider("Zone", cfg =>
-                        {
-                            cfg.FireAndForgetDelivery = true;
-                        })
+                        //.AddMemoryGrainStorage("PubSubStore")
+                        //.AddSimpleMessageStreamProvider("Zone", cfg =>
+                        //{
+                        //    cfg.FireAndForgetDelivery = true;
+                        //})
                         .EnableDirectClient();
                     })
 

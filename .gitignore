@@ -40,3 +40,8 @@ output
 /samples/SampleProtocol/bin
 /samples/SampleFrontIce/bin
 /samples/SampleProtocolIce/bin
+/samples/SampleGameServer/bin
+/samples/SampleFrontServer/bin
+/samples/SampleClient/bin
+/src/FootStone.Game/bin
+/src/FootStone.GrainInterfaces/bin

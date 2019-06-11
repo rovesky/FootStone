@@ -29,7 +29,9 @@ namespace FootStone.Core
         }
 
         public async Task StartAsync(CancellationToken cancellationToken = default(CancellationToken))
-        {
+        {          
+            await clusterClient.Connect();
+
             var clientServices = Services.GetServices<IClientService>();
             foreach (var clientService in clientServices)
             {
@@ -37,7 +39,6 @@ namespace FootStone.Core
                 await clientService.Start();
             }
 
-            await clusterClient.Connect();
         }
 
         public async Task StopAsync(CancellationToken cancellationToken = default(CancellationToken))

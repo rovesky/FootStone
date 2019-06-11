@@ -48,7 +48,6 @@ namespace FootStone.Core.Client
             }
             
 
-
             public override void ChannelRead(IChannelHandlerContext context, object message)
             {
           
@@ -122,9 +121,11 @@ namespace FootStone.Core.Client
             //  Test();
             try
             {
-              //  ConnectNettyAsync("127.0.0.1", 8007,"11").Wait();
+                //  ConnectNettyAsync("127.0.0.1", 8007,"11").Wait();
+
+                int count = args.Length > 0? int.Parse(args[0]) : 1;
              
-                Test(1).Wait();
+                Test(count).Wait();
                 //logger.Info("Test OK!");
 
                 Console.ReadLine();
@@ -137,10 +138,10 @@ namespace FootStone.Core.Client
 
         private static async Task Test(int count)
         {
-            NetworkIce.Instance.Init("192.168.0.128", 4061);
+          //  NetworkIceClient.Instance.Init("192.168.0.128", 4061);
             for (int i = 0; i < count; ++i)
             {
-                runTest(i, 1);
+                runTest(i, 10);
                 await Task.Delay(20);
             }
             logger.Info("all session created:" + count);
@@ -150,12 +151,15 @@ namespace FootStone.Core.Client
         {
             try
             {
+                NetworkIceClient iceClient = new NetworkIceClient();
+                iceClient.Init("192.168.0.128", 4061);
+                //   index = 86;
                 var sessionId = "session" + index;
                 var account = "account" + index;
                 var password = "111111";
                 var playerName = "player" + index;
 
-                var sessionPrx = await NetworkIce.Instance.CreateSession(sessionId);
+                var sessionPrx = await iceClient.CreateSession(sessionId);
                 //  Console.Out.WriteLine("NetworkIce.Instance.CreateSession ok:"+ account);
 
                 var accountPrx = AccountPrxHelper.uncheckedCast(sessionPrx, "account");
@@ -223,16 +227,18 @@ namespace FootStone.Core.Client
                 for (int i = 0; i < count; ++i)
                 {
                     await playerPrx.SetPlayerNameAsync(playerName + "_" + i);
-                    await Task.Delay(3000);
+                    await Task.Delay(30);
                     property = await roleMasterPrx.GetPropertyAsync();
-                    await Task.Delay(5000);
+                    await Task.Delay(50);
                     //     Console.Out.WriteLine("property" + JsonConvert.SerializeObject(property));
                     playerInfo = await playerPrx.GetPlayerInfoAsync();
-                    await Task.Delay(10000);
+                    await Task.Delay(100);
                 }
                 logger.Info("playerInfo:" + JsonConvert.SerializeObject(playerInfo));
 
                 logger.Info("playerPrx end!");
+                sessionPrx.begin_Destroy();
+                iceClient.Fini();
                 //  await channel.CloseAsync();
             }
             catch(System.Exception e)

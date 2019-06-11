@@ -15,7 +15,7 @@ namespace FootStone.FrontIce
     public class IceService : GrainService, IIceService
     {
         private NLog.Logger logger = LogManager.GetCurrentClassLogger();
-        private NetworkIce network = new NetworkIce();
+        private NetworkIceServer network = new NetworkIceServer();
 
         public IceService(IServiceProvider services, IGrainIdentity id, Silo silo, ILoggerFactory loggerFactory)
             : base(id, silo, loggerFactory)

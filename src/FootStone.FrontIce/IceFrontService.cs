@@ -8,11 +8,10 @@ using System.Threading.Tasks;
 
 namespace FootStone.FrontIce
 {
-    [Reentrant]
     public class IceFrontService :IClientService
     {
         private NLog.Logger logger = LogManager.GetCurrentClassLogger();
-        private NetworkIce network = new NetworkIce();
+        private NetworkIceServer network = new NetworkIceServer();
 
         public IceFrontService()          
         {

@@ -2,7 +2,6 @@
 using Ice;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace FootStone.FrontIce
 {
@@ -11,7 +10,6 @@ namespace FootStone.FrontIce
          public SessionI(string account)
         {
             this.Account = account;  
-          //  _destroy = false;       
         }
 
         public  override void AddPush(ISessionPushPrx sessionPush, Current current = null)
@@ -55,16 +53,16 @@ namespace FootStone.FrontIce
 
         public void Dispose()
         {
-            
+            if(SessionPushPrx!= null)
+                SessionPushPrx.begin_SessionDestroyed();
         }
        
 
         public string Account { set; get; }
         public Guid   PlayerId { set; get; }
 
-        public ISessionPushPrx SessionPushPrx { get; private set; }  
-     
-       // private bool _destroy;
+        public ISessionPushPrx SessionPushPrx { get; private set; }       
+
         private Dictionary<String, object> attributes = new Dictionary<string, object>();
 
     }

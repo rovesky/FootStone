@@ -12,16 +12,16 @@ using System.Threading.Tasks;
 
 namespace FootStone.Core.Client
 {
-    public class NetworkIce
+    public class NetworkIceClient
     {
         private static NLog.Logger logger = LogManager.GetCurrentClassLogger();
 
-        private static NetworkIce _instance;
+        private static NetworkIceClient _instance;
 
         /// <summary>
         /// 私有化构造函数，使得类不可通过new来创建实例
         /// </summary>
-        private NetworkIce() { }
+        public  NetworkIceClient() { }
 
         private List<Action>     actions = new List<Action>();
 
@@ -36,13 +36,13 @@ namespace FootStone.Core.Client
       //  public PlayerPrx PlayerPrx {  get ;  set; }
 
 
-        public static NetworkIce Instance
+        public static NetworkIceClient Instance
         {
             get
             {
                 if (_instance == null)
                 {
-                    _instance = new NetworkIce();
+                    _instance = new NetworkIceClient();
                 }
                 return _instance;
             }
@@ -77,7 +77,7 @@ namespace FootStone.Core.Client
             }
         }
 
-        public  void Init(string IP,int port)
+        public void Init(string ip, int port)
         {
             try
             {
@@ -90,32 +90,38 @@ namespace FootStone.Core.Client
                 initData.properties.setProperty("Ice.Trace.Network", "1");
                 initData.properties.setProperty("Ice.Default.Timeout", "15");
                 //    initData.properties.setProperty("SessionFactory.Proxy", "SessionFactory:default -h "+ IP + " -p " + port +" -t 10000");
-                initData.properties.setProperty("Ice.Default.Locator", "FootStone/Locator:default -h " + IP + " -p " + port);
+                initData.properties.setProperty("Ice.Default.Locator", "FootStone/Locator:default -h " + ip + " -p " + port);
 
                 initData.logger = new NLoggerI(LogManager.GetLogger("Ice"));
-                  //initData.dispatcher = delegate (System.Action action, Ice.Connection connection)
-                  //{
-                  //    lock (this)
-                  //    {
-                  //        actions.Add(action);
-                  //    }                
-                  //};
+                //initData.dispatcher = delegate (System.Action action, Ice.Connection connection)
+                //{
+                //    lock (this)
+                //    {
+                //        actions.Add(action);
+                //    }                
+                //};
 
-                  communicator = Ice.Util.initialize(initData);
+                communicator = Ice.Util.initialize(initData);
                 Adapter = communicator.createObjectAdapter("");
 
-
-                //    Communicator.w
                 Thread thread = new Thread(new ThreadStart(() =>
                 {
                     Communicator.waitForShutdown();
+                    logger.Info("ice closed!");
+
                 }));
                 thread.Start();
             }
             catch (System.Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                logger.Error(ex);
             }
+        }
+
+        public void Fini()
+        {
+            Communicator.shutdown();
+            logger.Info("ice shutdown!");
         }
              
         public async Task<ISessionPrx> CreateSession(string account)
@@ -194,7 +200,7 @@ namespace FootStone.Core.Client
 
         public override void hpChanged(int hp, Current current = null)
         {
-            logger.Info(name+" hp changed:" + hp);
+      //      logger.Info(name+" hp changed:" + hp);
         }
     }
 
