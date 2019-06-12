@@ -14,6 +14,9 @@ namespace FootStone.GrainInterfaces
         Task Register(RegisterInfo info);
 
         Task setCurPlayerId(string playerId);
-      
+
+        Task CreatePlayer(int gameId,PlayerShortInfo info);
+
+        Task<List<PlayerShortInfo>> GetPlayersShortInfo(int gameId);
     }
 }

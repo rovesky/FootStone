@@ -8,6 +8,7 @@ using Orleans.Configuration;
 using Orleans.Hosting;
 using SampleFrontIce;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace FootStone.Core.FrontServer
@@ -18,11 +19,34 @@ namespace FootStone.Core.FrontServer
         //static string mysqlConnectCluster = "server=192.168.3.28;user id=root;password=198292;database=footstone_cluster;MaximumPoolsize=50";
 
         private static Logger logger = LogManager.GetCurrentClassLogger();
+        static readonly ManualResetEvent _siloStopped = new ManualResetEvent(false);
+        static bool siloStopping = false;
+        static readonly object syncLock = new object();
+
         static void Main(string[] args)
         {
             try
             {
+             
+
                 IFSClient client = null;
+                Console.CancelKeyPress += (s, a) =>
+                {
+                    a.Cancel = true;
+                    /// Don't allow the following code to repeat if the user presses Ctrl+C repeatedly.
+                    lock (syncLock)
+                    {
+                        if (!siloStopping)
+                        {
+                            siloStopping = true;
+                            Task.Run(async () =>
+                            {
+                                await client.StopAsync();
+                                _siloStopped.Set();
+                            }).Ignore();
+                        }
+                    }
+                };
                 do
                 {
                     try
@@ -69,20 +93,20 @@ namespace FootStone.Core.FrontServer
                         Task.Delay(3000).Wait();
                     }
                 }
-                while (true);
+                while (true);              
 
                 logger.Info("Front Server Started!");
 
-             
-                do
-                {
-                    string exit = Console.ReadLine();
-                    if (exit.Equals("exit"))
-                    {
-                        client.StopAsync().Wait();
-                        break;
-                    }
-                } while (true);
+                _siloStopped.WaitOne();
+                //do
+                //{
+                //    string exit = Console.ReadLine();
+                //    if (exit.Equals("exit"))
+                //    {
+                //        client.StopAsync().Wait();
+                //        break;
+                //    }
+                //} while (true);
 
             }
             catch (Exception ex)

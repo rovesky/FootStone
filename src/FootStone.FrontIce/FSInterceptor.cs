@@ -26,7 +26,7 @@ namespace FootStone.FrontIce
             }
             catch(Ice.Exception e)
             {
-                logger.warning(e.ToString());
+                logger.trace("",e.ToString());
                 throw e;
             }
             catch (System.Exception e)

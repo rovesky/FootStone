@@ -19,7 +19,7 @@ namespace FootStone.Core
         public string password;
       //  public string curPlayerId;
         public string token;
-      //  public Dictionary<int,List<PlayerShortInfo>> players;      
+        public Dictionary<int,List<PlayerShortInfo>> players = new Dictionary<int, List<PlayerShortInfo>>();      
     }
 
     [StorageProvider(ProviderName = "memory1")]
@@ -88,6 +88,39 @@ namespace FootStone.Core
             curPlayerId = playerId;
             return Task.CompletedTask;
             
+        }
+
+        public Task CreatePlayer(int gameId, PlayerShortInfo info)
+        {
+            List<PlayerShortInfo> players;
+            if (!State.players.ContainsKey(gameId))           
+            {
+                players = new List<PlayerShortInfo>();
+                State.players.Add(gameId, players);
+            }
+            else
+            {
+                players = State.players[gameId];
+            }
+
+            players.Add(info);
+            return Task.CompletedTask;
+        }
+
+        public Task<List<PlayerShortInfo>> GetPlayersShortInfo(int gameId)
+        {
+            List<PlayerShortInfo> players;
+            if (State.players.ContainsKey(gameId))
+            {
+                players = State.players[gameId];
+            }
+            else
+            {
+                players = new List<PlayerShortInfo>();
+            }
+       
+            return Task.FromResult(players);
+
         }
     }    
 }

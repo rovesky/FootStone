@@ -52,6 +52,17 @@ namespace FootStone.Core
 
         public async Task CreatePlayer(string account, int gameId,PlayerCreateInfo info)
         {
+            InitPlayer(account, gameId, info);
+            logger.Debug("create player:" + this.State.name);
+
+            IAccountGrain accoutGrain = GrainFactory.GetGrain<IAccountGrain>(account);
+            await accoutGrain.CreatePlayer(gameId, new PlayerShortInfo(State.playerId, info.name, 1, 1));
+
+            await WriteStateAsync();
+        }
+
+        private void InitPlayer(string account, int gameId, PlayerCreateInfo info)
+        {
             this.State.account = account;
             this.State.playerId = this.GetPrimaryKey().ToString();
             this.State.name = info.name;
@@ -64,8 +75,6 @@ namespace FootStone.Core
             this.State.roleMaster.property.intel = 10;
             this.State.roleMaster.property.str = 10;
             this.State.roleMaster.property.agil = 10;
-            logger.Debug("create player:" + this.State.name);
-            await WriteStateAsync();
         }
 
         public async Task PlayerOnline()

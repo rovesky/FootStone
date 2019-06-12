@@ -70,5 +70,13 @@ namespace FootStone.Core
         {
             throw new NotImplementedException();
         }
+
+        public async Task<List<GamePlayerState>> GetPlayersByAccount(string account)
+        {
+            List<GamePlayerState> ret = new List<GamePlayerState>();
+
+
+            return ret;
+        }
     }
 }

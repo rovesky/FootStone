@@ -13,5 +13,9 @@ namespace FootStone.Core.GrainInterfaces
         Task PlayerLeave(Guid playerId);
 
         Task<List<GamePlayerState>> GetOnlinePlayersByLevel(int level);
+
+        Task<List<GamePlayerState>> GetPlayersByAccount(string account);
+
+
     }
 }

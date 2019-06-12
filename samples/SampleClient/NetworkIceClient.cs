@@ -12,11 +12,16 @@ using System.Threading.Tasks;
 
 namespace FootStone.Core.Client
 {
+    public static class  Test
+    {
+        public  static int HpChangeCount = 0;
+    }
     public class NetworkIceClient
     {
         private static NLog.Logger logger = LogManager.GetCurrentClassLogger();
 
         private static NetworkIceClient _instance;
+   
 
         /// <summary>
         /// 私有化构造函数，使得类不可通过new来创建实例
@@ -26,16 +31,9 @@ namespace FootStone.Core.Client
         private List<Action>     actions = new List<Action>();
 
         public ObjectAdapter Adapter { get; private set; }
-
         private Ice.Communicator communicator;
 
-      //  public SessionFactoryPrx SessionFactoryPrx { get; private set; }
-      //  public SessionPrx SessionPrx { get; private set; }
-     //   public AccountPrx accountPrx { get; private set; }
-
-      //  public PlayerPrx PlayerPrx {  get ;  set; }
-
-
+  
         public static NetworkIceClient Instance
         {
             get
@@ -88,7 +86,7 @@ namespace FootStone.Core.Client
                 //initData.properties.setProperty("Ice.RetryIntervals", "-1");
                 initData.properties.setProperty("Ice.FactoryAssemblies", "client");
                 initData.properties.setProperty("Ice.Trace.Network", "1");
-                initData.properties.setProperty("Ice.Default.Timeout", "15");
+                initData.properties.setProperty("Ice.Default.Timeout", "15000");
                 //    initData.properties.setProperty("SessionFactory.Proxy", "SessionFactory:default -h "+ IP + " -p " + port +" -t 10000");
                 initData.properties.setProperty("Ice.Default.Locator", "FootStone/Locator:default -h " + ip + " -p " + port);
 
@@ -132,12 +130,15 @@ namespace FootStone.Core.Client
                 sessionFactoryPrx = (ISessionFactoryPrx)ISessionFactoryPrxHelper
                    .uncheckedCast(communicator.stringToProxy("sessionFactory"))
                    .ice_connectionId(account);
+
+                sessionFactoryPrx.ice_timeout(15000);
             }
             catch (Ice.NotRegisteredException)
             {
               //  var query = IceGrid.QueryPrxHelper.checkedCast(communicator.stringToProxy("FootStone/Query"));
                 //   hello = HelloPrxHelper.checkedCast(query.findObjectByType("::Demo::Hello"));
             }
+                
 
             await sessionFactoryPrx.ice_getConnectionAsync();
             var sessionPrx = (ISessionPrx)(await sessionFactoryPrx
@@ -145,6 +146,10 @@ namespace FootStone.Core.Client
           
             Connection connection = await sessionPrx.ice_getConnectionAsync();
             connection.setACM(30, Ice.ACMClose.CloseOff, Ice.ACMHeartbeat.HeartbeatAlways);
+            connection.setCloseCallback( _ =>
+            {
+                logger.Warn($"{account} connecton closed!");
+            });
 
             logger.Info(connection.getInfo().connectionId+" session connection: ACM=" +
                 JsonConvert.SerializeObject(connection.getACM())
@@ -197,10 +202,17 @@ namespace FootStone.Core.Client
         {
             this.name = name;
         }
-
+               
         public override void hpChanged(int hp, Current current = null)
         {
-      //      logger.Info(name+" hp changed:" + hp);
+
+            Test.HpChangeCount++;
+            if (Test.HpChangeCount % 1000 == 0)
+            {
+                logger.Info(name + " hp changed::" + Test.HpChangeCount);
+            }
+
+            //      logger.Info(name+" hp changed:" + hp);
         }
     }
 

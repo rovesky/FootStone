@@ -134,18 +134,20 @@ namespace FootStone.Grains
 
         }
 
-        public Task<List<PlayerShortInfo>> GetPlayerInfoShortList(string account,int gameId)
+        public async Task<List<PlayerShortInfo>> GetPlayerInfoShortList(string account, int gameId)
         {
-            IGameGrain gameGrain = GrainFactory.GetGrain<IGameGrain>(gameId);
+            //IGameGrain gameGrain = GrainFactory.GetGrain<IGameGrain>(gameId);
 
-            
-
-            //if (State.players == null || !State.players.ContainsKey(serverId))
+            //var gamePlayers = await gameGrain.GetPlayersByAccount(account);
+            //var rets = new List<PlayerShortInfo>();
+            //foreach (var gamePlayer in gamePlayers)
             //{
-            //    return Task.FromResult(new List<PlayerShortInfo>());
+            //    rets.Add(new PlayerShortInfo(gamePlayer.id, gamePlayer.name, 1, 0));
+
             //}
-            //return Task.FromResult(State.players[serverId]);
-            return Task.FromResult(new List<PlayerShortInfo>());
+
+            IAccountGrain accountGrain = GrainFactory.GetGrain<IAccountGrain>(account);
+            return await accountGrain.GetPlayersShortInfo(gameId);
         }
     }
   

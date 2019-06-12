@@ -32,3 +32,7 @@ Ice.Trace.Network=0
 # the assembly so that Ice can locate classes and exceptions.
 #
 Ice.FactoryAssemblies=client
+
+
+Ice.ThreadPool.client.Size=5
+Ice.ThreadPool.server.Size=5

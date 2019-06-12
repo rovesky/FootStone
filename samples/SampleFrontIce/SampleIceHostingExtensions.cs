@@ -11,7 +11,7 @@ namespace SampleFrontIce
     {
         private static void InitIceOptions(IceOptions iceOptions)
         {
-            iceOptions.ConfigFile = "config";
+            iceOptions.ConfigFile = "Ice.config";
             iceOptions.FacetTypes.Add(typeof(AccountI));
             iceOptions.FacetTypes.Add(typeof(WorldI));
             iceOptions.FacetTypes.Add(typeof(PlayerI));

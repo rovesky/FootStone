@@ -41,5 +41,10 @@ namespace FootStone.Core
         {        
             FindComponent<IPlayerObserver>().LevelChanged(playerId, newLevel);            
         }
+
+        public Task<List<GamePlayerState>> GetPlayersByAccount(string account)
+        {
+            return FindComponent<IPlayerManager>().GetPlayersByAccount(account);
+        }
     }
 }

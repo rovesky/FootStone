@@ -7,6 +7,7 @@ using Orleans.Configuration;
 using Orleans.Hosting;
 using System;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace FootStone.Core.GameServer
@@ -22,6 +23,10 @@ namespace FootStone.Core.GameServer
 
         // static string mysqlConnectCluster = "server=192.168.0.128;user id=root;password=198292;database=footstone_cluster;MaximumPoolsize=50";
         // static string mysqlConnectStorage = "server=192.168.1.128;user id=root;password=654321#;database=footstonestorage;MaximumPoolsize=50";
+
+        static readonly ManualResetEvent _siloStopped = new ManualResetEvent(false);      
+        static bool siloStopping = false;
+        static readonly object syncLock = new object();
 
         public static string GetLocalIP()
         {
@@ -46,6 +51,21 @@ namespace FootStone.Core.GameServer
         {
             try
             {
+              
+                Console.CancelKeyPress += (s, a) =>
+                {
+                    a.Cancel = true;
+                    /// Don't allow the following code to repeat if the user presses Ctrl+C repeatedly.
+                    lock (syncLock)
+                    {
+                        if (!siloStopping)
+                        {
+                            siloStopping = true;
+                            Task.Run(StopAsync).Ignore();
+                        }
+                    }
+                };
+
 
                 var footStone = new FSHostBuilder()
 
@@ -64,19 +84,24 @@ namespace FootStone.Core.GameServer
                             options.ClusterId = "lsj";
                             options.ServiceId = "FootStone";
                         })
-                        .Configure<EndpointOptions>(options =>
+                        .ConfigureEndpoints(IPAddress.Parse(GetLocalIP()),11111, 30000)                      
+                        //.Configure<StatisticsOptions>(options =>
+                        //{
+                        //    options.LogWriteInterval = TimeSpan.FromSeconds(10);
+                        //    options.CollectionLevel = Orleans.Runtime.Configuration.StatisticsLevel.Critical;
+                        //})
+                        .AddStartupTask(async (IServiceProvider services, CancellationToken cancellation) =>
                         {
-                            // Port to use for Silo-to-Silo
-                            options.SiloPort = 11111;
-                            // Port to use for the gateway
-                            options.GatewayPort = 30000;
-                            // IP Address to advertise in the cluster
+                            // Use the service provider to get the grain factory.
+                        //    var grainFactory = services.GetRequiredService<IGrainFactory>();
 
-                            options.AdvertisedIPAddress = IPAddress.Parse(GetLocalIP());
-                            //    options.AdvertisedIPAddress = IPAddress.Parse(GetLocalIP());
+                            // Get a reference to a grain and call a method on it.
+                          //  var grain = grainFactory.GetGrain<IMyGrain>(0);
+                          //  await grain.Initialize();
+                           
                         })
                         //  .Configure<EndpointOptions>(options => options.AdvertisedIPAddress = IPAddress.Any)
-                      //  .ConfigureApplicationParts(parts => parts.AddApplicationPart(typeof(IAccountGrain).Assembly).WithReferences())
+                        //  .ConfigureApplicationParts(parts => parts.AddApplicationPart(typeof(IAccountGrain).Assembly).WithReferences())
                         .ConfigureLogging(logging =>
                         {               
                             //logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Warning);
@@ -102,7 +127,6 @@ namespace FootStone.Core.GameServer
                         //})
                         .EnableDirectClient();
                     })
-
                     //ÃÌº”Ice÷ß≥÷
                    // .AddFrontIce()
                     .Build();
@@ -112,15 +136,9 @@ namespace FootStone.Core.GameServer
                 Global.FSHost = footStone;
 
                 RunAsync(footStone).Wait();
-                do
-                {
-                    string exit = Console.ReadLine();
-                    if (exit.Equals("exit"))
-                    {
-                        StopAsync(footStone).Wait();
-                        break;
-                    }
-                } while (true);
+
+                _siloStopped.WaitOne();
+             
             }
             catch (Exception ex)
             {
@@ -154,9 +172,10 @@ namespace FootStone.Core.GameServer
             logger.Info("FSHost start completed!");
         }
 
-        static async Task StopAsync(IFSHost fs)
+        static async Task StopAsync()
         {
-            await fs.StopAsync();
+            await Global.FSHost.StopAsync();
+            _siloStopped.Set();
         }
 
     }

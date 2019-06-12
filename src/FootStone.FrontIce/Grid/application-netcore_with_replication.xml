@@ -14,7 +14,7 @@
       <parameter name="index"/>
       <parameter name="endpoints"/>
       <server id="FootStoneServer-${index}" exe="dotnet" activation="manual">
-        <option>FootStone.SampleFrontServer.dll</option>
+        <!--<option>FootStone.SampleFrontServer.dll</option>-->
         <adapter name="SessionFactoryAdapter" endpoints="${endpoints}" replica-group="ReplicatedSessionFactoryAdapter"/>
         <property name="Identity" value="sessionFactory"/>
         <property name="IceMX.Metrics.Debug.GroupBy" value="id"/>
@@ -40,7 +40,7 @@
       <server-instance template="FootStoneServer" index="2" endpoints="tcp -h 192.168.0.120 -p 12000"/>
     </node>
     <node name="node3">
-      <server-instance template="FootStoneServer" index="3" endpoints="tcp -h 192.168.206.4 -p 12000"/>
+      <server-instance template="FootStoneServer" index="3" endpoints="tcp -h 192.168.0.183 -p 12000"/>
     </node>
 
   </application>

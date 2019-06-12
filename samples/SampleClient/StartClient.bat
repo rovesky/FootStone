@@ -1,2 +1,2 @@
-dotnet SampleClient.dll
+dotnet SampleClient.dll 10
 pause

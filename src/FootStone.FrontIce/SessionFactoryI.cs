@@ -7,6 +7,7 @@ using FootStone.GrainInterfaces;
 using Ice;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace FootStone.FrontIce
 {
@@ -14,8 +15,10 @@ namespace FootStone.FrontIce
     public class SessionFactoryI : ISessionFactoryDisp_
     {
         private string serverName;
-        private List<Type> facets;   
-       
+        private List<Type> facets;
+
+        private Dictionary<string, SessionI> sessions = new Dictionary<string, SessionI>();
+        
 
         public SessionFactoryI(string name, List<Type> facets)
         {
@@ -46,8 +49,13 @@ namespace FootStone.FrontIce
                 {
                     DestroySession(account,proxy.ice_getIdentity(), current);                 
                 });
-           
-            logger.print("Create session :" + account);
+
+            if (sessions.ContainsKey(account))
+            {
+                sessions.Remove(account);
+            }
+            sessions.Add(account, sessionI);
+            logger.print($"Create session :{account},sessions count:{sessions.Count}"  );
             return proxy;
         }
      
@@ -82,8 +90,9 @@ namespace FootStone.FrontIce
                     }
                 }
                 current.adapter.removeAllFacets(id);
-          
-                logger.print($"The session {account}:{id.name} is now destroyed.");
+
+                sessions.Remove(account);
+                logger.print($"The session {account}:{id.name} is now destroyed from thread {Thread.CurrentThread.ManagedThreadId},current sessions count:{sessions.Count}.");
             }
             catch (Ice.ObjectAdapterDeactivatedException)
             {
@@ -93,6 +102,11 @@ namespace FootStone.FrontIce
             catch (Ice.LocalException e)
             {
                 logger.error(e.ToString());           
+            }
+            catch(System.Exception e)
+            {
+                logger.error(e.ToString());
+
             }
         }
     }

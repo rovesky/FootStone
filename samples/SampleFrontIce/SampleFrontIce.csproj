@@ -13,4 +13,10 @@
     <ProjectReference Include="..\SampleGrainInterfaces\SampleGrainInterfaces.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Ice.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

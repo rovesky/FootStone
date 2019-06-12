@@ -138,21 +138,31 @@ namespace FootStone.Core.Client
 
         private static async Task Test(int count)
         {
-          //  NetworkIceClient.Instance.Init("192.168.0.128", 4061);
+            NetworkIceClient.Instance.Init("192.168.0.128", 4061);
             for (int i = 0; i < count; ++i)
             {
-                runTest(i, 10);
+                runTest(i, 100,true);
                 await Task.Delay(20);
             }
             logger.Info("all session created:" + count);
         }
 
-        private static async Task runTest(int index,int count)
+        private static async Task runTest(int index,int count,bool newClient)
         {
             try
             {
-                NetworkIceClient iceClient = new NetworkIceClient();
-                iceClient.Init("192.168.0.128", 4061);
+                NetworkIceClient iceClient;
+                if (newClient)
+                {
+                    iceClient = new NetworkIceClient();
+                    iceClient.Init("192.168.0.128", 4061);
+                }
+                else
+                {
+                    iceClient = NetworkIceClient.Instance;
+                }             
+               
+                
                 //   index = 86;
                 var sessionId = "session" + index;
                 var account = "account" + index;
@@ -192,24 +202,24 @@ namespace FootStone.Core.Client
                 List<PlayerShortInfo> players = await worldPrx.GetPlayerListRequestAsync(serverId);
                 var playerPrx = IPlayerPrxHelper.uncheckedCast(sessionPrx, "player");
 
-                //if (players.Count == 0)
-                //{
-                //    var playerId = await playerPrx.CreatePlayerRequestAsync(serverId,new PlayerCreateInfo(playerName,1));
-                //    players = await worldPrx.GetPlayerListRequestAsync(serverId);
-                //}
+                if (players.Count == 0)
+                {
+                    var playerId = await playerPrx.CreatePlayerRequestAsync(serverId, new PlayerCreateInfo(playerName, 1));
+                    players = await worldPrx.GetPlayerListRequestAsync(serverId);
+                }
 
-                var playerId = await playerPrx.CreatePlayerRequestAsync(serverId, new PlayerCreateInfo(playerName, 1));
+           //     var playerId = await playerPrx.CreatePlayerRequestAsync(serverId, new PlayerCreateInfo(playerName, 1));
 
               //  await playerPrx.GetPlayerInfoAsync();
 
-                await playerPrx.SelectPlayerRequestAsync(playerId);
-                //         await playerPrx.SelectPlayerRequestAsync(players[0].playerId);
+              //  await playerPrx.SelectPlayerRequestAsync(playerId);
+                await playerPrx.SelectPlayerRequestAsync(players[0].playerId);
 
                 var roleMasterPrx = IRoleMasterPrxHelper.uncheckedCast(sessionPrx, "roleMaster");
                 var zonePrx = IZonePrxHelper.uncheckedCast(sessionPrx, "zone");
 
                 var playerInfo = await playerPrx.GetPlayerInfoAsync();
-                var endPoint = await zonePrx.PlayerEnterAsync(playerInfo.zoneId);
+                //var endPoint = await zonePrx.PlayerEnterAsync(playerInfo.zoneId);
                 // Console.Out.WriteLine("ConnectNetty begin(" + endPoint.ip + ":" + endPoint.port + ")");
 
                 // var channel = await ConnectNettyAsync(endPoint.ip, endPoint.port, playerInfo.id);
@@ -227,12 +237,12 @@ namespace FootStone.Core.Client
                 for (int i = 0; i < count; ++i)
                 {
                     await playerPrx.SetPlayerNameAsync(playerName + "_" + i);
-                    await Task.Delay(30);
+                    await Task.Delay(3000);
                     property = await roleMasterPrx.GetPropertyAsync();
-                    await Task.Delay(50);
+                    await Task.Delay(5000);
                     //     Console.Out.WriteLine("property" + JsonConvert.SerializeObject(property));
                     playerInfo = await playerPrx.GetPlayerInfoAsync();
-                    await Task.Delay(100);
+                    await Task.Delay(10000);
                 }
                 logger.Info("playerInfo:" + JsonConvert.SerializeObject(playerInfo));
 
