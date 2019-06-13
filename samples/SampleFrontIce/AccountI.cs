@@ -58,9 +58,9 @@ namespace SampleFrontIce
         }
 
 
-        public async void Dispose()
+        public  void Dispose()
         {
-            await observer.Unsubscribe();
+             observer.Unsubscribe();
         }
 
 

@@ -106,7 +106,6 @@ namespace FootStone.FrontIce
             catch(System.Exception e)
             {
                 logger.error(e.ToString());
-
             }
         }
     }

@@ -34,5 +34,5 @@ Ice.Trace.Network=0
 Ice.FactoryAssemblies=client
 
 
-Ice.ThreadPool.client.Size=5
-Ice.ThreadPool.server.Size=5
+Ice.ThreadPool.client.Size=1
+Ice.ThreadPool.server.Size=1

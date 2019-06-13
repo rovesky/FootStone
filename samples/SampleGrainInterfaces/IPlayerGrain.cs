@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 namespace FootStone.GrainInterfaces
 {
     /// <summary>
-    /// A player is, well, there's really no other good name...
+    /// 
     /// </summary>
     public interface IPlayerGrain : IGrainWithGuidKey, IObserverManager<IPlayerObserver>
     {
@@ -15,6 +15,8 @@ namespace FootStone.GrainInterfaces
         Task PlayerOnline();
 
         Task PlayerOffline();
+
+        Task Ping();
 
         Task SetPlayerName(string name);
 

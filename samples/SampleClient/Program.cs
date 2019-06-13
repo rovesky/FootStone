@@ -136,31 +136,42 @@ namespace FootStone.Core.Client
             }
         }
 
+        private static List<NetworkIceClient> clients = new List<NetworkIceClient>();
+
         private static async Task Test(int count)
         {
-            NetworkIceClient.Instance.Init("192.168.0.128", 4061);
+            //  NetworkIceClient.Instance.Init("192.168.0.128", 4061);
+            NetworkIceClient client = new NetworkIceClient();
+            client.Init("192.168.0.128", 4061);
+            clients.Add(client);
             for (int i = 0; i < count; ++i)
             {
-                runTest(i, 100,true);
+                if(i%100 == 0)
+                {
+                    client = new NetworkIceClient();
+                    client.Init("192.168.0.128", 4061);
+                    clients.Add(client);
+                }
+                runTest(i, 30, client);
                 await Task.Delay(20);
             }
             logger.Info("all session created:" + count);
         }
 
-        private static async Task runTest(int index,int count,bool newClient)
+        private static async Task runTest(int index,int count, NetworkIceClient iceClient)
         {
             try
             {
-                NetworkIceClient iceClient;
-                if (newClient)
-                {
-                    iceClient = new NetworkIceClient();
-                    iceClient.Init("192.168.0.128", 4061);
-                }
-                else
-                {
-                    iceClient = NetworkIceClient.Instance;
-                }             
+                //NetworkIceClient iceClient;
+                //if (newClient)
+                //{
+                //    iceClient = new NetworkIceClient();
+                //    iceClient.Init("192.168.0.128", 4061);
+                //}
+                //else
+                //{
+                //    iceClient = NetworkIceClient.Instance;
+                //}             
                
                 
                 //   index = 86;

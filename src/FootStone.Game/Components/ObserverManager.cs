@@ -22,6 +22,7 @@ namespace FootStone.Game
         public override Task Fini()
         {
             subscribers.Clear();
+            subscribers = null;
             return Task.CompletedTask;
         }
 
@@ -56,5 +57,10 @@ namespace FootStone.Game
             return Task.CompletedTask;
         }
    
+        public Task ClearObserver()
+        {
+            subscribers.Clear();
+            return Task.CompletedTask;
+        }
     }
 }

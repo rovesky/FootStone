@@ -150,25 +150,7 @@ namespace FootStone.Core.GameServer
 
         static async Task RunAsync(IFSHost fs)
         {
-            await fs.StartAsync();
-            //   await client.Connect();
-
-            //ITestGrain test = Global.OrleansClient.GetGrain<ITestGrain>(0);
-            //await test.Test();
-       //     ISampleGameGrain game = Global.OrleansClient.GetGrain<ISampleGameGrain>(1);
-       //     await game.PlayerLeave(Guid.NewGuid());
-
-      //      var info = await game.GetGameState();
-
-      //      await game.SampleBattleBegin();
-
-        //    IWorldGrain world = Global.OrleansClient.GetGrain<IWorldGrain>("1");
-        //    await world.Init(System.Environment.CurrentDirectory);
-
-            //Console.WriteLine("Map file name is '{0}'.", mapFileName);
-            //Console.WriteLine("Setting up Adventure, please wait ...");
-            //Adventure adventure = new Adventure(client);
-            //adventure.Configure(mapFileName).Wait();
+            await fs.StartAsync();      
             logger.Info("FSHost start completed!");
         }
 

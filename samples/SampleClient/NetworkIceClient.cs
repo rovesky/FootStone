@@ -127,11 +127,10 @@ namespace FootStone.Core.Client
             ISessionFactoryPrx sessionFactoryPrx = null;
             try
             {
-                sessionFactoryPrx = (ISessionFactoryPrx)ISessionFactoryPrxHelper
-                   .uncheckedCast(communicator.stringToProxy("sessionFactory"))
-                   .ice_connectionId(account);
 
-                sessionFactoryPrx.ice_timeout(15000);
+                sessionFactoryPrx = ISessionFactoryPrxHelper
+                   .uncheckedCast(communicator.stringToProxy("sessionFactory").ice_connectionId(account).ice_timeout(15000)) ;         
+
             }
             catch (Ice.NotRegisteredException)
             {
@@ -140,7 +139,10 @@ namespace FootStone.Core.Client
             }
                 
 
-            await sessionFactoryPrx.ice_getConnectionAsync();
+            await sessionFactoryPrx.ice_pingAsync();
+
+            //logger.Debug(communicator.proxyToString(sessionFactoryPrx));
+
             var sessionPrx = (ISessionPrx)(await sessionFactoryPrx
                 .CreateSessionAsync(account, "")).ice_connectionId(account);
           
@@ -155,9 +157,10 @@ namespace FootStone.Core.Client
                 JsonConvert.SerializeObject(connection.getACM())
                 + ",Endpoint=" + JsonConvert.SerializeObject(connection.getEndpoint()));
 
-          
+
             // Register the callback receiver servant with the object adapter     
-            
+        //    communicator.f
+          //  var adapter = communicator.createObjectAdapter("");
             var proxy = ISessionPushPrxHelper.uncheckedCast(Adapter.addWithUUID(new SessionPushI()));
             Adapter.addFacet(new PlayerPushI(account), proxy.ice_getIdentity(), "playerPush");
             Adapter.addFacet(new ZonePushI(account), proxy.ice_getIdentity(), "zonePush");

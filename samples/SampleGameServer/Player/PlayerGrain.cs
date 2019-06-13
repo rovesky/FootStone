@@ -16,10 +16,11 @@ namespace FootStone.Core
     [StorageProvider(ProviderName= "memory1")]
     public partial class PlayerGrain : FSGrain<PlayerInfo, IPlayerObserver>, IPlayerGrain
     {    
-        //private IZoneGrain zoneGrain;
-        //private bool isOnline;
+      
+        private bool isOnline  = false;
+        private DateTime lastPingTime;
 
-        private NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        private NLog.Logger logger = NLog.LogManager.GetLogger("FootStone.Core.PlayerGrain");
         private IDisposable timer;
 
         public PlayerGrain(IGrainActivationContext grainActivationContext)
@@ -81,6 +82,7 @@ namespace FootStone.Core
         {
 
             logger.Debug($"{State.account} PlayerOnline!");
+
             IGameGrain gameGrain = this.GrainFactory.GetGrain<IGameGrain>(State.gameId);
 
             var gamePlayerInfo = new GamePlayerState();
@@ -93,28 +95,36 @@ namespace FootStone.Core
             await accountGrain.setCurPlayerId(State.playerId);
 
             timer = RegisterTimer((s) =>
-            {
-              //  logger.Debug($"{State.account} timer triger!");
+               {              
+                   //logger.Debug($"{State.account} timer triger!");
 
-                State.roleMaster.property.intel++;
-                State.level++;
-                Notify((t) =>
-                {
-                    t.HpChanged(State.roleMaster.property.intel);
-                    t.LevelChanged(Guid.Parse(State.playerId), this.State.level);
-                });
+                   if(DateTime.Now - lastPingTime > TimeSpan.FromSeconds(60))
+                   {
+                       PlayerOffline();
+                   }
 
-                WriteStateAsync();
-                return Task.CompletedTask;
-            }
+
+                   State.roleMaster.property.intel++;
+                   State.level++;
+                   Notify((t) =>
+                   {
+                       t.HpChanged(State.roleMaster.property.intel);
+                       t.LevelChanged(Guid.Parse(State.playerId), this.State.level);
+                   });
+
+                   WriteStateAsync();
+                   return Task.CompletedTask;
+               }
                , null
                , TimeSpan.FromSeconds(10)
                , TimeSpan.FromSeconds(10));
+
+            lastPingTime = DateTime.Now;
+            isOnline = true;
         }
 
         public async Task PlayerOffline()
         {
-
             logger.Debug($"{State.account} PlayerOffline!");
             if (timer != null)
             {
@@ -122,11 +132,21 @@ namespace FootStone.Core
                 timer = null;
             }
 
+            await ClearObserver();
+
             IGameGrain gameGrain = this.GrainFactory.GetGrain<IGameGrain>(State.gameId);
             await gameGrain.PlayerLeave(Guid.Parse(State.playerId));
 
             IAccountGrain accountGrain = this.GrainFactory.GetGrain<IAccountGrain>(State.account);
             await accountGrain.setCurPlayerId("");
+
+            isOnline = false;
+        }
+
+        public Task Ping()
+        {
+            lastPingTime = DateTime.Now;
+            return Task.CompletedTask;
         }
     }
 }

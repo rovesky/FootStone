@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
 
 namespace SampleFrontIce
 {
@@ -43,6 +44,7 @@ namespace SampleFrontIce
         private ObserverClient<IPlayerObserver> observer = new ObserverClient<IPlayerObserver>(Global.OrleansClient);
         private IPlayerGrain playerGrain;
         private NLog.Logger logger = LogManager.GetCurrentClassLogger();
+        private Timer pingTimer;
 
         public PlayerI()
         {
@@ -79,7 +81,20 @@ namespace SampleFrontIce
 
             session.PlayerId = gpid;
 
+
+            pingTimer = new Timer();
+            pingTimer.AutoReset = true;
+            pingTimer.Interval = 30000;
+            pingTimer.Enabled = true;
+            pingTimer.Elapsed += Timer_Elapsed;
+            pingTimer.Start();
+
             logger.Debug($"Session Bind {session.Account}:{session.PlayerId}");
+        }
+
+        private void Timer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            playerGrain.Ping();
         }
 
         public async override Task<PlayerInfo> GetPlayerInfoAsync(Current current = null)
@@ -94,11 +109,18 @@ namespace SampleFrontIce
         }
 
 
-        public async void Dispose()
+        public  void Dispose()
         {
-            await observer.Unsubscribe();
+            logger.Debug("playerGrain.PlayerOffline()");
+            if (pingTimer != null)
+            {
+                pingTimer.Close();
+                pingTimer = null;
+            }
+
+           // observer.Unsubscribe();
             if(playerGrain != null)
-                await playerGrain.PlayerOffline();
+                 playerGrain.PlayerOffline();
         }
 
     }

@@ -102,6 +102,11 @@ namespace FootStone.Game
             return Observer.Unsubscribe(subscriber);
         }
 
+        public Task ClearObserver()
+        {
+            return Observer.ClearObserver();
+        }
+
         public Task Notify(Action<TObserver> notification)
         {
             return Observer.Notify(notification);

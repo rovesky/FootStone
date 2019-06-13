@@ -12,5 +12,7 @@ namespace FootStone.Core.GrainInterfaces
 
         Task Notify(Action<T> notification);
 
+        Task ClearObserver();
+
     }
 }
