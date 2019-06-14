@@ -16,6 +16,8 @@ namespace FootStone.Core.GrainInterfaces
 
         Task<List<GamePlayerState>> GetPlayersByAccount(string account);
 
+        Task<int> GetPlayerCount();
+
 
     }
 }

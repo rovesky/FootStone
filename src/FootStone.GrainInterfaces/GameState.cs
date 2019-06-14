@@ -9,7 +9,16 @@ namespace FootStone.Core.GrainInterfaces
         public long id;
         public string name;
         public bool enabled;
-     
+
+        public GameState()
+        {
+
+        }
+        public GameState(long id, string name, bool enabled) : this(id)
+        {
+            this.name = name;
+            this.enabled = enabled;
+        }
 
         public GameState(long id)
         {

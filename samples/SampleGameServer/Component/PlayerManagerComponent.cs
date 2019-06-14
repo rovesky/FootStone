@@ -13,12 +13,11 @@ namespace FootStone.Core
     {
         private Dictionary<Guid, GamePlayerState> players = new Dictionary<Guid, GamePlayerState>();
 
-        public PlayerManagerComponent(FSGrain grain):
+        public PlayerManagerComponent(IFSGrain grain):
             base(grain)
         {
            
-        }
-        
+        }        
 
         public override async Task Init()
         {
@@ -75,8 +74,12 @@ namespace FootStone.Core
         {
             List<GamePlayerState> ret = new List<GamePlayerState>();
 
-
             return ret;
+        }
+
+        public Task<int> GetPlayerCount()
+        {
+            return Task.FromResult(players.Count);
         }
     }
 }

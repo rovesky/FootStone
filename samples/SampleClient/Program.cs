@@ -122,10 +122,10 @@ namespace FootStone.Core.Client
             try
             {
                 //  ConnectNettyAsync("127.0.0.1", 8007,"11").Wait();
-
                 int count = args.Length > 0? int.Parse(args[0]) : 1;
-             
-                Test(count).Wait();
+                int startIndex = args.Length > 1 ? int.Parse(args[1]) : 0;
+
+                Test(count, startIndex).Wait();
                 //logger.Info("Test OK!");
 
                 Console.ReadLine();
@@ -138,13 +138,13 @@ namespace FootStone.Core.Client
 
         private static List<NetworkIceClient> clients = new List<NetworkIceClient>();
 
-        private static async Task Test(int count)
-        {
-            //  NetworkIceClient.Instance.Init("192.168.0.128", 4061);
+        private static async Task Test(int count,int startIndex)
+        {       
             NetworkIceClient client = new NetworkIceClient();
             client.Init("192.168.0.128", 4061);
             clients.Add(client);
-            for (int i = 0; i < count; ++i)
+            
+            for (int i = startIndex; i < startIndex+ count; ++i)
             {
                 if(i%100 == 0)
                 {
@@ -152,7 +152,7 @@ namespace FootStone.Core.Client
                     client.Init("192.168.0.128", 4061);
                     clients.Add(client);
                 }
-                runTest(i, 30, client);
+                runTest(i, 20, client);
                 await Task.Delay(20);
             }
             logger.Info("all session created:" + count);
@@ -162,19 +162,7 @@ namespace FootStone.Core.Client
         {
             try
             {
-                //NetworkIceClient iceClient;
-                //if (newClient)
-                //{
-                //    iceClient = new NetworkIceClient();
-                //    iceClient.Init("192.168.0.128", 4061);
-                //}
-                //else
-                //{
-                //    iceClient = NetworkIceClient.Instance;
-                //}             
-               
-                
-                //   index = 86;
+              
                 var sessionId = "session" + index;
                 var account = "account" + index;
                 var password = "111111";
@@ -208,28 +196,28 @@ namespace FootStone.Core.Client
                     return;
                 }
 
+                //选取第一个服务器
                 var serverId = servers[0].id;
 
+                //获取角色列表
                 List<PlayerShortInfo> players = await worldPrx.GetPlayerListRequestAsync(serverId);
                 var playerPrx = IPlayerPrxHelper.uncheckedCast(sessionPrx, "player");
 
+                //如果角色列表为0，创建新角色
                 if (players.Count == 0)
                 {
                     var playerId = await playerPrx.CreatePlayerRequestAsync(serverId, new PlayerCreateInfo(playerName, 1));
                     players = await worldPrx.GetPlayerListRequestAsync(serverId);
                 }
-
-           //     var playerId = await playerPrx.CreatePlayerRequestAsync(serverId, new PlayerCreateInfo(playerName, 1));
-
-              //  await playerPrx.GetPlayerInfoAsync();
-
-              //  await playerPrx.SelectPlayerRequestAsync(playerId);
+                //选择第一个角色
                 await playerPrx.SelectPlayerRequestAsync(players[0].playerId);
 
                 var roleMasterPrx = IRoleMasterPrxHelper.uncheckedCast(sessionPrx, "roleMaster");
                 var zonePrx = IZonePrxHelper.uncheckedCast(sessionPrx, "zone");
 
+                //获取角色信息
                 var playerInfo = await playerPrx.GetPlayerInfoAsync();
+
                 //var endPoint = await zonePrx.PlayerEnterAsync(playerInfo.zoneId);
                 // Console.Out.WriteLine("ConnectNetty begin(" + endPoint.ip + ":" + endPoint.port + ")");
 
@@ -243,7 +231,7 @@ namespace FootStone.Core.Client
 
                 // channel.Id.AsLongText
 
-                logger.Info("playerPrx begin!" );
+                logger.Info($"{account} playerPrx begin!" );
                 MasterProperty property;
                 for (int i = 0; i < count; ++i)
                 {
@@ -255,9 +243,9 @@ namespace FootStone.Core.Client
                     playerInfo = await playerPrx.GetPlayerInfoAsync();
                     await Task.Delay(10000);
                 }
-                logger.Info("playerInfo:" + JsonConvert.SerializeObject(playerInfo));
+                logger.Info($"{account} playerInfo:" + JsonConvert.SerializeObject(playerInfo));
 
-                logger.Info("playerPrx end!");
+                logger.Info($"{account} playerPrx end!");
                 sessionPrx.begin_Destroy();
                 iceClient.Fini();
                 //  await channel.CloseAsync();
@@ -266,8 +254,6 @@ namespace FootStone.Core.Client
             {
                 logger.Error(e);
             }
-        }
-
-      
+        }      
     }
 }

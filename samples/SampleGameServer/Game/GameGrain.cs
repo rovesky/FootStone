@@ -14,20 +14,24 @@ using System.Threading.Tasks;
 namespace FootStone.Core
 {
 
-    [StorageProvider(ProviderName = "memory1")]
-    public abstract partial class GameGrain :  FSGrain
+    [StorageProvider(ProviderName = "ado1")]
+    public  partial class GameGrain :  FSGrain<GameState>
     {
+        public GameGrain()
+        {
+
+        }
 
         public override  Task OnActivateAsync()
         {
-            AddComponent(CreateGameComponent());
+            AddComponent(new GameComponent<GameState>(this,State));
             AddComponent(new PlayerManagerComponent(this));
 
             return base.OnActivateAsync();
         }
 
 
-        protected abstract IFSComponent CreateGameComponent();
+    //    protected abstract IFSComponent CreateGameComponent();
         
 
     }

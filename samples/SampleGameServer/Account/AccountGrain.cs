@@ -22,7 +22,7 @@ namespace FootStone.Core
         public Dictionary<int,List<PlayerShortInfo>> players = new Dictionary<int, List<PlayerShortInfo>>();      
     }
 
-    [StorageProvider(ProviderName = "memory1")]
+    [StorageProvider(ProviderName = "ado1")]
     public class AccountGrain : FSGrain<AccountState,IAccountObserver>, IAccountGrain
     {
 

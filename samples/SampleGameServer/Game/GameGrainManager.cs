@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 namespace FootStone.Core
 {
 
-    public abstract partial class GameGrain : FSGrain, IGameGrain 
+    public  partial class GameGrain : FSGrain<GameState>, IGameGrain 
     {      
 
         public Task DisableGame() 

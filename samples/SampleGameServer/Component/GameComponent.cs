@@ -17,7 +17,7 @@ namespace FootStone.Core
     {
         private TState gameState;
 
-        public GameComponent(FSGrain grain, TState state):
+        public GameComponent(IFSGrain grain, TState state):
             base(grain)
         {
             this.gameState = state;
@@ -30,21 +30,20 @@ namespace FootStone.Core
 
         public override Task Fini()
         {
-            throw new NotImplementedException();
+            return Task.CompletedTask;
         }
 
 
 
         public Task DisableGame()
         {
-            throw new NotImplementedException();
+            return Task.CompletedTask;
         }
 
         public Task EanbleGame()
         {
-            throw new NotImplementedException();
+            return Task.CompletedTask;
         }
-
       
 
         public Task<GameState> GetGameState()

@@ -1,3 +1,4 @@
+using FootStone.FrontIce;
 using FootStone.GrainInterfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -5,6 +6,7 @@ using NLog;
 using Orleans;
 using Orleans.Configuration;
 using Orleans.Hosting;
+using SampleFrontIce;
 using System;
 using System.Net;
 using System.Threading;
@@ -19,7 +21,7 @@ namespace FootStone.Core.GameServer
 
         static string IP_START = "192.168.0";
         static string mysqlConnectCluster = "server=192.168.0.128;user id=root;password=654321#;database=footstone;MaximumPoolsize=50";
-        static string mysqlConnectStorage = "server=192.168.0.128;user id=root;password=654321#;database=footstonestorage;MaximumPoolsize=50";
+        static string mysqlConnectStorage = "server=192.168.0.120;user id=root;password=456789;database=footstone_storage;MaximumPoolsize=100";
 
         // static string mysqlConnectCluster = "server=192.168.0.128;user id=root;password=198292;database=footstone_cluster;MaximumPoolsize=50";
         // static string mysqlConnectStorage = "server=192.168.1.128;user id=root;password=654321#;database=footstonestorage;MaximumPoolsize=50";
@@ -128,7 +130,7 @@ namespace FootStone.Core.GameServer
                         .EnableDirectClient();
                     })
                     //ÃÌº”Ice÷ß≥÷
-                   // .AddFrontIce()
+                    .AddFrontIce()
                     .Build();
 
                 logger.Info("FSHost builded!");

@@ -56,15 +56,9 @@ namespace FootStone.Core.GameServer
 
             return base.Init(serviceProvider);
         }
-        private static string Pad(int value, int width)
-        {
-            return value.ToString("d").PadRight(width);
-        }
-
+      
         public async override  Task Start()
         {
-     
-
             bossGroup = new MultithreadEventLoopGroup(1);
             workerGroup = new MultithreadEventLoopGroup();
 
@@ -92,22 +86,7 @@ namespace FootStone.Core.GameServer
                 boundChannel = await bootstrap.BindAsync(
                      // host,
                      options.Port);
-                logger.Info("DotNetty started:"+ options.Port);
-
-                this.RegisterTimer( async (s1) =>
-                {
-                    var managerGrain =  GrainFactory.GetGrain<IManagementGrain>(0);
-
-                    var stats = await managerGrain.GetSimpleGrainStatistics();
-                    logger.Warn("Silo                   Activations  Type");
-                    logger.Warn("---------------------  -----------  ------------");
-                    foreach (var s in stats.OrderBy(s => s.SiloAddress + s.GrainType))
-                        logger.Warn("{0}  {1}  {2}", s.SiloAddress.ToString().PadRight(21), Pad(s.ActivationCount, 11), s.GrainType);
-
-
-                }, null
-               , TimeSpan.FromSeconds(10)
-               , TimeSpan.FromSeconds(10));
+                logger.Info("DotNetty started:"+ options.Port);          
             }
             catch(Exception ex)
             {
@@ -130,10 +109,8 @@ namespace FootStone.Core.GameServer
                  bossGroup.ShutdownGracefullyAsync(TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(1)),
                  workerGroup.ShutdownGracefullyAsync(TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(1)));
 
-            await base.Stop();        
-
-        }
-       
+            await base.Stop();      
+        }       
     }
 
 

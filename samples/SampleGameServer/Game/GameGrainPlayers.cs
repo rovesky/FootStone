@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 namespace FootStone.Core
 {
 
-    public abstract partial class GameGrain : FSGrain, IPlayerManager, IPlayerObserver
+    public  partial class GameGrain : FSGrain<GameState>, IPlayerManager, IPlayerObserver
     {
 
         public Task PlayerEnter(GamePlayerState info)
@@ -45,6 +45,11 @@ namespace FootStone.Core
         public Task<List<GamePlayerState>> GetPlayersByAccount(string account)
         {
             return FindComponent<IPlayerManager>().GetPlayersByAccount(account);
+        }
+
+        public Task<int> GetPlayerCount()
+        {
+            return FindComponent<IPlayerManager>().GetPlayerCount();
         }
     }
 }

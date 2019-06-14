@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 namespace FootStone.Core
 {
 
-    [StorageProvider(ProviderName= "memory1")]
+    [StorageProvider(ProviderName= "ado1")]
     public partial class PlayerGrain : FSGrain<PlayerInfo, IPlayerObserver>, IPlayerGrain
     {    
       
@@ -116,8 +116,8 @@ namespace FootStone.Core
                    return Task.CompletedTask;
                }
                , null
-               , TimeSpan.FromSeconds(10)
-               , TimeSpan.FromSeconds(10));
+               , TimeSpan.FromSeconds(20)
+               , TimeSpan.FromSeconds(20));
 
             lastPingTime = DateTime.Now;
             isOnline = true;
