@@ -33,8 +33,6 @@ namespace FootStone.Core
             return Task.CompletedTask;
         }
 
-
-
         public Task DisableGame()
         {
             return Task.CompletedTask;
@@ -45,12 +43,9 @@ namespace FootStone.Core
             return Task.CompletedTask;
         }
       
-
         public Task<GameState> GetGameState()
         {
             return Task.FromResult((GameState)gameState);
-        }
-
-     
+        }     
     }
 }

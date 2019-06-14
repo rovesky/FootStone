@@ -12,7 +12,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FootStone.Core.Grains
+namespace FootStone.Core
 {
 
     class ZonePlayer
@@ -35,69 +35,59 @@ namespace FootStone.Core.Grains
  
     public  class ZoneGrain : Grain, IZoneGrain
     {
-
-       // readonly ISocketServiceClient SocketServiceClient;
-     
-       
+        private NLog.Logger logger = NLog.LogManager.GetLogger("FootStone.Core.ZoneGrain");
         private Dictionary<Guid, ZonePlayer> players = new Dictionary<Guid, ZonePlayer>();
-      //  private IStreamProvider streamProvider;
-     //   private IAsyncStream<byte[]> zoneStream;
 
-
-        //public ZoneGrain(IGrainIdentity identity, IGrainRuntime runtime)
-        //  : base(identity, runtime)
-        //{
-
-        //    this.Runtime1 = runtime;
-
-        //}
-
-        //public IGrainRuntime Runtime1 { get; }
-
+        private Random random = new Random();
         public ZoneGrain(IGrainActivationContext grainActivationContext)
         {
             SiloAddressInfo = grainActivationContext.GrainType.GetProperty("SiloAddress", BindingFlags.Instance | BindingFlags.NonPublic);
-          
-          //  SocketServiceClient = socketServiceClient;
+        
         }
 
         public PropertyInfo SiloAddressInfo { get; }
-       // public SiloAddress SiloAddress1 { get; set; }
-        public INettyServiceClient SocketServiceClient { get; }
+
+
+        public byte[] randomBytes(int size)
+        {
+           // int size = random.Next() % maxSize;
+            var bytes = new byte[size];
+            for (int i = 0; i < size; ++i)
+            {
+                bytes[i] = (byte)i;
+            }
+            return bytes;
+        }
 
         public override Task OnActivateAsync()
         {
-          //  streamProvider = GetStreamProvider("Zone");
-         //  zoneStream = streamProvider.GetStream<byte[]>(this.GetPrimaryKey(), "Zone");
-            //int size = 200;
-            //var bytes = new byte[size];
-            //for (int i = 0; i < size; ++i) 
-            //{
-            //    bytes[i] = 0x01;
-            //}
-            //RegisterTimer((s) =>
-            //     {
+            List<byte[]> datas = new List<byte[]>();
+            for (int i = 0; i < 100; ++i) {
+                datas.Add(randomBytes(i));
+            }
 
-            //         try
-            //         {
-            //            // zoneStream.OnNextAsync(bytes);
-            //             int i = 0;
-            //             foreach (ZonePlayer player in players.Values)
-            //             {
-            //                 ChannelManager.Instance.Send(player.id.ToString(), bytes);
-            //                 i++;
-            //             }
-            //         }
-            //         catch(Exception e)
-            //         {
-            //           //  Console.Error.WriteLine(e.Message);
-            //         }
-                    
-            //         return Task.CompletedTask;
-            //     }
-            //     , null
-            //     , TimeSpan.FromMilliseconds(33)
-            //     , TimeSpan.FromMilliseconds(33));
+            RegisterTimer((s) =>
+                 {
+                     try
+                     {
+                         int i = 0;
+                         foreach (ZonePlayer player in players.Values)
+                         {
+                             var bytes = datas[random.Next() % 100];
+                             ChannelManager.Instance.Send(player.id.ToString(), bytes);
+                             i++;
+                         }
+                     }
+                     catch (Exception e)
+                     {
+                         logger.Error(e);
+                     }
+
+                     return Task.CompletedTask;
+                 }
+                 , null
+                 , TimeSpan.FromMilliseconds(33)
+                 , TimeSpan.FromMilliseconds(33));
 
             return Task.CompletedTask;
         }
@@ -106,48 +96,39 @@ namespace FootStone.Core.Grains
         {
             return Task.CompletedTask;
         }
+       
 
-        //public Task PlayerBindChannel(Guid playerId, string channelId)
-        //{
-        //    if (!players.ContainsKey(playerId))
-        //    {
-        //        throw new Exception("");
-        //    }
-
-        //    var player = players[playerId];
-        //    player.channelId = channelId;
-        //    return Task.CompletedTask;
-        //}
-
-        public Task<EndPointZone> PlayerEnter(Guid playerId)
-        {          
-            //var stream = streamProvider.GetStream<byte[]>(playerId, "ZonePlayer");
-            //try
-            //{
-            //    players.Add(playerId, new ZonePlayer(playerId, stream));
-            //}
-            //catch(Exception e)
-            //{
-
-            //}
-
+        public Task<EndPointZone> GetEndPoint()
+        {
             var siloAddress = (SiloAddress)SiloAddressInfo.GetValue(this);
 
-          //  Console.Out.WriteLine("zone silo addr:"+siloAddress.Endpoint.Address);
-          
-            //   Console.Out.WriteLine(this.GetPrimaryKey() + " zone player count:" + players.Count);
-
             return Task.FromResult(new EndPointZone(
-                siloAddress.Endpoint.Address.ToString(),
-                8007));
+              siloAddress.Endpoint.Address.ToString(),
+              8007));
+        }
+
+
+        public Task PlayerEnter(Guid playerId)
+        {
+            logger.Debug($"zone {this.GetPrimaryKey().ToString()} ,PlayerEnter:{playerId.ToString()} ,zone player count:{ players.Count}");
+
+            if (!players.ContainsKey(playerId))
+                players.Add(playerId, new ZonePlayer(playerId, null)); 
+
+            return Task.CompletedTask;
         }
 
         public Task PlayerLeave(Guid playerId)
         {
-          //  Console.Out.WriteLine("zone PlayerLeave:" + playerId.ToString());
+            logger.Debug($"zone {this.GetPrimaryKey().ToString()} ,PlayerLeave:{playerId.ToString()} ,zone player count:{ players.Count}");
 
             players.Remove(playerId);
             return Task.CompletedTask;
+        }
+
+        public Task<int> GetPlayerCount()
+        {
+            return Task.FromResult(players.Count);
         }
     }
 }

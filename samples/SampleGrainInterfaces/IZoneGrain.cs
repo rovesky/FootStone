@@ -9,9 +9,14 @@ namespace FootStone.Core.GrainInterfaces
 {
     public interface IZoneGrain : IGrainWithGuidKey
     {
-        Task<EndPointZone> PlayerEnter(Guid playerId);
+
+        Task<EndPointZone> GetEndPoint();
+
+        Task PlayerEnter(Guid playerId);
 
         Task PlayerLeave(Guid playerId);
+
+        Task<int> GetPlayerCount();
      //   Task PlayerBindChannel(Guid playerId, string channelId);
 
         //Task GetOnlinePlayersByLevel(int level);

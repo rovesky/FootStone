@@ -106,7 +106,7 @@ namespace FootStone.Core.Client
             }
             catch(Exception ex)
             {
-                Console.Error.WriteLine(ex.Message+ex.StackTrace);
+                logger.Error(ex);
                 return null;
             }
             finally
@@ -217,19 +217,20 @@ namespace FootStone.Core.Client
 
                 //获取角色信息
                 var playerInfo = await playerPrx.GetPlayerInfoAsync();
+                logger.Debug($"{account} playerInfo:" + JsonConvert.SerializeObject(playerInfo));
 
-                //var endPoint = await zonePrx.PlayerEnterAsync(playerInfo.zoneId);
-                // Console.Out.WriteLine("ConnectNetty begin(" + endPoint.ip + ":" + endPoint.port + ")");
+                //绑定Zone
+                var endPoint = await zonePrx.BindZoneAsync(playerInfo.zoneId,playerInfo.playerId);
 
-                // var channel = await ConnectNettyAsync(endPoint.ip, endPoint.port, playerInfo.id);
-                //  Console.Out.WriteLine("ConnectNetty end(" + endPoint.ip + ":" + endPoint.port + ")");
+                //连接Netty Zone
+                logger.Debug("ConnectNetty begin(" + endPoint.ip + ":" + endPoint.port + ")");
+                var channel = await ConnectNettyAsync(endPoint.ip, endPoint.port, playerInfo.playerId);
+                logger.Debug("ConnectNetty end(" + endPoint.ip + ":" + endPoint.port + ")");
 
-                //   Console.Out.WriteLine("PlayerBind begin:" + channel.Id.AsLongText());
+                await Task.Delay(100);
+                //进入Zone
+                await zonePrx.PlayerEnterAsync();             
 
-                //  await zonePrx.PlayerBindChannelAsync(channel.Id.AsLongText());
-                //  Console.Out.WriteLine("PlayerBind end:" + channel.Id.AsLongText());
-
-                // channel.Id.AsLongText
 
                 logger.Info($"{account} playerPrx begin!" );
                 MasterProperty property;

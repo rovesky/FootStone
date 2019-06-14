@@ -15,8 +15,10 @@ using Orleans.Core;
 using Orleans.Runtime;
 using Orleans.Streams;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace FootStone.Core.GameServer
@@ -24,9 +26,7 @@ namespace FootStone.Core.GameServer
     [Reentrant]
     public class NettyService : GrainService,INettyService
     {
-        readonly IGrainFactory GrainFactory;
-
-        private IStreamProvider streamProvider;
+        private readonly IGrainFactory GrainFactory; 
         private IChannel boundChannel;
         private MultithreadEventLoopGroup bossGroup;
         private MultithreadEventLoopGroup workerGroup;
@@ -53,7 +53,6 @@ namespace FootStone.Core.GameServer
 
             this.options = serviceProvider.GetService<IOptions<NettyOptions>>().Value;
 
-
             return base.Init(serviceProvider);
         }
       
@@ -70,6 +69,7 @@ namespace FootStone.Core.GameServer
 
                 bootstrap
                     .Option(ChannelOption.SoBacklog, 100)
+                    .Option(ChannelOption.TcpNodelay, true)
                     .Handler(new LoggingHandler("SRV-LSTN"))
                     .ChildHandler(new ActionChannelInitializer<IChannel>(channel =>
                     {
@@ -86,11 +86,11 @@ namespace FootStone.Core.GameServer
                 boundChannel = await bootstrap.BindAsync(
                      // host,
                      options.Port);
-                logger.Info("DotNetty started:"+ options.Port);          
+                logger.Info("DotNetty Started:"+ options.Port);          
             }
             catch(Exception ex)
             {
-                Console.Error.WriteLine(ex.StackTrace);
+                logger.Error(ex);
             }
             finally
             {
@@ -103,7 +103,7 @@ namespace FootStone.Core.GameServer
 
         public async override Task Stop()
         {
-            logger.Info("DotNetty stopped!");
+            logger.Info("DotNetty Stopped!");
             await boundChannel.CloseAsync();
             await Task.WhenAll(
                  bossGroup.ShutdownGracefullyAsync(TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(1)),
@@ -118,38 +118,40 @@ namespace FootStone.Core.GameServer
     {
         private NLog.Logger logger = LogManager.GetCurrentClassLogger();
 
+        // private Dictionary<string, string> playerIds = new Dictionary<string, string>();
+        private string playerId;
+
+        private static int count = 0;
+
+        public SocketServerHandler()
+        {
+          //  logger.Warn("SocketServerHandler Constructor!");
+        }
+
         public override void ChannelRead(IChannelHandlerContext context, object message)
         {
-            logger.Info("ChannelRead:" + message);
-            //if (message is MsgHandShakeRequest handshake)
-            //{
-            //    Console.Out.WriteLine("handshake:" + handshake.playerId);
-            //    ChannelManager.Instance.AddChannel(
-            //        handshake.playerId,
-            //        new PlayerChannel(context.Channel));
-            //}
-            // context.
-          //  var buffer = message as IByteBuffer;
+            logger.Debug("ChannelRead:" + message);
+         
             if (message is IByteBuffer buffer)
             {
                 ushort type = buffer.ReadUnsignedShort();
                 if(type == 1)
                 {
                     ushort length = buffer.ReadUnsignedShort();
-                    string playerId = buffer.ReadBytes(length).ToString(Encoding.UTF8);
-                    Console.Out.WriteLine("handshake:" + playerId);
+                    playerId = buffer.ReadBytes(length).ToString(Encoding.UTF8);
+                    logger.Debug("handshake:" + playerId);
+
+                    //   playerIds.Add(context.Channel.Id.AsShortText(), playerId);
+                    //   logger.Warn($"add playerIds:{context.Channel.Id.AsShortText()},playerId:{playerId},total:{playerIds.Count}");
+                    Interlocked.Increment(ref count);
                     ChannelManager.Instance.AddChannel(
                         playerId,
                         new PlayerChannel(context.Channel));
                 }
-
+                //context.WriteAsync(message);
                 //Console.WriteLine("Received from client: " + buffer.ToString(Encoding.UTF8));
-
-
-           // buffer.rel
-            }
-            
-            //context.WriteAsync(message);
+            }            
+          
         }
 
         //public override void ChannelRegistered(IChannelHandlerContext context)
@@ -162,16 +164,41 @@ namespace FootStone.Core.GameServer
         //    base.ChannelRegistered(context);
         //}
 
-        //public override void ChannelUnregistered(IChannelHandlerContext context)
-        //{
-        //  //  ChannelManager.Instance.RemoveChannel(context.Channel.Id.AsLongText());
-        //}
+        public override void ChannelUnregistered(IChannelHandlerContext context)
+        {
+            if (playerId != null)
+            {
+                Interlocked.Decrement(ref count);
+                logger.Debug($"ChannelUnregistered:{count}");
+
+                ChannelManager.Instance.RemoveChannel(playerId);
+                playerId = null;
+            }
+        }
 
         public override void ChannelReadComplete(IChannelHandlerContext context) => context.Flush();
 
         public override void ExceptionCaught(IChannelHandlerContext context, Exception exception)
         {
-            logger.Error(exception);
+            if (exception is System.Net.Sockets.SocketException)
+            {
+                logger.Info(exception);
+
+                if (playerId != null)
+                {
+                    Interlocked.Decrement(ref count);
+                    logger.Debug($"ExceptionCaught:{count}");
+
+                    ChannelManager.Instance.RemoveChannel(playerId);
+                    playerId = null;
+                }
+            }
+            else
+            {
+                logger.Error(exception);
+            }
+
+
             context.CloseAsync();
         }
     }

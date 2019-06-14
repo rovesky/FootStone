@@ -1,3 +1,4 @@
+using FootStone.Core.GrainInterfaces;
 using FootStone.FrontIce;
 using FootStone.GrainInterfaces;
 using Microsoft.Extensions.DependencyInjection;
@@ -94,13 +95,10 @@ namespace FootStone.Core.GameServer
                         //})
                         .AddStartupTask(async (IServiceProvider services, CancellationToken cancellation) =>
                         {
-                            // Use the service provider to get the grain factory.
-                        //    var grainFactory = services.GetRequiredService<IGrainFactory>();
+                            var grainFactory = services.GetRequiredService<IGrainFactory>();             
+                            var grain = grainFactory.GetGrain<IWorldGrain>("1");
+                            await grain.Init(Environment.CurrentDirectory);
 
-                            // Get a reference to a grain and call a method on it.
-                          //  var grain = grainFactory.GetGrain<IMyGrain>(0);
-                          //  await grain.Initialize();
-                           
                         })
                         //  .Configure<EndpointOptions>(options => options.AdvertisedIPAddress = IPAddress.Any)
                         //  .ConfigureApplicationParts(parts => parts.AddApplicationPart(typeof(IAccountGrain).Assembly).WithReferences())

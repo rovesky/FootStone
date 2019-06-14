@@ -26,12 +26,14 @@ module FootStone
 			void ZoneSync(Bytes data);
 		}
    
-		interface IZone
+		["amd"]interface IZone
 		{ 
-		    ["amd"]EndPointZone PlayerEnter(string zoneId);
-
-		    void Move(Bytes data);
-		
+		   
+			EndPointZone BindZone(string zoneId,string playerId);
+			
+			void PlayerEnter( );
+        
+			void PlayerLeave();	
 		}  		
 	}
 }

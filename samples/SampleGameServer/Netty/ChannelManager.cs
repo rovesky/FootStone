@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NLog;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Text;
@@ -9,6 +10,8 @@ namespace FootStone.Core
     public class ChannelManager
     {
         private static readonly ChannelManager instance = new ChannelManager();
+
+        private static NLog.Logger logger = LogManager.GetCurrentClassLogger();
 
         private static int msgCount = 0;
 
@@ -29,34 +32,37 @@ namespace FootStone.Core
 
         public  void AddChannel(string id, IPlayerChannel channel)
         {
-            Console.Out.WriteLine("AddChannel:" + id);
+            logger.Debug("AddChannel:" + id);
             this.channels[id] = channel;
         }
 
         public void RemoveChannel(string id)
         {
-            Console.Out.WriteLine("RemoveChannel:" + id);
+            logger.Debug("RemoveChannel:" + id);
             IPlayerChannel value;
-            this.channels.Remove(id, out value);            
+            channels.TryRemove(id, out value);            
         }
 
         public IPlayerChannel GetChannel(string id)
         {
-            Console.Out.WriteLine("FindChannel:" + id);
+            logger.Debug("FindChannel:" + id);
             return this.channels[id];
         }
 
+        public int GetChannelCount()
+        {       
+            return this.channels.Count;
+        }
         public void Send(string id,byte[] data)
         {
             Interlocked.Increment(ref msgCount);
             if (msgCount % 10000 == 0)
             {
-                Console.Out.WriteLine("send msg count:" + msgCount);
+                logger.Debug("send msg count:" + msgCount);
             }
 
-          //  this.channels.ContainsKey
-
-            IPlayerChannel channel = this.channels[id];
+            IPlayerChannel channel;
+            this.channels.TryGetValue(id, out channel);
             if(channel != null)
             {
                 channel.Send(data);

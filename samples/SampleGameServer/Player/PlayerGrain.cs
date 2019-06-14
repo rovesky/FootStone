@@ -53,7 +53,7 @@ namespace FootStone.Core
 
         public async Task CreatePlayer(string account, int gameId,PlayerCreateInfo info)
         {
-            InitPlayer(account, gameId, info);
+            await InitPlayer(account, gameId, info);
             logger.Debug("create player:" + this.State.name);
 
             IAccountGrain accoutGrain = GrainFactory.GetGrain<IAccountGrain>(account);
@@ -62,14 +62,15 @@ namespace FootStone.Core
             await WriteStateAsync();
         }
 
-        private void InitPlayer(string account, int gameId, PlayerCreateInfo info)
+        private async Task InitPlayer(string account, int gameId, PlayerCreateInfo info)
         {
             this.State.account = account;
             this.State.playerId = this.GetPrimaryKey().ToString();
             this.State.name = info.name;
             this.State.gameId = gameId;
 
-            this.State.zoneId = Guid.NewGuid().ToString();
+          //  var worldGrain = GrainFactory.GetGrain<IWorldGrain>("1");
+          //  this.State.zoneId = await worldGrain.DispatchZone(State.playerId, gameId);
             this.State.items = new List<Item>();
             this.State.items.Add(new Item("1", "item1", 1));
             this.State.items.Add(new Item("2", "item2", 2));
@@ -82,6 +83,8 @@ namespace FootStone.Core
         {
 
             logger.Debug($"{State.account} PlayerOnline!");
+            var worldGrain = GrainFactory.GetGrain<IWorldGrain>("1");
+            this.State.zoneId = await worldGrain.DispatchZone(State.playerId, this.State.gameId);
 
             IGameGrain gameGrain = this.GrainFactory.GetGrain<IGameGrain>(State.gameId);
 

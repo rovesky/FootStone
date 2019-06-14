@@ -13,5 +13,7 @@ namespace FootStone.Core.GrainInterfaces
         Task<List<ServerInfo>> GetServerList();
 
         Task<List<PlayerShortInfo>> GetPlayerInfoShortList(string account,int gameId);
+
+        Task<string> DispatchZone(string playerId, int gameId);
     }
 }

@@ -234,10 +234,13 @@ namespace FootStone
         public delegate void Callback_IZonePush_ZoneSync();
 
         [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-        public delegate void Callback_IZone_PlayerEnter(EndPointZone ret);
+        public delegate void Callback_IZone_BindZone(EndPointZone ret);
 
         [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-        public delegate void Callback_IZone_Move();
+        public delegate void Callback_IZone_PlayerEnter();
+
+        [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
+        public delegate void Callback_IZone_PlayerLeave();
     }
 }
 
@@ -264,29 +267,41 @@ namespace FootStone
         [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
         public interface IZonePrx : Ice.ObjectPrx
         {
-            EndPointZone PlayerEnter(string zoneId, Ice.OptionalContext context = new Ice.OptionalContext());
+            EndPointZone BindZone(string zoneId, string playerId, Ice.OptionalContext context = new Ice.OptionalContext());
 
-            _System.Threading.Tasks.Task<EndPointZone> PlayerEnterAsync(string zoneId, Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken());
+            _System.Threading.Tasks.Task<EndPointZone> BindZoneAsync(string zoneId, string playerId, Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken());
 
-            Ice.AsyncResult<Callback_IZone_PlayerEnter> begin_PlayerEnter(string zoneId, Ice.OptionalContext context = new Ice.OptionalContext());
+            Ice.AsyncResult<Callback_IZone_BindZone> begin_BindZone(string zoneId, string playerId, Ice.OptionalContext context = new Ice.OptionalContext());
 
-            Ice.AsyncResult begin_PlayerEnter(string zoneId, Ice.AsyncCallback callback, object cookie);
+            Ice.AsyncResult begin_BindZone(string zoneId, string playerId, Ice.AsyncCallback callback, object cookie);
 
-            Ice.AsyncResult begin_PlayerEnter(string zoneId, Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie);
+            Ice.AsyncResult begin_BindZone(string zoneId, string playerId, Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie);
 
-            EndPointZone end_PlayerEnter(Ice.AsyncResult asyncResult);
+            EndPointZone end_BindZone(Ice.AsyncResult asyncResult);
 
-            void Move(byte[] data, Ice.OptionalContext context = new Ice.OptionalContext());
+            void PlayerEnter(Ice.OptionalContext context = new Ice.OptionalContext());
 
-            _System.Threading.Tasks.Task MoveAsync(byte[] data, Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken());
+            _System.Threading.Tasks.Task PlayerEnterAsync(Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken());
 
-            Ice.AsyncResult<Callback_IZone_Move> begin_Move(byte[] data, Ice.OptionalContext context = new Ice.OptionalContext());
+            Ice.AsyncResult<Callback_IZone_PlayerEnter> begin_PlayerEnter(Ice.OptionalContext context = new Ice.OptionalContext());
 
-            Ice.AsyncResult begin_Move(byte[] data, Ice.AsyncCallback callback, object cookie);
+            Ice.AsyncResult begin_PlayerEnter(Ice.AsyncCallback callback, object cookie);
 
-            Ice.AsyncResult begin_Move(byte[] data, Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie);
+            Ice.AsyncResult begin_PlayerEnter(Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie);
 
-            void end_Move(Ice.AsyncResult asyncResult);
+            void end_PlayerEnter(Ice.AsyncResult asyncResult);
+
+            void PlayerLeave(Ice.OptionalContext context = new Ice.OptionalContext());
+
+            _System.Threading.Tasks.Task PlayerLeaveAsync(Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken());
+
+            Ice.AsyncResult<Callback_IZone_PlayerLeave> begin_PlayerLeave(Ice.OptionalContext context = new Ice.OptionalContext());
+
+            Ice.AsyncResult begin_PlayerLeave(Ice.AsyncCallback callback, object cookie);
+
+            Ice.AsyncResult begin_PlayerLeave(Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie);
+
+            void end_PlayerLeave(Ice.AsyncResult asyncResult);
         }
     }
 }
@@ -306,10 +321,13 @@ namespace FootStone
         public interface IZoneOperations_
         {
             [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-            _System.Threading.Tasks.Task<EndPointZone> PlayerEnterAsync(string zoneId, Ice.Current current = null);
+            _System.Threading.Tasks.Task<EndPointZone> BindZoneAsync(string zoneId, string playerId, Ice.Current current = null);
 
             [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-            void Move(byte[] data, Ice.Current current = null);
+            _System.Threading.Tasks.Task PlayerEnterAsync(Ice.Current current = null);
+
+            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
+            _System.Threading.Tasks.Task PlayerLeaveAsync(Ice.Current current = null);
         }
     }
 }
@@ -592,11 +610,11 @@ namespace FootStone
 
             #region Synchronous operations
 
-            public void Move(byte[] data, Ice.OptionalContext context = new Ice.OptionalContext())
+            public EndPointZone BindZone(string zoneId, string playerId, Ice.OptionalContext context = new Ice.OptionalContext())
             {
                 try
                 {
-                    _iceI_MoveAsync(data, context, null, _System.Threading.CancellationToken.None, true).Wait();
+                    return _iceI_BindZoneAsync(zoneId, playerId, context, null, _System.Threading.CancellationToken.None, true).Result;
                 }
                 catch(_System.AggregateException ex_)
                 {
@@ -604,11 +622,23 @@ namespace FootStone
                 }
             }
 
-            public EndPointZone PlayerEnter(string zoneId, Ice.OptionalContext context = new Ice.OptionalContext())
+            public void PlayerEnter(Ice.OptionalContext context = new Ice.OptionalContext())
             {
                 try
                 {
-                    return _iceI_PlayerEnterAsync(zoneId, context, null, _System.Threading.CancellationToken.None, true).Result;
+                    _iceI_PlayerEnterAsync(context, null, _System.Threading.CancellationToken.None, true).Wait();
+                }
+                catch(_System.AggregateException ex_)
+                {
+                    throw ex_.InnerException;
+                }
+            }
+
+            public void PlayerLeave(Ice.OptionalContext context = new Ice.OptionalContext())
+            {
+                try
+                {
+                    _iceI_PlayerLeaveAsync(context, null, _System.Threading.CancellationToken.None, true).Wait();
                 }
                 catch(_System.AggregateException ex_)
                 {
@@ -620,55 +650,26 @@ namespace FootStone
 
             #region Async Task operations
 
-            public _System.Threading.Tasks.Task MoveAsync(byte[] data, Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken())
+            public _System.Threading.Tasks.Task<EndPointZone> BindZoneAsync(string zoneId, string playerId, Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken())
             {
-                return _iceI_MoveAsync(data, context, progress, cancel, false);
+                return _iceI_BindZoneAsync(zoneId, playerId, context, progress, cancel, false);
             }
 
-            private _System.Threading.Tasks.Task _iceI_MoveAsync(byte[] iceP_data, Ice.OptionalContext context, _System.IProgress<bool> progress, _System.Threading.CancellationToken cancel, bool synchronous)
+            private _System.Threading.Tasks.Task<EndPointZone> _iceI_BindZoneAsync(string iceP_zoneId, string iceP_playerId, Ice.OptionalContext context, _System.IProgress<bool> progress, _System.Threading.CancellationToken cancel, bool synchronous)
             {
-                var completed = new IceInternal.OperationTaskCompletionCallback<object>(progress, cancel);
-                _iceI_Move(iceP_data, context, synchronous, completed);
-                return completed.Task;
-            }
-
-            private const string _Move_name = "Move";
-
-            private void _iceI_Move(byte[] iceP_data, _System.Collections.Generic.Dictionary<string, string> context, bool synchronous, IceInternal.OutgoingAsyncCompletionCallback completed)
-            {
-                var outAsync = getOutgoingAsync<object>(completed);
-                outAsync.invoke(
-                    _Move_name,
-                    Ice.OperationMode.Normal,
-                    Ice.FormatType.DefaultFormat,
-                    context,
-                    synchronous,
-                    write: (Ice.OutputStream ostr) =>
-                    {
-                        BytesHelper.write(ostr, iceP_data);
-                    });
-            }
-
-            public _System.Threading.Tasks.Task<EndPointZone> PlayerEnterAsync(string zoneId, Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken())
-            {
-                return _iceI_PlayerEnterAsync(zoneId, context, progress, cancel, false);
-            }
-
-            private _System.Threading.Tasks.Task<EndPointZone> _iceI_PlayerEnterAsync(string iceP_zoneId, Ice.OptionalContext context, _System.IProgress<bool> progress, _System.Threading.CancellationToken cancel, bool synchronous)
-            {
-                iceCheckTwowayOnly(_PlayerEnter_name);
+                iceCheckTwowayOnly(_BindZone_name);
                 var completed = new IceInternal.OperationTaskCompletionCallback<EndPointZone>(progress, cancel);
-                _iceI_PlayerEnter(iceP_zoneId, context, synchronous, completed);
+                _iceI_BindZone(iceP_zoneId, iceP_playerId, context, synchronous, completed);
                 return completed.Task;
             }
 
-            private const string _PlayerEnter_name = "PlayerEnter";
+            private const string _BindZone_name = "BindZone";
 
-            private void _iceI_PlayerEnter(string iceP_zoneId, _System.Collections.Generic.Dictionary<string, string> context, bool synchronous, IceInternal.OutgoingAsyncCompletionCallback completed)
+            private void _iceI_BindZone(string iceP_zoneId, string iceP_playerId, _System.Collections.Generic.Dictionary<string, string> context, bool synchronous, IceInternal.OutgoingAsyncCompletionCallback completed)
             {
                 var outAsync = getOutgoingAsync<EndPointZone>(completed);
                 outAsync.invoke(
-                    _PlayerEnter_name,
+                    _BindZone_name,
                     Ice.OperationMode.Normal,
                     Ice.FormatType.DefaultFormat,
                     context,
@@ -676,6 +677,7 @@ namespace FootStone
                     write: (Ice.OutputStream ostr) =>
                     {
                         ostr.writeString(iceP_zoneId);
+                        ostr.writeString(iceP_playerId);
                     },
                     read: (Ice.InputStream istr) =>
                     {
@@ -685,81 +687,167 @@ namespace FootStone
                     });
             }
 
+            public _System.Threading.Tasks.Task PlayerEnterAsync(Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken())
+            {
+                return _iceI_PlayerEnterAsync(context, progress, cancel, false);
+            }
+
+            private _System.Threading.Tasks.Task _iceI_PlayerEnterAsync(Ice.OptionalContext context, _System.IProgress<bool> progress, _System.Threading.CancellationToken cancel, bool synchronous)
+            {
+                var completed = new IceInternal.OperationTaskCompletionCallback<object>(progress, cancel);
+                _iceI_PlayerEnter(context, synchronous, completed);
+                return completed.Task;
+            }
+
+            private const string _PlayerEnter_name = "PlayerEnter";
+
+            private void _iceI_PlayerEnter(_System.Collections.Generic.Dictionary<string, string> context, bool synchronous, IceInternal.OutgoingAsyncCompletionCallback completed)
+            {
+                var outAsync = getOutgoingAsync<object>(completed);
+                outAsync.invoke(
+                    _PlayerEnter_name,
+                    Ice.OperationMode.Normal,
+                    Ice.FormatType.DefaultFormat,
+                    context,
+                    synchronous);
+            }
+
+            public _System.Threading.Tasks.Task PlayerLeaveAsync(Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken())
+            {
+                return _iceI_PlayerLeaveAsync(context, progress, cancel, false);
+            }
+
+            private _System.Threading.Tasks.Task _iceI_PlayerLeaveAsync(Ice.OptionalContext context, _System.IProgress<bool> progress, _System.Threading.CancellationToken cancel, bool synchronous)
+            {
+                var completed = new IceInternal.OperationTaskCompletionCallback<object>(progress, cancel);
+                _iceI_PlayerLeave(context, synchronous, completed);
+                return completed.Task;
+            }
+
+            private const string _PlayerLeave_name = "PlayerLeave";
+
+            private void _iceI_PlayerLeave(_System.Collections.Generic.Dictionary<string, string> context, bool synchronous, IceInternal.OutgoingAsyncCompletionCallback completed)
+            {
+                var outAsync = getOutgoingAsync<object>(completed);
+                outAsync.invoke(
+                    _PlayerLeave_name,
+                    Ice.OperationMode.Normal,
+                    Ice.FormatType.DefaultFormat,
+                    context,
+                    synchronous);
+            }
+
             #endregion
 
             #region Asynchronous operations
 
-            public Ice.AsyncResult<Callback_IZone_Move> begin_Move(byte[] data, Ice.OptionalContext context = new Ice.OptionalContext())
+            public Ice.AsyncResult<Callback_IZone_BindZone> begin_BindZone(string zoneId, string playerId, Ice.OptionalContext context = new Ice.OptionalContext())
             {
-                return begin_Move(data, context, null, null, false);
+                return begin_BindZone(zoneId, playerId, context, null, null, false);
             }
 
-            public Ice.AsyncResult begin_Move(byte[] data, Ice.AsyncCallback callback, object cookie)
+            public Ice.AsyncResult begin_BindZone(string zoneId, string playerId, Ice.AsyncCallback callback, object cookie)
             {
-                return begin_Move(data, new Ice.OptionalContext(), callback, cookie, false);
+                return begin_BindZone(zoneId, playerId, new Ice.OptionalContext(), callback, cookie, false);
             }
 
-            public Ice.AsyncResult begin_Move(byte[] data, Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie)
+            public Ice.AsyncResult begin_BindZone(string zoneId, string playerId, Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie)
             {
-                return begin_Move(data, context, callback, cookie, false);
+                return begin_BindZone(zoneId, playerId, context, callback, cookie, false);
             }
 
-            public void end_Move(Ice.AsyncResult asyncResult)
+            public EndPointZone end_BindZone(Ice.AsyncResult asyncResult)
             {
-                var resultI_ = IceInternal.AsyncResultI.check(asyncResult, this, _Move_name);
-                ((IceInternal.OutgoingAsyncT<object>)resultI_.OutgoingAsync).getResult(resultI_.wait());
-            }
-
-            private Ice.AsyncResult<Callback_IZone_Move> begin_Move(byte[] iceP_data, _System.Collections.Generic.Dictionary<string, string> context, Ice.AsyncCallback completedCallback, object cookie, bool synchronous)
-            {
-                var completed = new IceInternal.OperationAsyncResultCompletionCallback<Callback_IZone_Move, object>(
-                    (Callback_IZone_Move cb, object ret) =>
-                    {
-                        if(cb != null)
-                        {
-                            cb.Invoke();
-                        }
-                    },
-                    this, _Move_name, cookie, completedCallback);
-                _iceI_Move(iceP_data, context, synchronous, completed);
-                return completed;
-            }
-
-            public Ice.AsyncResult<Callback_IZone_PlayerEnter> begin_PlayerEnter(string zoneId, Ice.OptionalContext context = new Ice.OptionalContext())
-            {
-                return begin_PlayerEnter(zoneId, context, null, null, false);
-            }
-
-            public Ice.AsyncResult begin_PlayerEnter(string zoneId, Ice.AsyncCallback callback, object cookie)
-            {
-                return begin_PlayerEnter(zoneId, new Ice.OptionalContext(), callback, cookie, false);
-            }
-
-            public Ice.AsyncResult begin_PlayerEnter(string zoneId, Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie)
-            {
-                return begin_PlayerEnter(zoneId, context, callback, cookie, false);
-            }
-
-            public EndPointZone end_PlayerEnter(Ice.AsyncResult asyncResult)
-            {
-                var resultI_ = IceInternal.AsyncResultI.check(asyncResult, this, _PlayerEnter_name);
+                var resultI_ = IceInternal.AsyncResultI.check(asyncResult, this, _BindZone_name);
                 var outgoing_ = (IceInternal.OutgoingAsyncT<EndPointZone>)resultI_.OutgoingAsync;
                 return outgoing_.getResult(resultI_.wait());
             }
 
-            private Ice.AsyncResult<Callback_IZone_PlayerEnter> begin_PlayerEnter(string iceP_zoneId, _System.Collections.Generic.Dictionary<string, string> context, Ice.AsyncCallback completedCallback, object cookie, bool synchronous)
+            private Ice.AsyncResult<Callback_IZone_BindZone> begin_BindZone(string iceP_zoneId, string iceP_playerId, _System.Collections.Generic.Dictionary<string, string> context, Ice.AsyncCallback completedCallback, object cookie, bool synchronous)
             {
-                iceCheckAsyncTwowayOnly(_PlayerEnter_name);
-                var completed = new IceInternal.OperationAsyncResultCompletionCallback<Callback_IZone_PlayerEnter, EndPointZone>(
-                    (Callback_IZone_PlayerEnter cb, EndPointZone ret) =>
+                iceCheckAsyncTwowayOnly(_BindZone_name);
+                var completed = new IceInternal.OperationAsyncResultCompletionCallback<Callback_IZone_BindZone, EndPointZone>(
+                    (Callback_IZone_BindZone cb, EndPointZone ret) =>
                     {
                         if(cb != null)
                         {
                             cb.Invoke(ret);
                         }
                     },
+                    this, _BindZone_name, cookie, completedCallback);
+                _iceI_BindZone(iceP_zoneId, iceP_playerId, context, synchronous, completed);
+                return completed;
+            }
+
+            public Ice.AsyncResult<Callback_IZone_PlayerEnter> begin_PlayerEnter(Ice.OptionalContext context = new Ice.OptionalContext())
+            {
+                return begin_PlayerEnter(context, null, null, false);
+            }
+
+            public Ice.AsyncResult begin_PlayerEnter(Ice.AsyncCallback callback, object cookie)
+            {
+                return begin_PlayerEnter(new Ice.OptionalContext(), callback, cookie, false);
+            }
+
+            public Ice.AsyncResult begin_PlayerEnter(Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie)
+            {
+                return begin_PlayerEnter(context, callback, cookie, false);
+            }
+
+            public void end_PlayerEnter(Ice.AsyncResult asyncResult)
+            {
+                var resultI_ = IceInternal.AsyncResultI.check(asyncResult, this, _PlayerEnter_name);
+                ((IceInternal.OutgoingAsyncT<object>)resultI_.OutgoingAsync).getResult(resultI_.wait());
+            }
+
+            private Ice.AsyncResult<Callback_IZone_PlayerEnter> begin_PlayerEnter(_System.Collections.Generic.Dictionary<string, string> context, Ice.AsyncCallback completedCallback, object cookie, bool synchronous)
+            {
+                var completed = new IceInternal.OperationAsyncResultCompletionCallback<Callback_IZone_PlayerEnter, object>(
+                    (Callback_IZone_PlayerEnter cb, object ret) =>
+                    {
+                        if(cb != null)
+                        {
+                            cb.Invoke();
+                        }
+                    },
                     this, _PlayerEnter_name, cookie, completedCallback);
-                _iceI_PlayerEnter(iceP_zoneId, context, synchronous, completed);
+                _iceI_PlayerEnter(context, synchronous, completed);
+                return completed;
+            }
+
+            public Ice.AsyncResult<Callback_IZone_PlayerLeave> begin_PlayerLeave(Ice.OptionalContext context = new Ice.OptionalContext())
+            {
+                return begin_PlayerLeave(context, null, null, false);
+            }
+
+            public Ice.AsyncResult begin_PlayerLeave(Ice.AsyncCallback callback, object cookie)
+            {
+                return begin_PlayerLeave(new Ice.OptionalContext(), callback, cookie, false);
+            }
+
+            public Ice.AsyncResult begin_PlayerLeave(Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie)
+            {
+                return begin_PlayerLeave(context, callback, cookie, false);
+            }
+
+            public void end_PlayerLeave(Ice.AsyncResult asyncResult)
+            {
+                var resultI_ = IceInternal.AsyncResultI.check(asyncResult, this, _PlayerLeave_name);
+                ((IceInternal.OutgoingAsyncT<object>)resultI_.OutgoingAsync).getResult(resultI_.wait());
+            }
+
+            private Ice.AsyncResult<Callback_IZone_PlayerLeave> begin_PlayerLeave(_System.Collections.Generic.Dictionary<string, string> context, Ice.AsyncCallback completedCallback, object cookie, bool synchronous)
+            {
+                var completed = new IceInternal.OperationAsyncResultCompletionCallback<Callback_IZone_PlayerLeave, object>(
+                    (Callback_IZone_PlayerLeave cb, object ret) =>
+                    {
+                        if(cb != null)
+                        {
+                            cb.Invoke();
+                        }
+                    },
+                    this, _PlayerLeave_name, cookie, completedCallback);
+                _iceI_PlayerLeave(context, synchronous, completed);
                 return completed;
             }
 
@@ -1022,9 +1110,11 @@ namespace FootStone
         {
             #region Slice operations
 
-            public abstract _System.Threading.Tasks.Task<EndPointZone> PlayerEnterAsync(string zoneId, Ice.Current current = null);
+            public abstract _System.Threading.Tasks.Task<EndPointZone> BindZoneAsync(string zoneId, string playerId, Ice.Current current = null);
 
-            public abstract void Move(byte[] data, Ice.Current current = null);
+            public abstract _System.Threading.Tasks.Task PlayerEnterAsync(Ice.Current current = null);
+
+            public abstract _System.Threading.Tasks.Task PlayerLeaveAsync(Ice.Current current = null);
 
             #endregion
 
@@ -1062,14 +1152,16 @@ namespace FootStone
 
             [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011")]
             public static _System.Threading.Tasks.Task<Ice.OutputStream>
-            iceD_PlayerEnter(IZone obj, IceInternal.Incoming inS, Ice.Current current)
+            iceD_BindZone(IZone obj, IceInternal.Incoming inS, Ice.Current current)
             {
                 Ice.ObjectImpl.iceCheckMode(Ice.OperationMode.Normal, current.mode);
                 var istr = inS.startReadParams();
                 string iceP_zoneId;
+                string iceP_playerId;
                 iceP_zoneId = istr.readString();
+                iceP_playerId = istr.readString();
                 inS.endReadParams();
-                return inS.setResultTask<EndPointZone>(obj.PlayerEnterAsync(iceP_zoneId, current),
+                return inS.setResultTask<EndPointZone>(obj.BindZoneAsync(iceP_zoneId, iceP_playerId, current),
                     (ostr, ret) =>
                     {
                         EndPointZone.ice_write(ostr, ret);
@@ -1078,21 +1170,27 @@ namespace FootStone
 
             [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011")]
             public static _System.Threading.Tasks.Task<Ice.OutputStream>
-            iceD_Move(IZone obj, IceInternal.Incoming inS, Ice.Current current)
+            iceD_PlayerEnter(IZone obj, IceInternal.Incoming inS, Ice.Current current)
             {
                 Ice.ObjectImpl.iceCheckMode(Ice.OperationMode.Normal, current.mode);
-                var istr = inS.startReadParams();
-                byte[] iceP_data;
-                iceP_data = BytesHelper.read(istr);
-                inS.endReadParams();
-                obj.Move(iceP_data, current);
-                return inS.setResult(inS.writeEmptyParams());
+                inS.readEmptyParams();
+                return inS.setResultTask(obj.PlayerEnterAsync(current));
+            }
+
+            [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011")]
+            public static _System.Threading.Tasks.Task<Ice.OutputStream>
+            iceD_PlayerLeave(IZone obj, IceInternal.Incoming inS, Ice.Current current)
+            {
+                Ice.ObjectImpl.iceCheckMode(Ice.OperationMode.Normal, current.mode);
+                inS.readEmptyParams();
+                return inS.setResultTask(obj.PlayerLeaveAsync(current));
             }
 
             private static readonly string[] _all =
             {
-                "Move",
+                "BindZone",
                 "PlayerEnter",
+                "PlayerLeave",
                 "ice_id",
                 "ice_ids",
                 "ice_isA",
@@ -1112,7 +1210,7 @@ namespace FootStone
                 {
                     case 0:
                     {
-                        return iceD_Move(this, inS, current);
+                        return iceD_BindZone(this, inS, current);
                     }
                     case 1:
                     {
@@ -1120,17 +1218,21 @@ namespace FootStone
                     }
                     case 2:
                     {
-                        return Ice.ObjectImpl.iceD_ice_id(this, inS, current);
+                        return iceD_PlayerLeave(this, inS, current);
                     }
                     case 3:
                     {
-                        return Ice.ObjectImpl.iceD_ice_ids(this, inS, current);
+                        return Ice.ObjectImpl.iceD_ice_id(this, inS, current);
                     }
                     case 4:
                     {
-                        return Ice.ObjectImpl.iceD_ice_isA(this, inS, current);
+                        return Ice.ObjectImpl.iceD_ice_ids(this, inS, current);
                     }
                     case 5:
+                    {
+                        return Ice.ObjectImpl.iceD_ice_isA(this, inS, current);
+                    }
+                    case 6:
                     {
                         return Ice.ObjectImpl.iceD_ice_ping(this, inS, current);
                     }
