@@ -43,14 +43,13 @@ namespace FootStone.Core.Client
 
             public override void ChannelActive(IChannelHandlerContext context)
             {
-                Console.WriteLine("ChannelActive: " + this.playerId);
+             //   Console.WriteLine("ChannelActive: " + this.playerId);
                 context.WriteAndFlushAsync(this.initialMessage);
             }
             
 
             public override void ChannelRead(IChannelHandlerContext context, object message)
-            {
-          
+            {          
                 var buffer = message as IByteBuffer;
                 if (buffer != null)
                 {
@@ -58,8 +57,8 @@ namespace FootStone.Core.Client
                     if (msgCount % 10000 == 0)                    {
 
                         logger.Info("Received from server msg count: " + msgCount + ",msg length:" + buffer.Capacity);
-                    }
-                }
+                    }                  
+                }               
             }
 
             public override void ChannelReadComplete(IChannelHandlerContext context) => context.Flush();
@@ -95,7 +94,7 @@ namespace FootStone.Core.Client
                     {
                         IChannelPipeline pipeline = channel.Pipeline;
 
-                        pipeline.AddLast(new LoggingHandler());
+                       // pipeline.AddLast(new LoggingHandler());
                         pipeline.AddLast("framing-enc", new LengthFieldPrepender(2));
                         pipeline.AddLast("framing-dec", new LengthFieldBasedFrameDecoder(ushort.MaxValue, 0, 2, 0, 2));
 
@@ -136,11 +135,11 @@ namespace FootStone.Core.Client
             }
         }
 
-        private static List<NetworkIceClient> clients = new List<NetworkIceClient>();
+        private static List<NetworkClient> clients = new List<NetworkClient>();
 
         private static async Task Test(int count,int startIndex)
         {       
-            NetworkIceClient client = new NetworkIceClient();
+            NetworkClient client = new NetworkClient();
             client.Init("192.168.0.128", 4061);
             clients.Add(client);
             
@@ -148,21 +147,20 @@ namespace FootStone.Core.Client
             {
                 if(i%100 == 0)
                 {
-                    client = new NetworkIceClient();
+                    client = new NetworkClient();
                     client.Init("192.168.0.128", 4061);
                     clients.Add(client);
                 }
-                runTest(i, 20, client);
+                runTest(i, 20, client,false);
                 await Task.Delay(20);
             }
             logger.Info("all session created:" + count);
         }
 
-        private static async Task runTest(int index,int count, NetworkIceClient iceClient)
+        private static async Task runTest(int index,int count, NetworkClient iceClient,bool needZone)
         {
             try
-            {
-              
+            {              
                 var sessionId = "session" + index;
                 var account = "account" + index;
                 var password = "111111";
@@ -179,7 +177,7 @@ namespace FootStone.Core.Client
                 }
                 catch (Exception ex)
                 {
-                    logger.Info("RegisterRequest fail:" + ex.Message);
+                    logger.Debug("RegisterRequest fail:" + ex.Message);
                 }
 
              //   await accountPrx.TestLoginRequestAsync("11", "22", new Sample.SampleLoginData("code1"));
@@ -219,18 +217,21 @@ namespace FootStone.Core.Client
                 var playerInfo = await playerPrx.GetPlayerInfoAsync();
                 logger.Debug($"{account} playerInfo:" + JsonConvert.SerializeObject(playerInfo));
 
-                //绑定Zone
-                var endPoint = await zonePrx.BindZoneAsync(playerInfo.zoneId,playerInfo.playerId);
+                IChannel channel = null;
+                if (needZone)
+                {
+                    //绑定Zone
+                    var endPoint = await zonePrx.BindZoneAsync(playerInfo.zoneId, playerInfo.playerId);
 
-                //连接Netty Zone
-                logger.Debug("ConnectNetty begin(" + endPoint.ip + ":" + endPoint.port + ")");
-                var channel = await ConnectNettyAsync(endPoint.ip, endPoint.port, playerInfo.playerId);
-                logger.Debug("ConnectNetty end(" + endPoint.ip + ":" + endPoint.port + ")");
+                    //连接Netty Zone
+                    logger.Debug("ConnectNetty begin(" + endPoint.ip + ":" + endPoint.port + ")");
+                    channel = await ConnectNettyAsync(endPoint.ip, endPoint.port, playerInfo.playerId);
+                    logger.Debug("ConnectNetty end(" + endPoint.ip + ":" + endPoint.port + ")");
 
-                await Task.Delay(100);
-                //进入Zone
-                await zonePrx.PlayerEnterAsync();             
-
+                    await Task.Delay(100);
+                    //进入Zone
+                    await zonePrx.PlayerEnterAsync();
+                }
 
                 logger.Info($"{account} playerPrx begin!" );
                 MasterProperty property;
@@ -248,8 +249,12 @@ namespace FootStone.Core.Client
 
                 logger.Info($"{account} playerPrx end!");
                 sessionPrx.begin_Destroy();
+                if (channel != null)
+                {
+                    await channel.CloseAsync();
+                }
                 iceClient.Fini();
-                //  await channel.CloseAsync();
+              
             }
             catch(System.Exception e)
             {

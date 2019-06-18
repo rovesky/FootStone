@@ -1,5 +1,6 @@
 using FootStone.Core.GrainInterfaces;
 using FootStone.FrontIce;
+using FootStone.FrontNetty;
 using FootStone.GrainInterfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;

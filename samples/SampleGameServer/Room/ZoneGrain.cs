@@ -73,8 +73,12 @@ namespace FootStone.Core
                          int i = 0;
                          foreach (ZonePlayer player in players.Values)
                          {
-                             var bytes = datas[random.Next() % 100];
-                             ChannelManager.Instance.Send(player.id.ToString(), bytes);
+                           var size = random.Next() % 200;
+                             if (size < 100)
+                             {
+                                 var bytes = datas[size];
+                                 ChannelManager.Instance.Send(player.id.ToString(), bytes);
+                             }
                              i++;
                          }
                      }

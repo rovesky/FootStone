@@ -16,17 +16,17 @@ namespace FootStone.Core.Client
     {
         public  static int HpChangeCount = 0;
     }
-    public class NetworkIceClient
+    public class NetworkClient
     {
         private static NLog.Logger logger = LogManager.GetCurrentClassLogger();
 
-        private static NetworkIceClient _instance;
+        private static NetworkClient _instance;
    
 
         /// <summary>
         /// 私有化构造函数，使得类不可通过new来创建实例
         /// </summary>
-        public  NetworkIceClient() { }
+        public  NetworkClient() { }
 
         private List<Action>     actions = new List<Action>();
 
@@ -34,13 +34,13 @@ namespace FootStone.Core.Client
         private Ice.Communicator communicator;
 
   
-        public static NetworkIceClient Instance
+        public static NetworkClient Instance
         {
             get
             {
                 if (_instance == null)
                 {
-                    _instance = new NetworkIceClient();
+                    _instance = new NetworkClient();
                 }
                 return _instance;
             }

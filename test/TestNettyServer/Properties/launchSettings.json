@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "TestNettyServer": {
+      "commandName": "Project",
+      "commandLineArgs": "8007 192.168.0.128"
+    }
+  }
+}

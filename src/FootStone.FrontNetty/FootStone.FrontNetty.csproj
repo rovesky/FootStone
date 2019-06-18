@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputPath>..\..\output</OutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="DotNetty.Handlers" Version="0.6.0" />
+    <PackageReference Include="Microsoft.Orleans.Client" Version="2.2.4" />
+    <PackageReference Include="NLog" Version="4.6.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FootStone.Core\FootStone.Core.csproj" />
+  </ItemGroup>
+
+</Project>

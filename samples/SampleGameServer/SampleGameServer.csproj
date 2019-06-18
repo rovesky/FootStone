@@ -33,12 +33,13 @@
     <PackageReference Include="Microsoft.Orleans.Persistence.AdoNet" Version="2.2.4" />
     <PackageReference Include="Microsoft.Orleans.Server" Version="2.2.4" />
     <PackageReference Include="MySql.Data" Version="8.0.15" />
-    <PackageReference Include="NLog" Version="4.6.4" />
+    <PackageReference Include="NLog" Version="4.6.5" />
     <PackageReference Include="NLog.Config" Version="4.6.4" />
     <PackageReference Include="sqlSugarCore" Version="5.0.0.3" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\FootStone.FrontNetty\FootStone.FrontNetty.csproj" />
     <ProjectReference Include="..\..\src\FootStone.Game\FootStone.Game.csproj" />
     <ProjectReference Include="..\SampleFrontIce\SampleFrontIce.csproj" />
   </ItemGroup>

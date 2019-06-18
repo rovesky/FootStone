@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "TestNettyClient": {
+      "commandName": "Project",
+      "commandLineArgs": "2000 0 192.168.0.128"
+    }
+  }
+}

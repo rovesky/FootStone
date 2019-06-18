@@ -45,3 +45,6 @@ output
 /samples/SampleClient/bin
 /src/FootStone.Game/bin
 /src/FootStone.GrainInterfaces/bin
+/test/TestNettyClient/bin
+/test/TestNettyServer/bin
+/src/FootStone.FrontNetty/bin
