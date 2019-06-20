@@ -1,15 +1,11 @@
 ﻿using DotNetty.Buffers;
 using DotNetty.Codecs;
-using DotNetty.Handlers.Logging;
 using DotNetty.Transport.Bootstrapping;
 using DotNetty.Transport.Channels;
 using DotNetty.Transport.Channels.Sockets;
 using NLog;
 using System;
-using System.Collections.Generic;
-using System.Net;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace FootStone.FrontNetty
@@ -43,14 +39,13 @@ namespace FootStone.FrontNetty
                     .ChildHandler(new ActionChannelInitializer<IChannel>(channel =>
                     {
                         IChannelPipeline pipeline = channel.Pipeline;
-
                         //    pipeline.AddLast(new LoggingHandler("SRV-CONN"));
                         pipeline.AddLast("framing-enc", new LengthFieldPrepender(2));
                         pipeline.AddLast("framing-dec", new LengthFieldBasedFrameDecoder(ushort.MaxValue, 0, 2, 0, 2));
                         pipeline.AddLast("echo", new FrontServerHandler());
                     }));
 
-                logger.Info("DotNetty Inited!");
+                logger.Info("DotNetty FrontServer Inited!");
             }
             catch (Exception ex)
             {
@@ -73,14 +68,13 @@ namespace FootStone.FrontNetty
         }
 
         public async  Task Stop()
-        {
-        
+        {        
             await boundChannel.CloseAsync();
             await Task.WhenAll(
                  bossGroup.ShutdownGracefullyAsync(TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(1)),
                  workerGroup.ShutdownGracefullyAsync(TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(1)));
 
-            logger.Info("DotNetty Stopped!");
+            logger.Info("DotNetty FrontServer Stopped!");
         }
     }
 
@@ -93,7 +87,7 @@ namespace FootStone.FrontNetty
         public FrontServerHandler()
         {
    
-        }    
+        }
 
         public override void ChannelRead(IChannelHandlerContext context, object message)
         {
@@ -101,70 +95,58 @@ namespace FootStone.FrontNetty
             if (message is IByteBuffer buffer)
             {
                 ushort type = buffer.ReadUnsignedShort();
-                if (type == 1)
+
+                switch ((MessageType)type)
                 {
-                    int length = buffer.ReadUnsignedShort();
-                    playerId = buffer.ReadString(length, Encoding.UTF8);
-                    logger.Debug("Player Handshake:" + playerId);
+                    case MessageType.PlayerHandshake:
+                        {
+                            var length = buffer.ReadUnsignedShort();
+                            playerId = buffer.ReadString(length, Encoding.UTF8);
 
-                    ChannelManager.Instance.AddChannel(playerId + "c", context.Channel);
+                            ChannelManager.Instance.AddChannel(playerId + "c", context.Channel);
 
-                    base.ChannelRead(context, message);
-                }
-                else if (type == 2)
-                {
-                    int length = buffer.ReadUnsignedShort();
-                    var siloId = buffer.ReadString(length, Encoding.UTF8);
+                            logger.Debug("Player Handshake:" + playerId);                       
+                            break;
+                        }
+                    case MessageType.PlayerBindSilo:
+                        {
+                            var length = buffer.ReadUnsignedShort();
+                            var siloId = buffer.ReadString(length, Encoding.UTF8);
 
-                    logger.Debug($"Player:{playerId} bind silo:{siloId}");
-                    IChannel siloChannel = ChannelManager.Instance.GetChannel(siloId);
-                    ChannelManager.Instance.AddChannel(playerId + "s", siloChannel);
+                            IChannel siloChannel = ChannelManager.Instance.GetChannel(siloId);
+                            ChannelManager.Instance.AddChannel(playerId + "s", siloChannel);
 
-                    base.ChannelRead(context, message);
-                }
-                else if (type == 10)
-                {
-                     IChannel siloChannel = ChannelManager.Instance.GetChannel(playerId + "s");
+                            logger.Debug($"Player:{playerId} bind silo:{siloId}");                          
+                            break;
+                        }
+                    case MessageType.Data:
+                        {
+                            IChannel siloChannel = ChannelManager.Instance.GetChannel(playerId + "s");
+                         
+                            //添加包头
+                            var header = siloChannel.Allocator.DirectBuffer(4 + playerId.Length);
+                            header.WriteUnsignedShort(10);
+                            header.WriteUnsignedShort((ushort)playerId.Length);
+                            header.WriteString(playerId, Encoding.UTF8);
 
-                    //  buffer.ResetReaderIndex();
-                    //  buffer.ResetWriterIndex();
+                            buffer.DiscardReadBytes();
+                            var comBuff = siloChannel.Allocator.CompositeDirectBuffer();
+                            comBuff.AddComponents(true, header, buffer);
 
-                    buffer.DiscardReadBytes();
-                    var header = siloChannel.Allocator.DirectBuffer(4+ playerId.Length);
-                    header.WriteUnsignedShort(10);
-                    header.WriteUnsignedShort((ushort)playerId.Length);
-                    header.WriteString(playerId,Encoding.UTF8);
+                            logger.Debug($"Recieve Message:{playerId},buff.ReadableBytes:{comBuff.ReadableBytes}," +
+                             $"buff.WritableBytes:{comBuff.WritableBytes},buff.Capacity: {comBuff.Capacity}");
 
-                  
-                    var comBuff = siloChannel.Allocator.CompositeDirectBuffer();
-                    comBuff.AddComponents(true, header,buffer);
-
-                    logger.Debug($"Recieve Message:{playerId},buff.ReadableBytes:{comBuff.ReadableBytes}," +
-                     $"buff.WritableBytes:{comBuff.WritableBytes},buff.Capacity: {comBuff.Capacity}");
-
-                    siloChannel.WriteAndFlushAsync(comBuff);
-
-                    //var data = siloChannel.Allocator.Buffer(40);
-                    //data.WriteUnsignedShort(10);
-                    //string hello = "Hello";
-                    //data.WriteUnsignedShort((ushort)hello.Length);
-                    //data.WriteString(hello, Encoding.UTF8);
-
-                    //logger.Debug($"Send Message:{playerId},data.ReadableBytes:{data.ReadableBytes}," +
-                    //     $"data.WritableBytes:{data.WritableBytes},data.Capacity: {data.Capacity}");
-
-                    // siloChannel.WriteAsync()
-
-                }
-                else
-                {
-                    base.ChannelRead(context, message);
-                    logger.Error($"unkown type:{type}");
+                            siloChannel.WriteAndFlushAsync(comBuff);
+                            return;
+                        }
+                    default:
+                        {
+                            logger.Error($"unkown type:{type}");                           
+                            break;
+                        }
                 }
             }
-
-   
-
+            base.ChannelRead(context, message);
         }
 
 

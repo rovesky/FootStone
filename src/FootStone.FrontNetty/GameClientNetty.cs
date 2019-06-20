@@ -14,20 +14,6 @@ using System.Threading.Tasks;
 
 namespace FootStone.FrontNetty
 {
-
-    //struct Point2D
-    //{
-    //    int x;
-    //    int y;
-    //}
-
-    //[Serializable]
-    //struct Move
-    //{
-    //    byte direction;
-    //    byte speed;
-    //}
-
     class GameClientHandler : ChannelHandlerAdapter
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
@@ -35,13 +21,7 @@ namespace FootStone.FrontNetty
         public GameClientHandler()
         {
 
-        }
-
-        public override void ChannelActive(IChannelHandlerContext context)
-        {
-
-            base.ChannelActive(context);
-        }
+        }        
 
 
         public override void ChannelRead(IChannelHandlerContext context, object message)
@@ -55,11 +35,10 @@ namespace FootStone.FrontNetty
 
                 logger.Debug($"Send Data to client:{playerId}");
                 IChannel channel = ChannelManager.Instance.GetChannel(playerId + "c");
-
                 buffer.DiscardReadBytes();
                 channel.WriteAndFlushAsync(buffer);
+                return;
             }
-          //  base.ChannelRead(context, message);
         }
 
         public override void ExceptionCaught(IChannelHandlerContext context, Exception exception)
@@ -131,8 +110,8 @@ namespace FootStone.FrontNetty
 
             var siloId = host + ":" + port;
 
-            var message = channel.Allocator.Buffer(40);
-            message.WriteUnsignedShort(1);
+            var message = channel.Allocator.DirectBuffer(40);
+            message.WriteUnsignedShort((ushort)MessageType.SiloHandShake);
             message.WriteUnsignedShort((ushort)siloId.Length);
             message.WriteString(siloId, Encoding.UTF8);
             await channel.WriteAndFlushAsync(message);

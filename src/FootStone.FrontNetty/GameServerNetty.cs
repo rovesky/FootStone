@@ -97,41 +97,40 @@ namespace FootStone.FrontNetty
 
         public override void ChannelRead(IChannelHandlerContext context, object message)
         {
-         
             if (message is IByteBuffer buffer)
-            {
-                logger.Debug("ChannelRead:" + buffer.Capacity);
-
+            { 
                 ushort type = buffer.ReadUnsignedShort();
-                logger.Debug("ChannelRead:" + type);
-                if (type == 1)
+
+                switch ((MessageType)type)
                 {
-                    ushort length = buffer.ReadUnsignedShort();
-                    siloId = buffer.ReadString(length, Encoding.UTF8);
-                    logger.Debug("Game Handshake:" + siloId);
+                    case MessageType.SiloHandShake:
+                        {
+                            ushort length = buffer.ReadUnsignedShort();
+                            siloId = buffer.ReadString(length, Encoding.UTF8);
+                            logger.Debug("Game Handshake:" + siloId);
+                            ChannelManager.Instance.AddChannel(siloId, context.Channel);                         
+                            break;
+                        }
+                    case MessageType.Data:
+                        {
+                            ushort length = buffer.ReadUnsignedShort();
+                            var playerId = buffer.ReadString(length, Encoding.UTF8);                           
 
-                    ChannelManager.Instance.AddChannel(siloId, context.Channel);
-                }
-                else if (type == 10)
-                {
-        
-                    ushort length = buffer.ReadUnsignedShort();
-                    var playerId = buffer.ReadString(length, Encoding.UTF8);
-                    logger.Debug($"Recieve message:player:{playerId},buff.ReadableBytes{buffer.ReadableBytes}" +
-                        $"buff.WritableBytes{buffer.WritableBytes}!");
-                  //  var disType = buffer.ReadUnsignedShort();
+                            length = buffer.ReadUnsignedShort();
+                            var m = buffer.ReadString(length, Encoding.UTF8);
+                            logger.Debug($"Recieve message:{m} from player:{playerId},disType{0},send back!");
 
-                    length = buffer.ReadUnsignedShort();
-                    var m = buffer.ReadString(length, Encoding.UTF8);
-                    logger.Debug($"Recieve message:{m} from player:{playerId},disType{0},send back!");
-
-                    buffer.ResetReaderIndex();
-                    context.Channel.WriteAndFlushAsync(buffer);
+                            buffer.ResetReaderIndex();
+                            context.Channel.WriteAndFlushAsync(buffer);
+                            return;
+                        }
+                    default:
+                        logger.Error($"Unknown type:{type}!");
+                        break;
                 }
             }
 
             base.ChannelRead(context, message);
-
         }
 
 
@@ -145,7 +144,6 @@ namespace FootStone.FrontNetty
             base.HandlerRemoved(context);
         }
 
-    //    public override void ChannelReadComplete(IChannelHandlerContext context) => context.Flush();
 
         public override void ExceptionCaught(IChannelHandlerContext context, Exception exception)
         {
