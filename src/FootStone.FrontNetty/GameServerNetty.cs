@@ -97,10 +97,11 @@ namespace FootStone.FrontNetty
 
         public override void ChannelRead(IChannelHandlerContext context, object message)
         {
-         //   logger.Debug("ChannelRead:" + message);
-
+         
             if (message is IByteBuffer buffer)
             {
+                logger.Debug("ChannelRead:" + buffer.Capacity);
+
                 ushort type = buffer.ReadUnsignedShort();
                 logger.Debug("ChannelRead:" + type);
                 if (type == 1)
@@ -113,14 +114,19 @@ namespace FootStone.FrontNetty
                 }
                 else if (type == 10)
                 {
+        
                     ushort length = buffer.ReadUnsignedShort();
                     var playerId = buffer.ReadString(length, Encoding.UTF8);
+                    logger.Debug($"Recieve message:player:{playerId},buff.ReadableBytes{buffer.ReadableBytes}" +
+                        $"buff.WritableBytes{buffer.WritableBytes}!");
+                  //  var disType = buffer.ReadUnsignedShort();
 
                     length = buffer.ReadUnsignedShort();
                     var m = buffer.ReadString(length, Encoding.UTF8);
-                    logger.Debug($"Recieve message:{m} from player:{playerId},send back!");
+                    logger.Debug($"Recieve message:{m} from player:{playerId},disType{0},send back!");
 
-                    context.Channel.WriteAndFlushAsync(message);
+                    buffer.ResetReaderIndex();
+                    context.Channel.WriteAndFlushAsync(buffer);
                 }
             }
 

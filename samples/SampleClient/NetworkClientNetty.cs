@@ -56,7 +56,7 @@ namespace FootStone.Core.Client
             if (buffer != null)
             {
                 Interlocked.Increment(ref msgCount);
-                if (msgCount % (30 * playerCount) == 0)
+              //  if (msgCount % (1 * playerCount) == 0)
                 {
                     logger.Info("Received from server msg count: " + msgCount + ",msg length:" + buffer.Capacity);
                 }

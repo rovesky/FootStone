@@ -49,14 +49,17 @@ namespace FootStone.FrontNetty
             var buffer = message as IByteBuffer;
             if (buffer != null)
             {
-                int length = buffer.ReadInt();
+                buffer.ReadUnsignedShort();
+                int length = buffer.ReadUnsignedShort();
                 var playerId = buffer.ReadString(length, Encoding.UTF8);
 
                 logger.Debug($"Send Data to client:{playerId}");
                 IChannel channel = ChannelManager.Instance.GetChannel(playerId + "c");
+
+                buffer.DiscardReadBytes();
                 channel.WriteAndFlushAsync(buffer);
             }
-            base.ChannelRead(context, message);
+          //  base.ChannelRead(context, message);
         }
 
         public override void ExceptionCaught(IChannelHandlerContext context, Exception exception)
