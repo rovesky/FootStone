@@ -16,17 +16,17 @@ namespace FootStone.Core.Client
     {
         public  static int HpChangeCount = 0;
     }
-    public class NetworkClient
+    public class NetworkClientIce
     {
         private static NLog.Logger logger = LogManager.GetCurrentClassLogger();
 
-        private static NetworkClient _instance;
+        private static NetworkClientIce _instance;
    
 
         /// <summary>
         /// 私有化构造函数，使得类不可通过new来创建实例
         /// </summary>
-        public  NetworkClient() { }
+        public  NetworkClientIce() { }
 
         private List<Action>     actions = new List<Action>();
 
@@ -34,13 +34,13 @@ namespace FootStone.Core.Client
         private Ice.Communicator communicator;
 
   
-        public static NetworkClient Instance
+        public static NetworkClientIce Instance
         {
             get
             {
                 if (_instance == null)
                 {
-                    _instance = new NetworkClient();
+                    _instance = new NetworkClientIce();
                 }
                 return _instance;
             }
@@ -155,12 +155,11 @@ namespace FootStone.Core.Client
 
             logger.Info(connection.getInfo().connectionId+" session connection: ACM=" +
                 JsonConvert.SerializeObject(connection.getACM())
-                + ",Endpoint=" + JsonConvert.SerializeObject(connection.getEndpoint()));
+                + ",Endpoint=" + connection.getEndpoint().ToString());
+            
 
-
-            // Register the callback receiver servant with the object adapter     
-        //    communicator.f
-          //  var adapter = communicator.createObjectAdapter("");
+                  // Register the callback receiver servant with the object adapter     
+                  //  var adapter = communicator.createObjectAdapter("");
             var proxy = ISessionPushPrxHelper.uncheckedCast(Adapter.addWithUUID(new SessionPushI()));
             Adapter.addFacet(new PlayerPushI(account), proxy.ice_getIdentity(), "playerPush");
             Adapter.addFacet(new ZonePushI(account), proxy.ice_getIdentity(), "zonePush");

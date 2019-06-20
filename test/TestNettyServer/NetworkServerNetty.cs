@@ -40,7 +40,7 @@ namespace TestNettyServer
             return bytes;
         }
 
-        public async  Task Start(string host,int port)
+        public async  Task Start(int port,int actors)
         {
             bossGroup = new MultithreadEventLoopGroup(1);
             workerGroup = new MultithreadEventLoopGroup(4);
@@ -70,7 +70,7 @@ namespace TestNettyServer
                      //    pipeline.AddLast(new LoggingHandler("SRV-CONN"));
                         pipeline.AddLast("framing-enc", new LengthFieldPrepender(2));
                         pipeline.AddLast("framing-dec", new LengthFieldBasedFrameDecoder(ushort.MaxValue, 0, 2, 0, 2));
-                        pipeline.AddLast("echo", new SocketServerHandler(datas));
+                        pipeline.AddLast("echo", new SocketServerHandler(datas,actors));
                     }));
 
 
@@ -107,11 +107,13 @@ namespace TestNettyServer
         private static int msgCount = 0;
         private Random random;
         private List<byte[]> datas;
+        private int actors;
 
-        public SocketServerHandler(List<byte[]> datas)
+        public SocketServerHandler(List<byte[]> datas,int actors)
         {
             this.random = new Random();
             this.datas = datas;
+            this.actors = actors;
             //  logger.Warn("SocketServerHandler Constructor!");
         }
 
@@ -136,24 +138,36 @@ namespace TestNettyServer
                     pingTimer.AutoReset = true;
                     pingTimer.Interval = 33;
                     pingTimer.Enabled = true;
-                    pingTimer.Elapsed += (sender, e)=>{
+                    pingTimer.Elapsed += (sender, e)=>
+                    {
 
                         var rand = random.Next() % 200;
-                        if (rand < 60)
+                        if (rand < 100)
                         {
-                            int size = rand ;
+                            int size = rand;
                             var data = datas[size];
-                         //   IByteBuffer byteBuffer = Unpooled.DirectBuffer(size);                         
-                            IByteBuffer byteBuffer = context.Allocator.DirectBuffer(size);
-                            byteBuffer.WriteBytes(data);
-                            context.WriteAndFlushAsync(byteBuffer);
+                            //   IByteBuffer byteBuffer = Unpooled.DirectBuffer(size);                         
+                            
 
-                            Interlocked.Increment(ref msgCount);
-                            if (msgCount % (30 * count) == 0)
+                            for (int w = 1; w <= 10; ++w)
                             {
-                                logger.Info("Send to client msg count: " + msgCount + ",msg length:" + byteBuffer.Capacity);
-                            }  
-                        }
+                                int zoneCount = actors / 10;
+                                IByteBuffer byteBuffer = context.Allocator.DirectBuffer(size * zoneCount);
+
+                                for (int i = 0; i < zoneCount; ++i)
+                                {
+                                    byteBuffer.WriteBytes(data);
+                                }
+                                context.WriteAndFlushAsync(byteBuffer);
+                            }
+
+
+                            //Interlocked.Increment(ref msgCount);
+                            //if (msgCount % (30 * count) == 0)
+                            //{
+                            //    logger.Info("Send to client msg count: " + msgCount + ",msg length:" + byteBuffer.Capacity);
+                            //}
+                        }                  
                     };
                     pingTimer.Start();
                 }

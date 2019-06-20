@@ -30,20 +30,14 @@ namespace SampleFrontIce
 
         public static IFSClientBuilder AddFrontIce(this IFSClientBuilder builder)
         {
-            builder.ConfigureOrleans(client =>
+            builder.AddFrontIce(iceOptions =>
             {
-                client
-                .Configure<IceOptions>(iceOptions =>
-                {
-                    InitIceOptions(iceOptions);
-                })
-                .ConfigureServices(s =>
-                {
-                    s.AddSingleton<IClientService, IceFrontService>();
-                });
-            });
+                InitIceOptions(iceOptions);
+            });          
             return builder;
         }
+
+
 
     }
 }

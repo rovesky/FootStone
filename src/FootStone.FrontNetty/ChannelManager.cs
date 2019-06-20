@@ -1,4 +1,6 @@
-﻿using NLog;
+﻿using DotNetty.Buffers;
+using DotNetty.Transport.Channels;
+using NLog;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -11,7 +13,7 @@ namespace FootStone.FrontNetty
     {
         private static readonly ChannelManager instance = new ChannelManager();
 
-        private static NLog.Logger logger = LogManager.GetCurrentClassLogger();
+        private static Logger logger = LogManager.GetCurrentClassLogger();
 
         private static int msgCount = 0;
 
@@ -28,9 +30,9 @@ namespace FootStone.FrontNetty
         }
 
 
-        private ConcurrentDictionary<string, IPlayerChannel> channels = new ConcurrentDictionary<string, IPlayerChannel>();
+        private ConcurrentDictionary<string, IChannel> channels = new ConcurrentDictionary<string, IChannel>();
 
-        public  void AddChannel(string id, IPlayerChannel channel)
+        public  void AddChannel(string id, IChannel channel)
         {
             logger.Debug("AddChannel:" + id);
             this.channels[id] = channel;
@@ -39,11 +41,11 @@ namespace FootStone.FrontNetty
         public void RemoveChannel(string id)
         {
             logger.Debug("RemoveChannel:" + id);
-            IPlayerChannel value;
+            IChannel value;
             channels.TryRemove(id, out value);            
         }
 
-        public IPlayerChannel GetChannel(string id)
+        public IChannel GetChannel(string id)
         {
             logger.Debug("FindChannel:" + id);
             return this.channels[id];
@@ -61,11 +63,13 @@ namespace FootStone.FrontNetty
                 logger.Debug("send msg count:" + msgCount);
             }
 
-            IPlayerChannel channel;
+            IChannel channel;
             this.channels.TryGetValue(id, out channel);
             if(channel != null)
             {
-                channel.Send(data);
+                IByteBuffer byteBuffer = Unpooled.Buffer(data.Length);
+                byteBuffer.WriteBytes(data);
+                channel.WriteAndFlushAsync(byteBuffer);
             }
         }
     }

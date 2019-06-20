@@ -5,6 +5,7 @@ using Orleans.Core;
 using Orleans.Providers;
 using Orleans.Runtime;
 using Orleans.Streams;
+using SampleGameServer.Room;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,15 +18,13 @@ namespace FootStone.Core
 
     class ZonePlayer
     {
-        public Guid id;
-        public string channelId;
-        public IAsyncStream<byte[]> stream;
+        public Guid  id;
+        public IPlayerChannel channel;     
 
-
-        public ZonePlayer(Guid id, IAsyncStream<byte[]> stream)
+        public ZonePlayer(Guid id, IPlayerChannel channel)
         {
             this.id = id;
-            this.stream = stream;
+            this.channel = channel;      
         }
     }
     public class ZoneState
@@ -33,7 +32,7 @@ namespace FootStone.Core
         string id;
     }
  
-    public  class ZoneGrain : Grain, IZoneGrain
+    public  class ZoneGrain : Grain, IZoneGrain,IZoneStream
     {
         private NLog.Logger logger = NLog.LogManager.GetLogger("FootStone.Core.ZoneGrain");
         private Dictionary<Guid, ZonePlayer> players = new Dictionary<Guid, ZonePlayer>();
@@ -50,7 +49,6 @@ namespace FootStone.Core
 
         public byte[] randomBytes(int size)
         {
-           // int size = random.Next() % maxSize;
             var bytes = new byte[size];
             for (int i = 0; i < size; ++i)
             {
@@ -77,7 +75,7 @@ namespace FootStone.Core
                              if (size < 100)
                              {
                                  var bytes = datas[size];
-                                 ChannelManager.Instance.Send(player.id.ToString(), bytes);
+                                 player.channel.Send(bytes);
                              }
                              i++;
                          }
@@ -108,7 +106,7 @@ namespace FootStone.Core
 
             return Task.FromResult(new EndPointZone(
               siloAddress.Endpoint.Address.ToString(),
-              8007));
+              siloAddress.Endpoint.Port));
         }
 
 
@@ -117,7 +115,10 @@ namespace FootStone.Core
             logger.Debug($"zone {this.GetPrimaryKey().ToString()} ,PlayerEnter:{playerId.ToString()} ,zone player count:{ players.Count}");
 
             if (!players.ContainsKey(playerId))
-                players.Add(playerId, new ZonePlayer(playerId, null)); 
+            {
+             //   IPlayerChannel channel = ChannelManager.Instance.GetChannel(playerId.ToString());
+             //   players.Add(playerId, new ZonePlayer(playerId, channel));
+            }
 
             return Task.CompletedTask;
         }
@@ -133,6 +134,16 @@ namespace FootStone.Core
         public Task<int> GetPlayerCount()
         {
             return Task.FromResult(players.Count);
+        }
+
+        public void Send(byte[] data)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Recv(byte[] data)
+        {
+            throw new NotImplementedException();
         }
     }
 }

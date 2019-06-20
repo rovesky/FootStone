@@ -6,6 +6,8 @@ namespace FootStone.FrontNetty
 {
     public class NettyOptions
     {
-        public int Port { get; set; }
+        public int FrontPort { get; set; }
+
+        public int GamePort { get; set; }
     }
 }

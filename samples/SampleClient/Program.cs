@@ -70,6 +70,19 @@ namespace FootStone.Core.Client
             }
         }
 
+        static private string parseHost(string endPoint)
+        {
+            var strs =  endPoint.Split(' ');
+            for(int i = 0; i < strs.Length; ++i)
+            {
+                if(strs[i] == "-h")
+                {
+                    return strs[i + 1];
+                }
+            }
+            return "";
+        }
+
         static async Task<IChannel> ConnectNettyAsync(string host,int port,string playerId)
         {
          //   ExampleHelper.SetConsoleLogger();
@@ -135,29 +148,31 @@ namespace FootStone.Core.Client
             }
         }
 
-        private static List<NetworkClient> clients = new List<NetworkClient>();
+        private static List<NetworkClientIce> clients = new List<NetworkClientIce>();
 
         private static async Task Test(int count,int startIndex)
         {       
-            NetworkClient client = new NetworkClient();
-            client.Init("192.168.0.128", 4061);
-            clients.Add(client);
+            NetworkClientIce clientIce = new NetworkClientIce();
+            NetworkClientNetty clientNetty = new NetworkClientNetty();
+            clientNetty.Init();
+            clientIce.Init("192.168.0.128", 4061);
+            clients.Add(clientIce);
             
             for (int i = startIndex; i < startIndex+ count; ++i)
             {
                 if(i%100 == 0)
                 {
-                    client = new NetworkClient();
-                    client.Init("192.168.0.128", 4061);
-                    clients.Add(client);
+                    clientIce = new NetworkClientIce();
+                    clientIce.Init("192.168.0.128", 4061);
+                    clients.Add(clientIce);
                 }
-                runTest(i, 20, client,false);
+                runTest(i, 20, clientIce, clientNetty);
                 await Task.Delay(20);
             }
             logger.Info("all session created:" + count);
         }
 
-        private static async Task runTest(int index,int count, NetworkClient iceClient,bool needZone)
+        private static async Task runTest(int index,int count, NetworkClientIce iceClient,NetworkClientNetty netty)
         {
             try
             {              
@@ -218,17 +233,21 @@ namespace FootStone.Core.Client
                 logger.Debug($"{account} playerInfo:" + JsonConvert.SerializeObject(playerInfo));
 
                 IChannel channel = null;
-                if (needZone)
+                if (netty != null)
                 {
+                    //连接Netty Zone
+                    var host = parseHost(sessionPrx.ice_getConnection().getEndpoint().ToString());
+                    logger.Debug("ConnectNetty begin(" + host + ")");
+                    channel = await netty.ConnectNettyAsync(host, 8007, playerInfo.playerId);
+                    logger.Debug("ConnectNetty end(" + host + ")");
+
                     //绑定Zone
                     var endPoint = await zonePrx.BindZoneAsync(playerInfo.zoneId, playerInfo.playerId);
+                    var siloId = endPoint.ip + ":" +8017;
+                    await netty.BindSilo(channel, siloId);
+                    await netty.SendMessage(channel, "Hello");
 
-                    //连接Netty Zone
-                    logger.Debug("ConnectNetty begin(" + endPoint.ip + ":" + endPoint.port + ")");
-                    channel = await ConnectNettyAsync(endPoint.ip, endPoint.port, playerInfo.playerId);
-                    logger.Debug("ConnectNetty end(" + endPoint.ip + ":" + endPoint.port + ")");
-
-                    await Task.Delay(100);
+                    //await Task.Delay(100);
                     //进入Zone
                     await zonePrx.PlayerEnterAsync();
                 }

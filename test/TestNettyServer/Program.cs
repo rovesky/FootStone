@@ -17,7 +17,7 @@ namespace TestNettyServer
             try
             {
                 int port = args.Length > 0 ? int.Parse(args[0]) : 8007;
-                string host = args.Length > 1 ? args[1] : "127.0.0.1";
+                int actors  = args.Length > 1 ? int.Parse(args[1]) : 1;
 
 
                 NetworkServerNetty netty = new NetworkServerNetty();
@@ -42,7 +42,7 @@ namespace TestNettyServer
 
                 netty.Init();
 
-                netty.Start(host, port).Wait();
+                netty.Start(port,actors).Wait();
 
                 _siloStopped.WaitOne();
             }

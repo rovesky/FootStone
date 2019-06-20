@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace FootStone.FrontNetty
+namespace SampleGameServer.Room
 {
-    public interface IPlayerChannel
+    public interface IZoneStream
     {
         void Send(byte[] data);
+
+        void Recv(byte[] data);
     }
 }

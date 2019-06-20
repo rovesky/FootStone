@@ -25,39 +25,34 @@ using System.Threading.Tasks;
 namespace FootStone.Core.GameServer
 {
     [Reentrant]
-    public class NettyService : GrainService,INettyService
+    public class NettyService : GrainService//, INettyService
     {
-        private readonly IGrainFactory GrainFactory; 
+        private readonly IGrainFactory GrainFactory;
         private IChannel boundChannel;
         private MultithreadEventLoopGroup bossGroup;
         private MultithreadEventLoopGroup workerGroup;
 
         private NLog.Logger logger = LogManager.GetCurrentClassLogger();
 
-        public NettyService(IServiceProvider services, IGrainIdentity id, Silo silo, ILoggerFactory loggerFactory, IGrainFactory grainFactory) 
+        public NettyService(IServiceProvider services, IGrainIdentity id, Silo silo, ILoggerFactory loggerFactory, IGrainFactory grainFactory)
             : base(id, silo, loggerFactory)
-        {         
+        {
             GrainFactory = grainFactory;
         }
 
         public NettyOptions options { get; private set; }
-
-        //public Task AddOptionTime(int time)
-        //{
-        //  //  operationTimes += time;
-        //    return Task.CompletedTask;
-        //}
+     
 
         public override Task Init(IServiceProvider serviceProvider)
         {
-            logger.Info("DotNetty Init!");           
+            logger.Info("DotNetty Init!");
 
             this.options = serviceProvider.GetService<IOptions<NettyOptions>>().Value;
 
             return base.Init(serviceProvider);
         }
-      
-        public async override  Task Start()
+
+        public async override Task Start()
         {
             bossGroup = new MultithreadEventLoopGroup(1);
             workerGroup = new MultithreadEventLoopGroup();
@@ -70,13 +65,13 @@ namespace FootStone.Core.GameServer
 
                 bootstrap
                     .Option(ChannelOption.SoBacklog, 100)
-                   // .Option(ChannelOption.TcpNodelay, true)
-                   // .Handler(new LoggingHandler("SRV-LSTN"))
+                    // .Option(ChannelOption.TcpNodelay, true)
+                    // .Handler(new LoggingHandler("SRV-LSTN"))
                     .ChildHandler(new ActionChannelInitializer<IChannel>(channel =>
                     {
                         IChannelPipeline pipeline = channel.Pipeline;
 
-                    //    pipeline.AddLast(new LoggingHandler("SRV-CONN"));
+                        //    pipeline.AddLast(new LoggingHandler("SRV-CONN"));
                         pipeline.AddLast("framing-enc", new LengthFieldPrepender(2));
                         pipeline.AddLast("framing-dec", new LengthFieldBasedFrameDecoder(ushort.MaxValue, 0, 2, 0, 2));
 
@@ -86,20 +81,20 @@ namespace FootStone.Core.GameServer
                 string host = Silo.Endpoint.Address.ToString();
                 boundChannel = await bootstrap.BindAsync(
                      // host,
-                     options.Port);
-                logger.Info("DotNetty Started:"+ options.Port);          
+                     options.FrontPort);
+                logger.Info("DotNetty Started:" + options.FrontPort);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 logger.Error(ex);
             }
             finally
             {
-            //    await Task.WhenAll(
-            //        bossGroup.ShutdownGracefullyAsync(TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(1)),
-            //        workerGroup.ShutdownGracefullyAsync(TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(1)));
+                //    await Task.WhenAll(
+                //        bossGroup.ShutdownGracefullyAsync(TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(1)),
+                //        workerGroup.ShutdownGracefullyAsync(TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(1)));
             }
-         
+
         }
 
         public async override Task Stop()
@@ -110,49 +105,59 @@ namespace FootStone.Core.GameServer
                  bossGroup.ShutdownGracefullyAsync(TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(1)),
                  workerGroup.ShutdownGracefullyAsync(TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(1)));
 
-            await base.Stop();      
-        }       
+            await base.Stop();
+        }
     }
 
 
     class SocketServerHandler : ChannelHandlerAdapter
     {
-        private NLog.Logger logger = LogManager.GetCurrentClassLogger();
-
-        // private Dictionary<string, string> playerIds = new Dictionary<string, string>();
-        private string playerId;
-
+        private static NLog.Logger logger = LogManager.GetCurrentClassLogger();
         private static int count = 0;
+
+        private string siloId;
+
 
         public SocketServerHandler()
         {
-          //  logger.Warn("SocketServerHandler Constructor!");
+            //  logger.Warn("SocketServerHandler Constructor!");
         }
 
         public override void ChannelRead(IChannelHandlerContext context, object message)
         {
             logger.Debug("ChannelRead:" + message);
-         
+
             if (message is IByteBuffer buffer)
             {
                 ushort type = buffer.ReadUnsignedShort();
-                if(type == 1)
+                if (type == 1)
                 {
                     ushort length = buffer.ReadUnsignedShort();
-                    playerId = buffer.ReadBytes(length).ToString(Encoding.UTF8);
-                    logger.Debug("handshake:" + playerId);
+                    siloId = buffer.ReadBytes(length).ToString(Encoding.UTF8);
+                    logger.Debug("handshake:" + siloId);
+                }
+                else if(type == 2)
+                {
+                    ushort length = buffer.ReadUnsignedShort();
+                    var playerId = buffer.ReadBytes(length).ToString(Encoding.UTF8);
 
-                    //   playerIds.Add(context.Channel.Id.AsShortText(), playerId);
-                    //   logger.Warn($"add playerIds:{context.Channel.Id.AsShortText()},playerId:{playerId},total:{playerIds.Count}");
-                    Interlocked.Increment(ref count);
                     ChannelManager.Instance.AddChannel(
                         playerId,
                         new PlayerChannel(context.Channel));
                 }
+                else
+                {
+                    ushort length = buffer.ReadUnsignedShort();
+                    var playerId = buffer.ReadBytes(length).ToString(Encoding.UTF8);
+
+
+
+                }
                 //context.WriteAsync(message);
                 //Console.WriteLine("Received from client: " + buffer.ToString(Encoding.UTF8));
-            }            
-          
+            }
+
+
         }
 
         //public override void ChannelRegistered(IChannelHandlerContext context)
@@ -167,14 +172,14 @@ namespace FootStone.Core.GameServer
 
         public override void ChannelUnregistered(IChannelHandlerContext context)
         {
-            if (playerId != null)
-            {
-                Interlocked.Decrement(ref count);
-                logger.Debug($"ChannelUnregistered:{count}");
+            //if (playerId != null)
+            //{
+            //    Interlocked.Decrement(ref count);
+            //    logger.Debug($"ChannelUnregistered:{count}");
 
-                ChannelManager.Instance.RemoveChannel(playerId);
-                playerId = null;
-            }
+            //    ChannelManager.Instance.RemoveChannel(playerId);
+            //    playerId = null;
+            //}
         }
 
         public override void ChannelReadComplete(IChannelHandlerContext context) => context.Flush();
@@ -185,20 +190,19 @@ namespace FootStone.Core.GameServer
             {
                 logger.Info(exception);
 
-                if (playerId != null)
-                {
-                    Interlocked.Decrement(ref count);
-                    logger.Debug($"ExceptionCaught:{count}");
+                //if (playerId != null)
+                //{
+                //    Interlocked.Decrement(ref count);
+                //    logger.Debug($"ExceptionCaught:{count}");
 
-                    ChannelManager.Instance.RemoveChannel(playerId);
-                    playerId = null;
-                }
+                //    ChannelManager.Instance.RemoveChannel(playerId);
+                //    playerId = null;
+                //}
             }
             else
             {
                 logger.Error(exception);
             }
-
 
             context.CloseAsync();
         }

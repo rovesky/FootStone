@@ -79,33 +79,7 @@ namespace SampleFrontIce
                 zoneGrain.PlayerLeave(this.sessionI.PlayerId);
             }
         }
-
-        //public async Task AddObserver(Guid zoneId)
-        //{
-
-        //  //  Console.Out.WriteLine("add zonePush:" + sessionI.Account);
-        //    try
-        //    {
-        //        // var t1 = Task.Run(async () => {
-        //        IZonePushPrx push = (IZonePushPrx)IZonePushPrxHelper.uncheckedCast(sessionI.SessionPushPrx, "zonePush").ice_oneway();
-        //       // var connection = await push.ice_getConnectionAsync();
-
-        //        var streamProvider = Global.OrleansClient.GetStreamProvider("Zone");
-
-        //        var playerStream = streamProvider.GetStream<byte[]>(sessionI.PlayerId, "ZonePlayer");
-        //        var zoneStream = streamProvider.GetStream<byte[]>(zoneId, "Zone");
-
-        //        zoneStreamHandler = await zoneStream.SubscribeAsync(new StreamObserver(push,"zone"));
-        //        playerStreamHandler = await playerStream.SubscribeAsync(new StreamObserver(push,"player"));
-
-        //        //  });
-        //        //  await t1;
-        //    }
-        //    catch (System.Exception e)
-        //    {
-        //        Console.Error.WriteLine("zonePush:" + e.Message);
-        //    }
-        //}      
+      
 
         public async override Task<EndPointZone> BindZoneAsync(string zoneId, string playerId, Current current = null)
         {

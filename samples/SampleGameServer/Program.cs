@@ -116,10 +116,10 @@ namespace FootStone.Core.GameServer
                              options.ConnectionString = mysqlConnectStorage;
                              options.Invariant = "MySql.Data.MySqlClient";
                          })     
-                        .AddGrainService<NettyService>()
+                        .AddGrainService<NettyGameService>()
                         .Configure<NettyOptions>(options =>
                         {
-                            options.Port = 8007;
+                            options.GamePort = 8017;
                         })           
                         //.AddMemoryGrainStorage("PubSubStore")
                         //.AddSimpleMessageStreamProvider("Zone", cfg =>
@@ -129,7 +129,7 @@ namespace FootStone.Core.GameServer
                         .EnableDirectClient();
                     })
                     //ÃÌº”Ice÷ß≥÷
-                    .AddFrontIce()
+                //    .AddFrontIce()
                     .Build();
 
                 logger.Info("FSHost builded!");

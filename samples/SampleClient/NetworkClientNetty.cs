@@ -12,7 +12,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace FootStone.FrontNetty
+namespace FootStone.Core.Client
 {
 
     struct Point2D
@@ -33,7 +33,7 @@ namespace FootStone.FrontNetty
     class SocketNettyHandler : ChannelHandlerAdapter
     {
    
-        private NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
         private static int msgCount = 0;
         private static int playerCount = 0;
 
@@ -142,17 +142,31 @@ namespace FootStone.FrontNetty
         {
             var channel =  await bootstrap.ConnectAsync(new IPEndPoint(IPAddress.Parse(host), port));
       
-          //  var initialMessage = Unpooled.Buffer(100);
-            var initialMessage = channel.Allocator.Buffer(50);
-            byte[] messageBytes = Encoding.UTF8.GetBytes(playerId);
-            initialMessage.WriteUnsignedShort(1);
-            initialMessage.WriteUnsignedShort((ushort)messageBytes.Length);
-            initialMessage.WriteBytes(messageBytes);
-
-            await channel.WriteAndFlushAsync(initialMessage);
+            var message = channel.Allocator.Buffer(50);
+            message.WriteUnsignedShort(1);
+            message.WriteUnsignedShort((ushort)playerId.Length);
+            message.WriteString(playerId, Encoding.UTF8);
+            await channel.WriteAndFlushAsync(message);
 
             return channel;
         }
 
+        public async Task BindSilo(IChannel channel,string siloId)
+        {          
+            var data = channel.Allocator.Buffer(100);
+            data.WriteUnsignedShort(2);
+            data.WriteUnsignedShort((ushort)siloId.Length);
+            data.WriteString(siloId, Encoding.UTF8);
+            await channel.WriteAndFlushAsync(data);
+        }
+
+        public async Task SendMessage(IChannel channel, string message)
+        {
+            var data = channel.Allocator.Buffer(100);
+            data.WriteUnsignedShort(10);
+            data.WriteUnsignedShort((ushort)message.Length);
+            data.WriteString(message, Encoding.UTF8);
+            await channel.WriteAndFlushAsync(data);
+        }
     }
 }

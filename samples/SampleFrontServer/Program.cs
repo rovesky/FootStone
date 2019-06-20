@@ -1,4 +1,5 @@
 ﻿using FootStone.FrontIce;
+using FootStone.FrontNetty;
 using FootStone.GrainInterfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -27,7 +28,6 @@ namespace FootStone.Core.FrontServer
         {
             try
             {
-             
 
                 IFSClient client = null;
                 Console.CancelKeyPress += (s, a) =>
@@ -79,6 +79,12 @@ namespace FootStone.Core.FrontServer
                         })
                         //添加ICE支持
                         .AddFrontIce()
+                        //添加Netty支持
+                        .AddFrontNetty(options =>
+                        {
+                            options.FrontPort = 8007;
+                            options.GamePort = 8017;
+                        })
                         .Build();
 
                         //Global.OrleansClient = client.ClusterClient;
@@ -97,16 +103,7 @@ namespace FootStone.Core.FrontServer
 
                 logger.Info("Front Server Started!");
 
-                _siloStopped.WaitOne();
-                //do
-                //{
-                //    string exit = Console.ReadLine();
-                //    if (exit.Equals("exit"))
-                //    {
-                //        client.StopAsync().Wait();
-                //        break;
-                //    }
-                //} while (true);
+                _siloStopped.WaitOne();        
 
             }
             catch (Exception ex)

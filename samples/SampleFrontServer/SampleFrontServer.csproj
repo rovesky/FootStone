@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\FootStone.FrontNetty\FootStone.FrontNetty.csproj" />
     <ProjectReference Include="..\SampleFrontIce\SampleFrontIce.csproj" />
   </ItemGroup>
 

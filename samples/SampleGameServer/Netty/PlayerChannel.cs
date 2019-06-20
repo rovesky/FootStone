@@ -16,12 +16,22 @@ namespace FootStone.Core.GameServer
             this.channel = channel;
         }
 
+        public void Recv(byte[] data)
+        {
+            throw new NotImplementedException();
+        }
+
         public void Send(byte[] data)
         {
             logger.Debug("write data to client:"+ data.Length);
             IByteBuffer byteBuffer = Unpooled.Buffer(data.Length);
             byteBuffer.WriteBytes(data);
             channel.WriteAndFlushAsync(byteBuffer);
+        }
+
+        public void SetZone(ZoneGrain g)
+        {
+            throw new NotImplementedException();
         }
     }
 }
