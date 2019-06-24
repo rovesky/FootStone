@@ -117,9 +117,10 @@ namespace FootStone.Core.GameServer
                              options.Invariant = "MySql.Data.MySqlClient";
                          })     
                         .AddGrainService<NettyGameService>()
-                        .Configure<NettyOptions>(options =>
+                        .Configure<NettyGameOptions>(options =>
                         {
-                            options.GamePort = 8017;
+                            options.Port = 8017;
+                            options.Recv = ZoneNetttyData.Instance;
                         })           
                         //.AddMemoryGrainStorage("PubSubStore")
                         //.AddSimpleMessageStreamProvider("Zone", cfg =>

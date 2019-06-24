@@ -243,13 +243,15 @@ namespace FootStone.Core.Client
 
                     //绑定Zone
                     var endPoint = await zonePrx.BindZoneAsync(playerInfo.zoneId, playerInfo.playerId);
-                    var siloId = endPoint.ip + ":" +8017;
-                    await netty.BindSilo(channel, siloId);
-                    await netty.SendMessage(channel, "Hello");
+                    var siloId = endPoint.ip + ":" + endPoint.port;
+                    await netty.BindSilo(channel, siloId, playerInfo.playerId);                
 
-                    //await Task.Delay(100);
+                    await Task.Delay(100);
                     //进入Zone
                     await zonePrx.PlayerEnterAsync();
+
+                    //发送消息
+                    await netty.SendMessage(channel, "Hello");
                 }
 
                 logger.Info($"{account} playerPrx begin!" );

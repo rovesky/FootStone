@@ -15,12 +15,14 @@ namespace FootStone.FrontNetty
     {
         private FrontServerNetty frontSever = new FrontServerNetty();
         private GameClientNetty frontClient = new GameClientNetty();
-        private NettyOptions options;
+       // private NettyGameOptions gameOptions;
+        private NettyFrontOptions frontOptions;
         private static Logger logger = LogManager.GetCurrentClassLogger();
 
         public Task Init(IServiceProvider serviceProvider)
         {
-            this.options = serviceProvider.GetService<IOptions<NettyOptions>>().Value;
+           // this.gameOptions = serviceProvider.GetService<IOptions<NettyGameOptions>>().Value;
+            this.frontOptions = serviceProvider.GetService<IOptions<NettyFrontOptions>>().Value;
 
             frontSever.Init();
             frontClient.Init();
@@ -34,10 +36,10 @@ namespace FootStone.FrontNetty
             IList<Uri> gateways = await gatewayProvider.GetGateways();
             foreach(var uri in gateways)
             {
-               await frontClient.ConnectNettyAsync(uri.Host, options.GamePort);
+               await frontClient.ConnectNettyAsync(uri.Host, frontOptions.GamePort);
             }
             logger.Info("netty connect all silo ok!");
-            await frontSever.Start(options.FrontPort);       
+            await frontSever.Start(frontOptions.FrontPort);       
         }
 
         public async Task Stop()

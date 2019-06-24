@@ -12,7 +12,7 @@ namespace FootStone.Core.GrainInterfaces
 
         Task<EndPointZone> GetEndPoint();
 
-        Task PlayerEnter(Guid playerId);
+        Task PlayerEnter(Guid playerId,string frontId);
 
         Task PlayerLeave(Guid playerId);
 

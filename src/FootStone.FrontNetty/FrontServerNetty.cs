@@ -82,8 +82,11 @@ namespace FootStone.FrontNetty
     class FrontServerHandler : ChannelHandlerAdapter
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
+
         private string playerId;
-       
+        private IChannel siloChannel;
+
+
         public FrontServerHandler()
         {
    
@@ -100,37 +103,32 @@ namespace FootStone.FrontNetty
                 {
                     case MessageType.PlayerHandshake:
                         {
-                            var length = buffer.ReadUnsignedShort();
-                            playerId = buffer.ReadString(length, Encoding.UTF8);
+                            playerId = buffer.ReadStringShortUtf8();
+                            ChannelManager.Instance.AddChannel(playerId, context.Channel);
 
-                            ChannelManager.Instance.AddChannel(playerId + "c", context.Channel);
-
-                            logger.Debug("Player Handshake:" + playerId);                       
+                            logger.Debug("Player Handshake:" + playerId);
                             break;
                         }
                     case MessageType.PlayerBindSilo:
                         {
-                            var length = buffer.ReadUnsignedShort();
-                            var siloId = buffer.ReadString(length, Encoding.UTF8);
+                            var playerId = buffer.ReadStringShortUtf8();
+                            var siloId = buffer.ReadStringShortUtf8();
+                            siloChannel = ChannelManager.Instance.GetChannel(siloId);
 
-                            IChannel siloChannel = ChannelManager.Instance.GetChannel(siloId);
-                            ChannelManager.Instance.AddChannel(playerId + "s", siloChannel);
-
-                            logger.Debug($"Player:{playerId} bind silo:{siloId}");                          
-                            break;
+                            buffer.ResetReaderIndex();
+                            siloChannel.WriteAndFlushAsync(buffer);
+                            logger.Debug($"Player:{playerId} bind silo:{siloId}");
+                            return;
                         }
                     case MessageType.Data:
                         {
-                            IChannel siloChannel = ChannelManager.Instance.GetChannel(playerId + "s");
-                         
                             //添加包头
-                            var header = siloChannel.Allocator.DirectBuffer(4 + playerId.Length);
-                            header.WriteUnsignedShort(10);
-                            header.WriteUnsignedShort((ushort)playerId.Length);
-                            header.WriteString(playerId, Encoding.UTF8);
+                            var header = context.Allocator.DirectBuffer(4 + playerId.Length);
+                            header.WriteUnsignedShort((ushort)MessageType.Data);
+                            header.WriteStringShortUtf8(playerId);
 
                             buffer.DiscardReadBytes();
-                            var comBuff = siloChannel.Allocator.CompositeDirectBuffer();
+                            var comBuff = context.Allocator.CompositeDirectBuffer();
                             comBuff.AddComponents(true, header, buffer);
 
                             logger.Debug($"Recieve Message:{playerId},buff.ReadableBytes:{comBuff.ReadableBytes}," +
@@ -141,7 +139,7 @@ namespace FootStone.FrontNetty
                         }
                     default:
                         {
-                            logger.Error($"unkown type:{type}");                           
+                            logger.Error($"unkown type:{type}");
                             break;
                         }
                 }
@@ -155,7 +153,7 @@ namespace FootStone.FrontNetty
   
             if (playerId != null)
             {          
-                ChannelManager.Instance.RemoveChannel(playerId + "c");
+                ChannelManager.Instance.RemoveChannel(playerId);
                 playerId = null;
             }
             base.HandlerRemoved(context);

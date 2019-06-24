@@ -81,7 +81,7 @@ namespace FootStone.Core.FrontServer
                         .AddFrontIce()
                         //添加Netty支持
                         .AddFrontNetty(options =>
-                        {
+                        {                        
                             options.FrontPort = 8007;
                             options.GamePort = 8017;
                         })

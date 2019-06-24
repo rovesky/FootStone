@@ -4,8 +4,9 @@ using System.Text;
 
 namespace FootStone.FrontNetty
 {
-    public class NettyOptions
+    public class NettyFrontOptions
     {
+
         public int FrontPort { get; set; }
 
         public int GamePort { get; set; }

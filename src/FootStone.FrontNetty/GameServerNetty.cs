@@ -16,22 +16,20 @@ namespace FootStone.FrontNetty
 {
     public class GameServerNetty
     {
-       
+        private static Logger logger = LogManager.GetCurrentClassLogger();
+
         private IChannel boundChannel;
         private MultithreadEventLoopGroup bossGroup;
         private MultithreadEventLoopGroup workerGroup;
-
-        private Logger logger = LogManager.GetCurrentClassLogger();
         private ServerBootstrap bootstrap;
 
-        public void Init()
+        public void Init(IRecvData recv)
         {
             bossGroup = new MultithreadEventLoopGroup(1);
             workerGroup = new MultithreadEventLoopGroup(4);
 
             try
-            {        
-                
+            {               
                 bootstrap = new ServerBootstrap();
                 bootstrap.Group(bossGroup, workerGroup)
                          .Channel<TcpServerSocketChannel>()
@@ -47,7 +45,7 @@ namespace FootStone.FrontNetty
                         //    pipeline.AddLast(new LoggingHandler("SRV-CONN"));
                         pipeline.AddLast("framing-enc", new LengthFieldPrepender(2));
                         pipeline.AddLast("framing-dec", new LengthFieldBasedFrameDecoder(ushort.MaxValue, 0, 2, 0, 2));
-                        pipeline.AddLast("echo", new GameServerHandler());
+                        pipeline.AddLast("echo", new GameServerHandler(recv));
                     }));
 
                 logger.Info("DotNetty Inited!");
@@ -73,8 +71,7 @@ namespace FootStone.FrontNetty
         }
 
         public async  Task Stop()
-        {
-        
+        {        
             await boundChannel.CloseAsync();
             await Task.WhenAll(
                  bossGroup.ShutdownGracefullyAsync(TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(1)),
@@ -88,58 +85,63 @@ namespace FootStone.FrontNetty
     class GameServerHandler : ChannelHandlerAdapter
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
-        private string siloId;
-       
-        public GameServerHandler()
+        private string frontId;
+
+        private IRecvData recv;
+
+        public GameServerHandler(IRecvData recv)
         {
-   
+            this.recv = recv;   
         }    
 
+        
+
         public override void ChannelRead(IChannelHandlerContext context, object message)
-        {
+        {          
             if (message is IByteBuffer buffer)
             { 
                 ushort type = buffer.ReadUnsignedShort();
 
                 switch ((MessageType)type)
                 {
-                    case MessageType.SiloHandShake:
+                    case MessageType.PlayerBindSilo:
                         {
-                            ushort length = buffer.ReadUnsignedShort();
-                            siloId = buffer.ReadString(length, Encoding.UTF8);
-                            logger.Debug("Game Handshake:" + siloId);
-                            ChannelManager.Instance.AddChannel(siloId, context.Channel);                         
+                          
+                            var playerId = buffer.ReadStringShortUtf8();
+                            recv.BindChannel(playerId, context.Channel);
+                            logger.Debug($"Game PlayerBindSilo:{playerId}!" );               
                             break;
                         }
                     case MessageType.Data:
-                        {
-                            ushort length = buffer.ReadUnsignedShort();
-                            var playerId = buffer.ReadString(length, Encoding.UTF8);                           
+                        {                   
+                            var playerId = buffer.ReadStringShortUtf8();
+                            logger.Debug($"Game recv data,player:{playerId},size:{buffer.Capacity}!");
+                            recv.Recv(playerId, buffer, context.Channel);                 
 
-                            length = buffer.ReadUnsignedShort();
-                            var m = buffer.ReadString(length, Encoding.UTF8);
-                            logger.Debug($"Recieve message:{m} from player:{playerId},disType{0},send back!");
-
-                            buffer.ResetReaderIndex();
-                            context.Channel.WriteAndFlushAsync(buffer);
-                            return;
+                            break;                      
                         }
                     default:
                         logger.Error($"Unknown type:{type}!");
                         break;
                 }
             }
-
             base.ChannelRead(context, message);
         }
 
+        public override void HandlerAdded(IChannelHandlerContext context)
+        {
+            frontId = context.Channel.RemoteAddress.ToString();
+            ChannelManager.Instance.AddChannel(frontId,context.Channel);
+
+            base.HandlerAdded(context);
+        }
 
         public override void HandlerRemoved(IChannelHandlerContext context)
         {  
-            if (siloId != null)
+            if (frontId != null)
             {          
-                ChannelManager.Instance.RemoveChannel(siloId);
-                siloId = null;
+                ChannelManager.Instance.RemoveChannel(frontId);
+                frontId = null;
             }
             base.HandlerRemoved(context);
         }

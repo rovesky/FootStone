@@ -151,10 +151,14 @@ namespace FootStone.Core.Client
             return channel;
         }
 
-        public async Task BindSilo(IChannel channel,string siloId)
+        public async Task BindSilo(IChannel channel,string siloId, string playerId)
         {          
             var data = channel.Allocator.Buffer(100);
             data.WriteUnsignedShort(2);
+
+            data.WriteUnsignedShort((ushort)playerId.Length);
+            data.WriteString(playerId, Encoding.UTF8);
+
             data.WriteUnsignedShort((ushort)siloId.Length);
             data.WriteString(siloId, Encoding.UTF8);
             await channel.WriteAndFlushAsync(data);

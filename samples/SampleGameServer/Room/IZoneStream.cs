@@ -8,6 +8,6 @@ namespace SampleGameServer.Room
     {
         void Send(byte[] data);
 
-        void Recv(byte[] data);
+        void Recv(string playerId,byte[] data);
     }
 }

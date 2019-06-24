@@ -93,8 +93,8 @@ namespace SampleFrontIce
         }
 
         public async override Task PlayerEnterAsync(Current current = null)
-        {
-            await zoneGrain.PlayerEnter(sessionI.PlayerId);
+        {          
+            await zoneGrain.PlayerEnter(sessionI.PlayerId, current.adapter.GetHashCode().ToString());
         }
 
         public async override Task PlayerLeaveAsync(Current current = null)

@@ -26,14 +26,16 @@ namespace FootStone.FrontNetty
             GrainFactory = grainFactory;
         }
 
-        public NettyOptions options { get; private set; }
+        public NettyGameOptions options { get; private set; }
 
         public override Task Init(IServiceProvider serviceProvider)
         {
             logger.Info("Game DotNetty Service Init!");
 
-            options = serviceProvider.GetService<IOptions<NettyOptions>>().Value;
-            server.Init();
+            options = serviceProvider.GetService<IOptions<NettyGameOptions>>().Value;
+
+          //  var recv  = serviceProvider.GetService<IRecvData>();
+            server.Init(options.Recv);
 
             return base.Init(serviceProvider);
         }
@@ -42,7 +44,7 @@ namespace FootStone.FrontNetty
         {
             logger.Info("Game DotNetty Service Start!");
 
-            await server.Start(options.GamePort);
+            await server.Start(options.Port);
 
             await base.Start();
         }

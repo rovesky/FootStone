@@ -18,6 +18,9 @@ namespace FootStone.FrontNetty
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
 
+      //  private string frontId;
+      //  private string siloId;
+
         public GameClientHandler()
         {
 
@@ -29,17 +32,28 @@ namespace FootStone.FrontNetty
             var buffer = message as IByteBuffer;
             if (buffer != null)
             {
-                buffer.ReadUnsignedShort();
-                int length = buffer.ReadUnsignedShort();
-                var playerId = buffer.ReadString(length, Encoding.UTF8);
-
-                logger.Debug($"Send Data to client:{playerId}");
-                IChannel channel = ChannelManager.Instance.GetChannel(playerId + "c");
+                buffer.ReadUnsignedShort();      
+                var playerId = buffer.ReadStringShortUtf8();            
+                IChannel channel = ChannelManager.Instance.GetChannel(playerId);
                 buffer.DiscardReadBytes();
                 channel.WriteAndFlushAsync(buffer);
+
+                logger.Debug($"Send Data to client:{playerId}");
                 return;
             }
+            base.ChannelRead(context, message);
         }
+
+        public override void HandlerRemoved(IChannelHandlerContext context)
+        {
+           // if (siloId != null)
+           // {
+                ChannelManager.Instance.RemoveChannel(context.Name);
+            //    siloId = null;
+           // }
+            base.HandlerRemoved(context);
+        }
+
 
         public override void ExceptionCaught(IChannelHandlerContext context, Exception exception)
         {
@@ -109,15 +123,15 @@ namespace FootStone.FrontNetty
             var channel = await bootstrap.ConnectAsync(new IPEndPoint(IPAddress.Parse(host), port));
 
             var siloId = host + ":" + port;
+            ChannelManager.Instance.AddChannel(siloId, channel);
 
-            var message = channel.Allocator.DirectBuffer(40);
-            message.WriteUnsignedShort((ushort)MessageType.SiloHandShake);
-            message.WriteUnsignedShort((ushort)siloId.Length);
-            message.WriteString(siloId, Encoding.UTF8);
-            await channel.WriteAndFlushAsync(message);
+            //var message = channel.Allocator.DirectBuffer(4+siloId.Length);
+            //message.WriteUnsignedShort((ushort)MessageType.SiloHandShake);         
+            //message.WriteStringShortUtf8(siloId);
+            //await channel.WriteAndFlushAsync(message);
 
             logger.Debug($"Netty Add Silo：{siloId}");
-            ChannelManager.Instance.AddChannel(siloId, channel);
+       
 
             return channel;
         }
