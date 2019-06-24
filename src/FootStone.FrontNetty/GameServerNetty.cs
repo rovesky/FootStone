@@ -105,12 +105,23 @@ namespace FootStone.FrontNetty
                 switch ((MessageType)type)
                 {
                     case MessageType.PlayerBindSilo:
-                        {
-                          
+                        {                          
                             var playerId = buffer.ReadStringShortUtf8();
                             recv.BindChannel(playerId, context.Channel);
+
+                            //添加包头
+                            var header = context.Allocator.DirectBuffer(4 + playerId.Length);
+                            header.WriteUnsignedShort((ushort)MessageType.Data);
+                            header.WriteStringShortUtf8(playerId);
+
+                            buffer.ResetReaderIndex();
+                            var comBuff = context.Allocator.CompositeDirectBuffer();
+                            comBuff.AddComponents(true, header, buffer);
+                        
+                            context.Channel.WriteAndFlushAsync(comBuff);
+
                             logger.Debug($"Game PlayerBindSilo:{playerId}!" );               
-                            break;
+                            return;
                         }
                     case MessageType.Data:
                         {                   
@@ -133,13 +144,15 @@ namespace FootStone.FrontNetty
             frontId = context.Channel.RemoteAddress.ToString();
             ChannelManager.Instance.AddChannel(frontId,context.Channel);
 
+            logger.Debug($"HandlerAdded:{frontId}!");
             base.HandlerAdded(context);
         }
 
         public override void HandlerRemoved(IChannelHandlerContext context)
         {  
             if (frontId != null)
-            {          
+            {
+                logger.Debug($"HandlerRemoved:{frontId}!");
                 ChannelManager.Instance.RemoveChannel(frontId);
                 frontId = null;
             }

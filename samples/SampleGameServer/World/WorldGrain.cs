@@ -130,6 +130,7 @@ namespace FootStone.Grains
 
 
                 logger.Warn($"--  Channel Player Count:{ZoneNetttyData.Instance.GetChannelCount()}  --");
+                logger.Warn($"--  Zone Player Count:{ZoneNetttyData.Instance.GetPlayerZoneCount()}  --");
 
 
                 logger.Warn("---------------------  -----------  ------------");

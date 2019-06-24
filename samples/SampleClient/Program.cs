@@ -13,6 +13,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
+using System.Timers;
 using NLog;
 
 namespace FootStone.Core.Client
@@ -233,6 +234,7 @@ namespace FootStone.Core.Client
                 logger.Debug($"{account} playerInfo:" + JsonConvert.SerializeObject(playerInfo));
 
                 IChannel channel = null;
+                System.Timers.Timer pingTimer = null;
                 if (netty != null)
                 {
                     //连接Netty Zone
@@ -244,14 +246,23 @@ namespace FootStone.Core.Client
                     //绑定Zone
                     var endPoint = await zonePrx.BindZoneAsync(playerInfo.zoneId, playerInfo.playerId);
                     var siloId = endPoint.ip + ":" + endPoint.port;
-                    await netty.BindSilo(channel, siloId, playerInfo.playerId);                
-
-                    await Task.Delay(100);
+                    await netty.BindSilo(channel, siloId, playerInfo.playerId);     
+               
                     //进入Zone
                     await zonePrx.PlayerEnterAsync();
 
                     //发送消息
-                    await netty.SendMessage(channel, "Hello");
+                    pingTimer = new System.Timers.Timer();
+                    pingTimer.AutoReset = true;
+                    pingTimer.Interval = 150;
+                    pingTimer.Enabled = true;
+                    pingTimer.Elapsed += (_1,_2)=>
+                    {
+                        netty.SendMessage(channel, "Hello");
+                    };
+                    pingTimer.Start();
+
+                 
                 }
 
                 logger.Info($"{account} playerPrx begin!" );
@@ -273,6 +284,11 @@ namespace FootStone.Core.Client
                 if (channel != null)
                 {
                     await channel.CloseAsync();
+                }
+
+                if(pingTimer != null)
+                {
+                    pingTimer.Stop();
                 }
                 iceClient.Fini();
               

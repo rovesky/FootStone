@@ -78,6 +78,12 @@ namespace FootStone.Core
             return value;
         }
 
+
+        public int GetPlayerZoneCount()
+        {
+            return this.zones.Count;
+        }
+
         public void Recv(string playerId, IByteBuffer data, IChannel channel)
         {
             logger.Debug($"Player{playerId}Recv Data!");

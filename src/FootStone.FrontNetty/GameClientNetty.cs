@@ -46,9 +46,10 @@ namespace FootStone.FrontNetty
 
         public override void HandlerRemoved(IChannelHandlerContext context)
         {
-           // if (siloId != null)
-           // {
-                ChannelManager.Instance.RemoveChannel(context.Name);
+            // if (siloId != null)
+            // {
+            logger.Debug($"HandlerRemoved:{context.Name}");
+            ChannelManager.Instance.RemoveChannel(context.Name);
             //    siloId = null;
            // }
             base.HandlerRemoved(context);

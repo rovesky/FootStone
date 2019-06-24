@@ -85,34 +85,26 @@ namespace FootStone.Core
                      {
                          if (recvBuffer.ReadableBytes > 0)
                          {
-                             var byteBuffer = Unpooled.DirectBuffer(recvBuffer.ReadableBytes + 2);
-                             byteBuffer.WriteUnsignedShort((ushort)recvBuffer.ReadableBytes);
-                             byteBuffer.WriteBytes(recvBuffer);
-
-                             recvBuffer.ResetReaderIndex();
-                             recvBuffer.ResetWriterIndex();
-
-                           //  logger.Debug($"Zone send data:{byteBuffer.Capacity}!");
+                  
                              foreach (ZonePlayer player in players.Values)
                              {
                                  //var size = random.Next() % 200;
                                //  if (size < 100)
                                //  {
 
-                                     logger.Debug($"Zone send data:{byteBuffer.Capacity}!");
+                                     logger.Debug($"Zone send data:{player.id.ToString()},size:{recvBuffer.ReadableBytes}!");
 
                                      //Ìí¼Ó°üÍ·
-                                     var header = player.channel.Allocator.DirectBuffer(4 + player.id.ToString().Length);
-                                     header.WriteUnsignedShort((ushort)MessageType.Data);
-                                     header.WriteStringShortUtf8(player.id.ToString());
-
-                                   //  buffer.DiscardReadBytes();
-                                     var comBuff = player.channel.Allocator.CompositeDirectBuffer();
-                                     comBuff.AddComponents(true, header, byteBuffer);
-
-                                     player.channel.WriteAndFlushAsync(comBuff);
+                                     var msg = player.channel.Allocator.DirectBuffer(4 + player.id.ToString().Length);
+                                     msg.WriteUnsignedShort((ushort)MessageType.Data);
+                                     msg.WriteStringShortUtf8(player.id.ToString());
+                                     msg.WriteBytes(recvBuffer);
+                                     player.channel.WriteAndFlushAsync(msg);
                                //  }
                              }
+
+                             recvBuffer.ResetReaderIndex();
+                             recvBuffer.ResetWriterIndex();
                          }
                      }
                      catch (Exception e)
@@ -165,6 +157,7 @@ namespace FootStone.Core
         {
             logger.Debug($"zone {this.GetPrimaryKey().ToString()} ,PlayerLeave:{playerId.ToString()} ,zone player count:{ players.Count}");
             ZoneNetttyData.Instance.UnBindPlayerZone(playerId.ToString());
+            ZoneNetttyData.Instance.RemoveChannel(playerId.ToString());
             players.Remove(playerId);
             return Task.CompletedTask;
         }

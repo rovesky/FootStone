@@ -106,8 +106,11 @@ namespace FootStone.FrontNetty
                             playerId = buffer.ReadStringShortUtf8();
                             ChannelManager.Instance.AddChannel(playerId, context.Channel);
 
+                            buffer.ResetReaderIndex();
+                            context.Channel.WriteAndFlushAsync(buffer);                         
+
                             logger.Debug("Player Handshake:" + playerId);
-                            break;
+                            return;
                         }
                     case MessageType.PlayerBindSilo:
                         {

@@ -1,5 +1,6 @@
 ﻿using DotNetty.Buffers;
 using DotNetty.Codecs;
+
 using DotNetty.Handlers.Logging;
 using DotNetty.Transport.Bootstrapping;
 using DotNetty.Transport.Channels;
@@ -37,6 +38,10 @@ namespace FootStone.Core.Client
         private static int msgCount = 0;
         private static int playerCount = 0;
 
+
+        public TaskCompletionSource<object> tcsConnected = new TaskCompletionSource<object>();
+        public TaskCompletionSource<object> tcsBindSiloed = new TaskCompletionSource<object>();
+
         public SocketNettyHandler()
         {         
             Interlocked.Increment(ref playerCount);
@@ -60,6 +65,17 @@ namespace FootStone.Core.Client
                 {
                     logger.Info("Received from server msg count: " + msgCount + ",msg length:" + buffer.Capacity);
                 }
+
+                ushort type = buffer.ReadUnsignedShort();
+                if(type == 1)
+                {
+                    tcsConnected.SetResult(null);
+                }
+                else if(type == 2)
+                {
+                    tcsBindSiloed.SetResult(null);
+                }
+             
             }
             base.ChannelRead(context, message);
         }
@@ -148,6 +164,8 @@ namespace FootStone.Core.Client
             message.WriteString(playerId, Encoding.UTF8);
             await channel.WriteAndFlushAsync(message);
 
+            var handler = channel.Pipeline.Get<SocketNettyHandler>();
+            await handler.tcsConnected.Task;
             return channel;
         }
 
@@ -162,6 +180,10 @@ namespace FootStone.Core.Client
             data.WriteUnsignedShort((ushort)siloId.Length);
             data.WriteString(siloId, Encoding.UTF8);
             await channel.WriteAndFlushAsync(data);
+
+            var handler = channel.Pipeline.Get<SocketNettyHandler>();
+            await handler.tcsBindSiloed.Task;
+        
         }
 
         public async Task SendMessage(IChannel channel, string message)
