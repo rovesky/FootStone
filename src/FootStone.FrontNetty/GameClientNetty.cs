@@ -18,30 +18,35 @@ namespace FootStone.FrontNetty
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
 
-      //  private string frontId;
-      //  private string siloId;
-
         public GameClientHandler()
         {
 
-        }        
+        }
 
 
         public override void ChannelRead(IChannelHandlerContext context, object message)
         {
-            var buffer = message as IByteBuffer;
-            if (buffer != null)
+            try
             {
-                buffer.ReadUnsignedShort();      
-                var playerId = buffer.ReadStringShortUtf8();            
-                IChannel channel = ChannelManager.Instance.GetChannel(playerId);
-                buffer.DiscardReadBytes();
-                channel.WriteAndFlushAsync(buffer);
+                var buffer = message as IByteBuffer;
+                if (buffer != null)
+                {
+                    buffer.ReadUnsignedShort();
+                    var playerId = buffer.ReadStringShortUtf8();
+                    IChannel channel = ChannelManager.Instance.GetChannel(playerId);
+                    buffer.DiscardReadBytes();
+                    channel.WriteAndFlushAsync(buffer);
 
-                logger.Debug($"Send Data to client:{playerId}");
-                return;
+                    logger.Debug($"Send Data to client:{playerId}");
+                    return;
+                }
+            }
+            catch (Exception e)
+            {
+
             }
             base.ChannelRead(context, message);
+
         }
 
         public override void HandlerRemoved(IChannelHandlerContext context)

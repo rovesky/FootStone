@@ -18,6 +18,8 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading;
+using System.Collections.Concurrent;
 
 namespace FootStone.Core
 {
@@ -47,7 +49,9 @@ namespace FootStone.Core
         private Random random = new Random();
 
 
-        private IByteBuffer recvBuffer = Unpooled.DirectBuffer();
+        private ConcurrentQueue<byte[]> msgQueue = new ConcurrentQueue<byte[]>();
+
+        // private IByteBuffer recvBuffer = Unpooled.DirectBuffer();
 
 
         public ZoneGrain(IGrainActivationContext grainActivationContext)
@@ -83,28 +87,42 @@ namespace FootStone.Core
                  {
                      try
                      {
-                         if (recvBuffer.ReadableBytes > 0)
+
+                         if (msgQueue.Count > 0)
                          {
-                  
+                             List<byte[]> datas = msgQueue.ToList();
+                             msgQueue.Clear();
+
+                             //  IByteBuffer recvBuffer = Unpooled.DirectBuffer();
+
+
                              foreach (ZonePlayer player in players.Values)
                              {
                                  //var size = random.Next() % 200;
-                               //  if (size < 100)
-                               //  {
+                                 //  if (size < 100)
+                                 //  {
 
-                                     logger.Debug($"Zone send data:{player.id.ToString()},size:{recvBuffer.ReadableBytes}!");
+                               
+                                 //添加包头
+                                 var msg = player.channel.Allocator.DirectBuffer(4 + player.id.ToString().Length);
+                                 msg.WriteUnsignedShort((ushort)MessageType.Data);
+                                 msg.WriteStringShortUtf8(player.id.ToString());
+                                 msg.WriteUnsignedShort((ushort)MessageType.Data);
+                                 foreach (var data in datas)
+                                 {
+                                     msg.WriteBytes(data);
+                                 }
+                                 //msg.WriteBytes(recvBuffer);
+                                 player.channel.WriteAndFlushAsync(msg);
 
-                                     //添加包头
-                                     var msg = player.channel.Allocator.DirectBuffer(4 + player.id.ToString().Length);
-                                     msg.WriteUnsignedShort((ushort)MessageType.Data);
-                                     msg.WriteStringShortUtf8(player.id.ToString());
-                                     msg.WriteBytes(recvBuffer);
-                                     player.channel.WriteAndFlushAsync(msg);
-                               //  }
+                                 logger.Debug($"Zone send data:{player.id.ToString()},size:{msg.ReadableBytes}" +
+                                   $",threadId:{Thread.CurrentThread.ManagedThreadId}!");
+
+                                 //  }
                              }
 
-                             recvBuffer.ResetReaderIndex();
-                             recvBuffer.ResetWriterIndex();
+                             //  recvBuffer.ResetReaderIndex();
+                             //  recvBuffer.ResetWriterIndex();
                          }
                      }
                      catch (Exception e)
@@ -174,8 +192,9 @@ namespace FootStone.Core
 
         public void Recv(string playerId,byte[] data)
         {
-            logger.Debug($"Zone recv data:{playerId}!");
-            recvBuffer.WriteBytes(data);
+            logger.Debug($"Zone recv data:{playerId},data.len:{data.Length}，threadId:{Thread.CurrentThread.ManagedThreadId}!");
+            msgQueue.Enqueue(data);
+           // recvBuffer.WriteBytes(data);
         }
     }
 }

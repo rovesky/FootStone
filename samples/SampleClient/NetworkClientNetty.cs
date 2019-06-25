@@ -63,7 +63,7 @@ namespace FootStone.Core.Client
                 Interlocked.Increment(ref msgCount);
               //  if (msgCount % (1 * playerCount) == 0)
                 {
-                    logger.Info("Received from server msg count: " + msgCount + ",msg length:" + buffer.Capacity);
+                    logger.Info("Received from server msg count: " + msgCount + ",msg length:" + buffer.ReadableBytes);
                 }
 
                 ushort type = buffer.ReadUnsignedShort();
@@ -74,6 +74,17 @@ namespace FootStone.Core.Client
                 else if(type == 2)
                 {
                     tcsBindSiloed.SetResult(null);
+                }
+                else if (type == 10)
+                {
+                    int len = buffer.ReadableBytes;
+                    for(int i = 0; i < len/7; ++i)
+                    {
+                        var size = buffer.ReadUnsignedShort();
+                        var msg = buffer.ReadString(size,Encoding.UTF8);
+
+                        logger.Info($"{msgCount}-{i}Received from server msg:{msg}");
+                    }
                 }
              
             }
@@ -190,8 +201,10 @@ namespace FootStone.Core.Client
         {
             var data = channel.Allocator.Buffer(100);
             data.WriteUnsignedShort(10);
+            data.WriteUnsignedShort((ushort)(message.Length+2));
             data.WriteUnsignedShort((ushort)message.Length);
             data.WriteString(message, Encoding.UTF8);
+
             await channel.WriteAndFlushAsync(data);
         }
     }
