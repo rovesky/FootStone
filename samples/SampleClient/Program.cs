@@ -266,9 +266,7 @@ namespace FootStone.Core.Client
                     {
                         netty.SendMessage(channel, "Hello");
                     };
-                    pingTimer.Start();
-
-                 
+                    pingTimer.Start();                 
                 }
 
                 logger.Info($"{account} playerPrx begin!" );

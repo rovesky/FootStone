@@ -1,5 +1,6 @@
 ﻿using DotNetty.Buffers;
 using DotNetty.Codecs;
+using DotNetty.Common.Utilities;
 using DotNetty.Handlers.Logging;
 using DotNetty.Transport.Bootstrapping;
 using DotNetty.Transport.Channels;
@@ -31,32 +32,39 @@ namespace FootStone.FrontNetty
                 var buffer = message as IByteBuffer;
                 if (buffer != null)
                 {
-                    buffer.ReadUnsignedShort();
+                    ushort type = buffer.ReadUnsignedShort();
                     var playerId = buffer.ReadStringShortUtf8();
-                    IChannel channel = ChannelManager.Instance.GetChannel(playerId);
+                    IChannel channel = ChannelManager.Instance.GetPlayerChannel(playerId);
                     buffer.DiscardReadBytes();
-                    channel.WriteAndFlushAsync(buffer);
 
-                    logger.Debug($"Send Data to client:{playerId}");
+                    switch ((MessageType)type)
+                    {
+                        case MessageType.Data:
+                         //   ReferenceCountUtil.Release(buffer);
+                            channel.WriteAndFlushAsync(buffer);
+                            break;
+                        default:
+                            channel.WriteAndFlushAsync(buffer);
+                            break;
+                    }                            
+              
+                    //   logger.Debug($"Send Data to client:{playerId}");
                     return;
                 }
             }
             catch (Exception e)
             {
-
+                logger.Warn(e);
             }
             base.ChannelRead(context, message);
 
         }
 
         public override void HandlerRemoved(IChannelHandlerContext context)
-        {
-            // if (siloId != null)
-            // {
+        {       
             logger.Debug($"HandlerRemoved:{context.Name}");
-            ChannelManager.Instance.RemoveChannel(context.Name);
-            //    siloId = null;
-           // }
+            ChannelManager.Instance.RemovePlayerChannel(context.Name);
+      
             base.HandlerRemoved(context);
         }
 
@@ -65,7 +73,6 @@ namespace FootStone.FrontNetty
         {
             logger.Error(exception);
             context.CloseAsync();
-
             base.ExceptionCaught(context, exception);
         }
     }
@@ -92,11 +99,13 @@ namespace FootStone.FrontNetty
                     .Group(group)
                     .Channel<TcpSocketChannel>()
                     .Option(ChannelOption.Allocator, PooledByteBufferAllocator.Default)
-                    .Option(ChannelOption.TcpNodelay, true)
+                    .Option(ChannelOption.TcpNodelay, false)
+                    .Option(ChannelOption.SoSndbuf, 512 * 1024)
+                    .Option(ChannelOption.SoRcvbuf, 512 * 1024)
                     .Handler(new ActionChannelInitializer<ISocketChannel>(channel =>
                     {
                         IChannelPipeline pipeline = channel.Pipeline;
-
+                 
                         // pipeline.AddLast(new LoggingHandler());
                         pipeline.AddLast("framing-enc", new LengthFieldPrepender(2));
                         pipeline.AddLast("framing-dec", new LengthFieldBasedFrameDecoder(ushort.MaxValue, 0, 2, 0, 2));
@@ -129,16 +138,8 @@ namespace FootStone.FrontNetty
             var channel = await bootstrap.ConnectAsync(new IPEndPoint(IPAddress.Parse(host), port));
 
             var siloId = host + ":" + port;
-            ChannelManager.Instance.AddChannel(siloId, channel);
-
-            //var message = channel.Allocator.DirectBuffer(4+siloId.Length);
-            //message.WriteUnsignedShort((ushort)MessageType.SiloHandShake);         
-            //message.WriteStringShortUtf8(siloId);
-            //await channel.WriteAndFlushAsync(message);
-
-            logger.Debug($"Netty Add Silo：{siloId}");
-       
-
+            ChannelManager.Instance.AddSiloChannel(siloId, channel);
+            logger.Debug($"Netty Add Silo：{siloId}");      
             return channel;
         }
 

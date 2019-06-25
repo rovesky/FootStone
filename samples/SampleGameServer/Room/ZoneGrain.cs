@@ -51,8 +51,7 @@ namespace FootStone.Core
 
         private ConcurrentQueue<byte[]> msgQueue = new ConcurrentQueue<byte[]>();
 
-        // private IByteBuffer recvBuffer = Unpooled.DirectBuffer();
-
+       
 
         public ZoneGrain(IGrainActivationContext grainActivationContext)
         {  
@@ -78,11 +77,7 @@ namespace FootStone.Core
         {
             var options = ServiceProvider.GetService<IOptions<NettyGameOptions>>().Value;
             nettyPort = options.Port;
-            //List<byte[]> datas = new List<byte[]>();
-            //for (int i = 0; i < 100; ++i) {
-            //    datas.Add(randomBytes(i));
-            //}
-
+ 
             RegisterTimer((s) =>
                  {
                      try
@@ -92,9 +87,8 @@ namespace FootStone.Core
                          {
                              List<byte[]> datas = msgQueue.ToList();
                              msgQueue.Clear();
-
-                             //  IByteBuffer recvBuffer = Unpooled.DirectBuffer();
-
+                         
+                             IChannel channel = null;
 
                              foreach (ZonePlayer player in players.Values)
                              {
@@ -102,7 +96,7 @@ namespace FootStone.Core
                                  //  if (size < 100)
                                  //  {
 
-                               
+                                 channel = player.channel;
                                  //Ìí¼Ó°üÍ·
                                  var msg = player.channel.Allocator.DirectBuffer(4 + player.id.ToString().Length);
                                  msg.WriteUnsignedShort((ushort)MessageType.Data);
@@ -111,18 +105,20 @@ namespace FootStone.Core
                                  foreach (var data in datas)
                                  {
                                      msg.WriteBytes(data);
-                                 }
-                                 //msg.WriteBytes(recvBuffer);
-                                 player.channel.WriteAndFlushAsync(msg);
+                                 }                               
+                                 //  player.channel.WriteAndFlushAsync(msg);
 
-                                 logger.Debug($"Zone send data:{player.id.ToString()},size:{msg.ReadableBytes}" +
-                                   $",threadId:{Thread.CurrentThread.ManagedThreadId}!");
+                                 player.channel.WriteAsync(msg);
 
+                                 //   logger.Debug($"Zone send data:{player.id.ToString()},size:{msg.ReadableBytes}" +
+                                 //     $",threadId:{Thread.CurrentThread.ManagedThreadId}!");
                                  //  }
                              }
-
-                             //  recvBuffer.ResetReaderIndex();
-                             //  recvBuffer.ResetWriterIndex();
+                          
+                             if(channel != null)
+                             {
+                                 channel.Flush();
+                             }
                          }
                      }
                      catch (Exception e)

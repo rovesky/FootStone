@@ -127,7 +127,7 @@ namespace FootStone.Core.Client
                     .Group(group)
                     .Channel<TcpSocketChannel>()
                     .Option(ChannelOption.Allocator, PooledByteBufferAllocator.Default)
-                    .Option(ChannelOption.TcpNodelay, true)
+                  //  .Option(ChannelOption.TcpNodelay, true)
                     .Handler(new ActionChannelInitializer<ISocketChannel>(channel =>
                     {
                         IChannelPipeline pipeline = channel.Pipeline;

@@ -30,47 +30,64 @@ namespace FootStone.FrontNetty
         }
 
 
-        private ConcurrentDictionary<string, IChannel> channels = new ConcurrentDictionary<string, IChannel>();
+        private ConcurrentDictionary<string, IChannel> playerChannels = new ConcurrentDictionary<string, IChannel>();
+        private ConcurrentDictionary<string, IChannel> siloChannels = new ConcurrentDictionary<string, IChannel>();
 
-        public  void AddChannel(string id, IChannel channel)
+        public void AddPlayerChannel(string id, IChannel channel)
         {
-            logger.Debug("AddChannel:" + id);
-            this.channels[id] = channel;
+         //   logger.Debug("AddPlayerChannel:" + id);
+            this.playerChannels[id] = channel;
         }
 
-        public void RemoveChannel(string id)
+        public void RemovePlayerChannel(string id)
         {
-            logger.Debug("RemoveChannel:" + id);
+          //  logger.Debug("RemovePlayerChannel:" + id);
             IChannel value;
-            channels.TryRemove(id, out value);            
+            playerChannels.TryRemove(id, out value);            
         }
 
-        public IChannel GetChannel(string id)
+        public IChannel GetPlayerChannel(string id)
         {
-            logger.Debug("FindChannel:" + id);
-            return this.channels[id];
+          //  logger.Debug("GetPlayerChannel:" + id);
+            return this.playerChannels[id];
         }
 
-        public int GetChannelCount()
+        public int GetPlayerChannelCount()
         {       
-            return this.channels.Count;
+            return this.playerChannels.Count;
         }
-        public void Send(string id,byte[] data)
-        {
-            Interlocked.Increment(ref msgCount);
-            if (msgCount % 10000 == 0)
-            {
-                logger.Debug("send msg count:" + msgCount);
-            }
 
-            IChannel channel;
-            this.channels.TryGetValue(id, out channel);
-            if(channel != null)
+        public void AddSiloChannel(string id, IChannel channel)
+        {
+            //   logger.Debug("AddPlayerChannel:" + id);
+            this.siloChannels[id] = channel;
+        }
+
+        public void RemoveSiloChannel(string id)
+        {
+            //  logger.Debug("RemovePlayerChannel:" + id);
+            IChannel value;
+            siloChannels.TryRemove(id, out value);
+        }
+
+        public IChannel GetSiloChannel(string id)
+        {
+            //  logger.Debug("GetPlayerChannel:" + id);
+            return this.siloChannels[id];
+        }
+
+        public int GetSiloChannelCount()
+        {
+            return this.siloChannels.Count;
+        }
+
+        public void FlushAllSiloChannel()
+        {
+           foreach(var channel in this.siloChannels.Values)
             {
-                IByteBuffer byteBuffer = Unpooled.Buffer(data.Length);
-                byteBuffer.WriteBytes(data);
-                channel.WriteAndFlushAsync(byteBuffer);
+                channel.Flush();
             }
         }
+
     }
 }
