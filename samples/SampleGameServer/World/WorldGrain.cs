@@ -42,7 +42,50 @@ namespace FootStone.Grains
 
 
         public override async Task OnActivateAsync()
-        {    
+        {
+            RegisterTimer(async (s1) =>
+            {
+                logger.Warn("-----------------------------------  -----------  ------------");
+                logger.Warn("Id                                   Index        Player Count");
+                logger.Warn("-----------------------------------  -----------  ------------");
+                int i = 0;
+                foreach (var zoneId in zones)
+                {
+                    i++;
+                    IZoneGrain zoneGrain = GrainFactory.GetGrain<IZoneGrain>(zoneId);
+                    var count = await zoneGrain.GetPlayerCount();
+                    logger.Warn("{0}  {1}  {2}", zoneId.ToString().PadRight(21), Pad(i, 11), count);
+                }
+                logger.Warn("-----------------------------------  -----------  ------------");
+
+
+                logger.Warn($"--  Channel Player Count:{ZoneNetttyData.Instance.GetChannelCount()}  --");
+                logger.Warn($"--  Zone Player Count:{ZoneNetttyData.Instance.GetPlayerZoneCount()}  --");
+
+
+                logger.Warn("---------------------  -----------  ------------");
+                logger.Warn("Server Name            Id           Player Count");
+                logger.Warn("---------------------  -----------  ------------");
+                foreach (var s in gameInfos)
+                {
+                    IGameGrain gameGrain = GrainFactory.GetGrain<IGameGrain>(s.id);
+                    var count = await gameGrain.GetPlayerCount();
+                    logger.Warn("{0}  {1}  {2}", s.name.ToString().PadRight(21), Pad((int)s.id, 11), count);
+                }
+                logger.Warn("---------------------  -----------  ------------");
+
+                var managerGrain = GrainFactory.GetGrain<IManagementGrain>(0);
+                var stats = await managerGrain.GetSimpleGrainStatistics();
+                logger.Warn("------------------------------  -----------  ------------");
+                logger.Warn("Silo                            Activations  Type");
+                logger.Warn("------------------------------  -----------  ------------");
+                foreach (var s in stats.OrderBy(s => s.SiloAddress + s.GrainType))
+                    logger.Warn("{0}  {1}  {2}", s.SiloAddress.ToString().PadRight(21), Pad(s.ActivationCount, 11), s.GrainType);
+                logger.Warn("------------------------------  -----------  ------------");
+            }
+       , null
+       , TimeSpan.FromSeconds(10)
+       , TimeSpan.FromSeconds(10));
 
             await base.OnActivateAsync();
         }
@@ -96,9 +139,14 @@ namespace FootStone.Grains
             return Task.CompletedTask;
         }
 
-        public async Task Init(string configRoot)
+        public async Task Init()
         {
-            using (var jsonStream = new JsonTextReader(File.OpenText($"{configRoot}\\GameData\\Games.json")))
+            if (isInited)
+                return;
+
+            isInited = true;
+
+            using (var jsonStream = new JsonTextReader(File.OpenText($"{Environment.CurrentDirectory}/GameData/Games.json")))
             {
                 var deserializer = new JsonSerializer();
                 var gameConfigs = deserializer.Deserialize<List<GameConfig>>(jsonStream);
@@ -111,51 +159,8 @@ namespace FootStone.Grains
 
                     await AddGame(gameInfo);
                 }
-            }
-
-            RegisterTimer(async (s1) =>
-            {
-                logger.Warn("-----------------------------------  -----------  ------------");
-                logger.Warn("Id                                   Index        Player Count");
-                logger.Warn("-----------------------------------  -----------  ------------");
-                int i = 0;
-                foreach (var zoneId in zones)
-                {
-                    i++;
-                    IZoneGrain zoneGrain = GrainFactory.GetGrain<IZoneGrain>(zoneId);
-                    var count = await zoneGrain.GetPlayerCount();
-                    logger.Warn("{0}  {1}  {2}", zoneId.ToString().PadRight(21), Pad(i, 11), count);
-                }
-                logger.Warn("-----------------------------------  -----------  ------------");
-
-
-                logger.Warn($"--  Channel Player Count:{ZoneNetttyData.Instance.GetChannelCount()}  --");
-                logger.Warn($"--  Zone Player Count:{ZoneNetttyData.Instance.GetPlayerZoneCount()}  --");
-
-
-                logger.Warn("---------------------  -----------  ------------");
-                logger.Warn("Server Name            Id           Player Count");
-                logger.Warn("---------------------  -----------  ------------");
-                foreach (var s in gameInfos)
-                {
-                    IGameGrain gameGrain = GrainFactory.GetGrain<IGameGrain>(s.id);
-                    var count = await gameGrain.GetPlayerCount();
-                    logger.Warn("{0}  {1}  {2}", s.name.ToString().PadRight(21), Pad((int)s.id, 11), count);
-                }
-                logger.Warn("---------------------  -----------  ------------");
-
-                var managerGrain = GrainFactory.GetGrain<IManagementGrain>(0);
-                var stats = await managerGrain.GetSimpleGrainStatistics();
-                logger.Warn("------------------------------  -----------  ------------");
-                logger.Warn("Silo                            Activations  Type");
-                logger.Warn("------------------------------  -----------  ------------");
-                foreach (var s in stats.OrderBy(s => s.SiloAddress + s.GrainType))
-                    logger.Warn("{0}  {1}  {2}", s.SiloAddress.ToString().PadRight(21), Pad(s.ActivationCount, 11), s.GrainType);
-                logger.Warn("------------------------------  -----------  ------------");
-            }
-          , null
-          , TimeSpan.FromSeconds(10)
-          , TimeSpan.FromSeconds(10));
+            }         
+         
         }
 
         public Task<List<ServerInfo>> GetServerList()
@@ -179,6 +184,7 @@ namespace FootStone.Grains
         private int count = 0;
         private Guid curZone;
         private List<Guid> zones = new List<Guid>();
+        private bool isInited;
 
         public Task<string> DispatchZone(string playerId, int gameId)
         {

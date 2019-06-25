@@ -137,8 +137,9 @@ namespace FootStone.Core.Client
                 //  ConnectNettyAsync("127.0.0.1", 8007,"11").Wait();
                 int count = args.Length > 0? int.Parse(args[0]) : 1;
                 int startIndex = args.Length > 1 ? int.Parse(args[1]) : 0;
+                bool needNetty = args.Length > 2 ? bool.Parse(args[2]) : true;
 
-                Test(count, startIndex).Wait();
+                Test(count, startIndex, needNetty).Wait();
                 //logger.Info("Test OK!");
 
                 Console.ReadLine();
@@ -151,14 +152,19 @@ namespace FootStone.Core.Client
 
         private static List<NetworkClientIce> clients = new List<NetworkClientIce>();
 
-        private static async Task Test(int count,int startIndex)
+        private static async Task Test(int count,int startIndex, bool needNetty)
         {       
-            NetworkClientIce clientIce = new NetworkClientIce();
-            NetworkClientNetty clientNetty = new NetworkClientNetty();
-            clientNetty.Init();
+            NetworkClientIce clientIce = new NetworkClientIce();          
             clientIce.Init("192.168.0.128", 4061);
             clients.Add(clientIce);
-            
+
+            NetworkClientNetty clientNetty = null;
+            if (needNetty)
+            {
+                clientNetty = new NetworkClientNetty();
+                clientNetty.Init();
+            }
+
             for (int i = startIndex; i < startIndex+ count; ++i)
             {
                 if(i%100 == 0)

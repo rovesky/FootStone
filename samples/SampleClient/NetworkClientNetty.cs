@@ -1,17 +1,19 @@
 ﻿using DotNetty.Buffers;
 using DotNetty.Codecs;
-
+using DotNetty.Common.Utilities;
 using DotNetty.Handlers.Logging;
 using DotNetty.Transport.Bootstrapping;
 using DotNetty.Transport.Channels;
 using DotNetty.Transport.Channels.Sockets;
 using NLog;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Timers;
 
 namespace FootStone.Core.Client
 {
@@ -35,9 +37,10 @@ namespace FootStone.Core.Client
     {
    
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
-        private static int msgCount = 0;
-        private static int playerCount = 0;
+     //   private static int msgCount = 0;
+        public static int playerCount = 0;
 
+        public static ConcurrentQueue<IByteBuffer> msgQueue = new ConcurrentQueue<IByteBuffer>();
 
         public TaskCompletionSource<object> tcsConnected = new TaskCompletionSource<object>();
         public TaskCompletionSource<object> tcsBindSiloed = new TaskCompletionSource<object>();
@@ -59,13 +62,8 @@ namespace FootStone.Core.Client
         {
             var buffer = message as IByteBuffer;
             if (buffer != null)
-            {
-                Interlocked.Increment(ref msgCount);
-              //  if (msgCount % (1 * playerCount) == 0)
-                {
-                    logger.Info("Received from server msg count: " + msgCount + ",msg length:" + buffer.ReadableBytes);
-                }
-
+            {           
+             
                 ushort type = buffer.ReadUnsignedShort();
                 if(type == 1)
                 {
@@ -77,21 +75,15 @@ namespace FootStone.Core.Client
                 }
                 else if (type == 10)
                 {
-                    int len = buffer.ReadableBytes;
-                    for(int i = 0; i < len/7; ++i)
-                    {
-                        var size = buffer.ReadUnsignedShort();
-                        var msg = buffer.ReadString(size,Encoding.UTF8);
-
-                        logger.Info($"{msgCount}-{i}Received from server msg:{msg}");
-                    }
+                    msgQueue.Enqueue(buffer);
+                    return;
                 }
              
             }
             base.ChannelRead(context, message);
         }
 
-        public override void ChannelReadComplete(IChannelHandlerContext context) => context.Flush();
+       // public override void ChannelReadComplete(IChannelHandlerContext context) => context.Flush();
 
         public override void ExceptionCaught(IChannelHandlerContext context, Exception exception)
         {
@@ -109,6 +101,8 @@ namespace FootStone.Core.Client
         private Bootstrap bootstrap;
         private NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
         private MultithreadEventLoopGroup group;
+        private System.Timers.Timer pingTimer;
+        private int msgCount = 0;
 
         public NetworkClientNetty()
         {
@@ -143,6 +137,45 @@ namespace FootStone.Core.Client
                         pipeline.AddLast("framing-dec", new LengthFieldBasedFrameDecoder(ushort.MaxValue, 0, 2, 0, 2));
                         pipeline.AddLast("echo", new SocketNettyHandler());
                     }));
+
+                pingTimer = new System.Timers.Timer();
+                pingTimer.AutoReset = true;
+                pingTimer.Interval = 33;
+                pingTimer.Enabled = true;
+                pingTimer.Elapsed += (_1, _2) =>
+                {
+                    try
+                    {
+                        IByteBuffer[] buffers = SocketNettyHandler.msgQueue.ToArray();
+                        SocketNettyHandler.msgQueue.Clear();
+
+                        foreach (var buffer in buffers)
+                        {
+                            msgCount++;
+
+                            if (msgCount % (10 * SocketNettyHandler.playerCount) == 0)
+                            {
+                                logger.Info("Received from server msg count: " + msgCount + ",msg length:" + buffer.ReadableBytes);
+                            }
+
+                            int len = buffer.ReadableBytes;
+                            for (int i = 0; i < len / 7; ++i)
+                            {
+                                var size = buffer.ReadUnsignedShort();
+                                var msg = buffer.ReadString(size, Encoding.UTF8);
+
+                                logger.Debug($"{msgCount}-{i}Received from server msg:{msg}");
+                            }
+                            ReferenceCountUtil.Release(buffer);
+              
+                        }
+                    }
+                    catch(Exception e)
+                    {
+                        logger.Error(e);
+                    }
+                };
+                pingTimer.Start();
             }
 
             catch (Exception ex)
@@ -176,7 +209,8 @@ namespace FootStone.Core.Client
             await channel.WriteAndFlushAsync(message);
 
             var handler = channel.Pipeline.Get<SocketNettyHandler>();
-            await handler.tcsConnected.Task;
+            await handler.tcsConnected.Task;          
+
             return channel;
         }
 

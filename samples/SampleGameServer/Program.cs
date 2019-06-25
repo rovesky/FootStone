@@ -4,12 +4,15 @@ using FootStone.FrontNetty;
 using FootStone.GrainInterfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using NLog;
 using Orleans;
 using Orleans.Configuration;
 using Orleans.Hosting;
 using SampleFrontIce;
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
@@ -96,9 +99,9 @@ namespace FootStone.Core.GameServer
                         //})
                         .AddStartupTask(async (IServiceProvider services, CancellationToken cancellation) =>
                         {
-                            var grainFactory = services.GetRequiredService<IGrainFactory>();             
+                            var grainFactory = services.GetRequiredService<IGrainFactory>();
                             var grain = grainFactory.GetGrain<IWorldGrain>("1");
-                            await grain.Init(Environment.CurrentDirectory);
+                            await grain.Init();                         
 
                         })
                         //  .Configure<EndpointOptions>(options => options.AdvertisedIPAddress = IPAddress.Any)
