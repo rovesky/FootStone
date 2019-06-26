@@ -85,9 +85,7 @@ namespace FootStone.Core.FrontServer
                             options.FrontPort = 8007;
                             options.GamePort = 8017;
                         })
-                        .Build();
-
-                        //Global.OrleansClient = client.ClusterClient;
+                        .Build();                 
 
                         client.StartAsync().Wait();
                         break;

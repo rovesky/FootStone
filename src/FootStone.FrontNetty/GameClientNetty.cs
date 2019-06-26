@@ -18,10 +18,11 @@ namespace FootStone.FrontNetty
     class GameClientHandler : ChannelHandlerAdapter
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
+        private IChannelManager gameChannelManager;
 
-        public GameClientHandler()
+        public GameClientHandler(IChannelManager gameChannelManager)
         {
-
+            this.gameChannelManager = gameChannelManager;
         }
 
 
@@ -34,7 +35,7 @@ namespace FootStone.FrontNetty
                 {
                     ushort type = buffer.ReadUnsignedShort();
                     var playerId = buffer.ReadStringShortUtf8();
-                    IChannel channel = ChannelManager.Instance.GetPlayerChannel(playerId);
+                    IChannel channel = gameChannelManager.GetChannel(playerId);
                     buffer.DiscardReadBytes();
 
                     switch ((MessageType)type)
@@ -63,7 +64,7 @@ namespace FootStone.FrontNetty
         public override void HandlerRemoved(IChannelHandlerContext context)
         {       
             logger.Warn($"Front HandlerRemoved:{context.Name}");
-            ChannelManager.Instance.RemovePlayerChannel(context.Name);
+            gameChannelManager.RemoveChannel(context.Name);
       
             base.HandlerRemoved(context);
         }
@@ -89,7 +90,7 @@ namespace FootStone.FrontNetty
 
         }
 
-        public void Init()
+        public void Init(IChannelManager channelManager)
         {
             group = new MultithreadEventLoopGroup();
             try
@@ -109,7 +110,7 @@ namespace FootStone.FrontNetty
                         // pipeline.AddLast(new LoggingHandler());
                         pipeline.AddLast("framing-enc", new LengthFieldPrepender(2));
                         pipeline.AddLast("framing-dec", new LengthFieldBasedFrameDecoder(ushort.MaxValue, 0, 2, 0, 2));
-                        pipeline.AddLast("echo", new GameClientHandler());
+                        pipeline.AddLast("echo", new GameClientHandler(channelManager));
                     }));
             }
 
@@ -137,9 +138,9 @@ namespace FootStone.FrontNetty
         {
             var channel = await bootstrap.ConnectAsync(new IPEndPoint(IPAddress.Parse(host), port));
 
-            var siloId = host + ":" + port;
-            ChannelManager.Instance.AddSiloChannel(siloId, channel);
-            logger.Debug($"Netty Add Silo：{siloId}");      
+        //    var siloId = host + ":" + port;
+        //    ChannelManager.Instance.AddSiloChannel(siloId, channel);
+         //   logger.Debug($"Netty Add Silo：{siloId}");      
             return channel;
         }
 

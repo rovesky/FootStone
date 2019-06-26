@@ -133,7 +133,7 @@ namespace FootStone.Core.GameServer
                         .EnableDirectClient();
                     })
                     //ÃÌº”Ice÷ß≥÷
-                //    .AddFrontIce()
+                    .AddFrontIce()                    
                     .Build();
 
                 logger.Info("FSHost builded!");

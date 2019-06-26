@@ -18,7 +18,16 @@ namespace FootStone.FrontNetty
         private MultithreadEventLoopGroup workerGroup;
         private ServerBootstrap bootstrap;
 
-        public void Init()
+
+        public delegate void delegateBindPlayerAndGameServer(string playerId,string siloId);
+        public event delegateBindPlayerAndGameServer eventBindPlayerAndGameServer;
+
+        public void EmitEventBindPlayerAndSilo(string playerId,string siloId)
+        {
+            eventBindPlayerAndGameServer(playerId, siloId);
+        }
+
+        public void Init(IChannelManager channelManager)
         {
             bossGroup = new MultithreadEventLoopGroup(1);
             workerGroup = new MultithreadEventLoopGroup(4);
@@ -36,7 +45,7 @@ namespace FootStone.FrontNetty
                         //    pipeline.AddLast(new LoggingHandler("SRV-CONN"));
                         pipeline.AddLast("framing-enc", new LengthFieldPrepender(2));
                         pipeline.AddLast("framing-dec", new LengthFieldBasedFrameDecoder(ushort.MaxValue, 0, 2, 0, 2));
-                        pipeline.AddLast("echo", new FrontServerHandler());
+                        pipeline.AddLast("echo", new FrontServerHandler(this,channelManager));
                     }));
 
                 logger.Info("DotNetty FrontServer Inited!");
@@ -61,7 +70,7 @@ namespace FootStone.FrontNetty
             }
         }
 
-        public async  Task Stop()
+        public async  Task Fini()
         {        
             await boundChannel.CloseAsync();
             await Task.WhenAll(
@@ -80,9 +89,24 @@ namespace FootStone.FrontNetty
         private string playerId;
         private IChannel siloChannel;
 
-        public FrontServerHandler()
+        private FrontServerNetty frontServer;
+        private IChannelManager channelManager;
+
+        public FrontServerHandler(FrontServerNetty frontServer,IChannelManager channelManager)
         {
-   
+            this.frontServer = frontServer;
+            this.channelManager = channelManager;
+        }
+
+        private void PlayerBindSilo(IByteBuffer buffer)
+        {
+            var playerId = buffer.ReadStringShortUtf8();
+            var siloId = buffer.ReadStringShortUtf8();
+            frontServer.EmitEventBindPlayerAndSilo(playerId, siloId);
+
+         //   buffer.ResetReaderIndex();
+         //   siloChannel.WriteAndFlushAsync(buffer);
+            logger.Debug($"Player:{playerId} bind silo:{siloId}");
         }
 
         public override void ChannelRead(IChannelHandlerContext context, object message)
@@ -90,31 +114,25 @@ namespace FootStone.FrontNetty
 
             if (message is IByteBuffer buffer)
             {
+
+                //读取消息类型
                 ushort type = buffer.ReadUnsignedShort();
 
                 switch ((MessageType)type)
                 {
                     case MessageType.PlayerHandshake:
                         {
-                            playerId = buffer.ReadStringShortUtf8();
-                            ChannelManager.Instance.AddPlayerChannel(playerId, context.Channel);
-
+                            playerId = buffer.ReadStringShortUtf8();                          
                             buffer.ResetReaderIndex();
-                            context.Channel.WriteAndFlushAsync(buffer);                         
-
+                            context.Channel.WriteAndFlushAsync(buffer);
+                            channelManager.AddChannel(playerId, context.Channel);
                             logger.Debug("Player Handshake:" + playerId);
                             return;
                         }
-                    case MessageType.PlayerBindSilo:
-                        {
-                            var playerId = buffer.ReadStringShortUtf8();
-                            var siloId = buffer.ReadStringShortUtf8();
-                            siloChannel = ChannelManager.Instance.GetSiloChannel(siloId);
-
-                            buffer.ResetReaderIndex();
-                            siloChannel.WriteAndFlushAsync(buffer);
-                            logger.Debug($"Player:{playerId} bind silo:{siloId}");
-                            return;
+                    case MessageType.PlayerBindGame:
+                        {                        
+                            PlayerBindSilo(buffer);
+                            break;
                         }
                     case MessageType.Data:
                         {
@@ -149,7 +167,7 @@ namespace FootStone.FrontNetty
         {  
             if (playerId != null)
             {          
-                ChannelManager.Instance.RemoveSiloChannel(playerId);
+                channelManager.RemoveChannel(playerId);
                 playerId = null;
             }
             base.HandlerRemoved(context);

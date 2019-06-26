@@ -10,7 +10,7 @@ namespace FootStone.FrontNetty
 {
     public static class FrontNettyHostingExtensions
     {
-        //public static IFSHostBuilder AddFrontNetty(this IFSHostBuilder builder, Action<NettyOptions> config)
+        //public static IFSHostBuilder AddFrontNetty(this IFSHostBuilder builder, Action<NettyFrontOptions> config)
         //{
         //    builder.ConfigureSilo(silo =>
         //    {
@@ -35,7 +35,7 @@ namespace FootStone.FrontNetty
             return builder;
         }
 
-
+     
         public static IByteBuffer WriteStringShort(this IByteBuffer buffer, string value, Encoding encoding)
         {
             buffer.WriteUnsignedShort((ushort)value.Length).

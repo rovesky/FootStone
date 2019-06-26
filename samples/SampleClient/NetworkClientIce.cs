@@ -153,7 +153,7 @@ namespace FootStone.Core.Client
                 logger.Warn($"{account} connecton closed!");
             });
 
-            logger.Info(connection.getInfo().connectionId+" session connection: ACM=" +
+            logger.Debug(connection.getInfo().connectionId+" session connection: ACM=" +
                 JsonConvert.SerializeObject(connection.getACM())
                 + ",Endpoint=" + connection.getEndpoint().ToString());
             

@@ -89,7 +89,7 @@ namespace FootStone.Core
 
                              foreach (ZonePlayer player in players.Values)
                              {                               
-                               //  if (random.Next() % 100 < 50)
+                                 if (random.Next() % 100 < 50)
                                  {
                                      channel = player.channel;
                                      //Ìí¼Ó°üÍ·

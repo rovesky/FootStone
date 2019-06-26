@@ -48,7 +48,7 @@ namespace FootStone.Core.Client
         public SocketNettyHandler()
         {         
             Interlocked.Increment(ref playerCount);
-            logger.Info($"new SocketNettyHandler:{playerCount}! ");
+            logger.Debug($"new SocketNettyHandler:{playerCount}! ");
         }
 
         public override void ChannelActive(IChannelHandlerContext context)
@@ -113,13 +113,6 @@ namespace FootStone.Core.Client
         {
             group = new MultithreadEventLoopGroup();
 
-            //X509Certificate2 cert = null;
-            //string targetHost = null;
-            //if (ClientSettings.IsSsl)
-            //{
-            //    cert = new X509Certificate2(Path.Combine(ExampleHelper.ProcessDirectory, "dotnetty.com.pfx"), "password");
-            //    targetHost = cert.GetNameInfo(X509NameType.DnsName, false);
-            //}
             try
             {
                 bootstrap = new Bootstrap();
@@ -140,7 +133,7 @@ namespace FootStone.Core.Client
 
                 pingTimer = new System.Timers.Timer();
                 pingTimer.AutoReset = true;
-                pingTimer.Interval = 33;
+                pingTimer.Interval = 10;
                 pingTimer.Enabled = true;
                 pingTimer.Elapsed += (_1, _2) =>
                 {
@@ -158,14 +151,14 @@ namespace FootStone.Core.Client
                                 logger.Info("Received from server msg count: " + msgCount + ",msg length:" + buffer.ReadableBytes);
                             }
 
-                            int len = buffer.ReadableBytes;
-                            for (int i = 0; i < len / 7; ++i)
-                            {
-                                var size = buffer.ReadUnsignedShort();
-                                var msg = buffer.ReadString(size, Encoding.UTF8);
+                            //int len = buffer.ReadableBytes;
+                            //for (int i = 0; i < len / 7; ++i)
+                            //{
+                            //    var size = buffer.ReadUnsignedShort();
+                            //    var msg = buffer.ReadString(size, Encoding.UTF8);
 
-                                logger.Debug($"{msgCount}-{i}Received from server msg:{msg}");
-                            }
+                            //    logger.Debug($"{msgCount}-{i}Received from server msg:{msg}");
+                            //}
                             ReferenceCountUtil.Release(buffer);
               
                         }
@@ -214,7 +207,7 @@ namespace FootStone.Core.Client
             return channel;
         }
 
-        public async Task BindSilo(IChannel channel,string siloId, string playerId)
+        public async Task BindGameServer(IChannel channel, string playerId,string gameServerId)
         {          
             var data = channel.Allocator.Buffer(100);
             data.WriteUnsignedShort(2);
@@ -222,13 +215,12 @@ namespace FootStone.Core.Client
             data.WriteUnsignedShort((ushort)playerId.Length);
             data.WriteString(playerId, Encoding.UTF8);
 
-            data.WriteUnsignedShort((ushort)siloId.Length);
-            data.WriteString(siloId, Encoding.UTF8);
+            data.WriteUnsignedShort((ushort)gameServerId.Length);
+            data.WriteString(gameServerId, Encoding.UTF8);
             await channel.WriteAndFlushAsync(data);
 
             var handler = channel.Pipeline.Get<SocketNettyHandler>();
-            await handler.tcsBindSiloed.Task;
-        
+            await handler.tcsBindSiloed.Task;        
         }
 
         public async Task SendMessage(IChannel channel, string message)

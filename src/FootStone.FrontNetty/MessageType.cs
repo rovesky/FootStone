@@ -7,7 +7,7 @@ namespace FootStone.FrontNetty
     public enum MessageType
     {
         PlayerHandshake = 1,
-        PlayerBindSilo = 2,
+        PlayerBindGame = 2,
         SiloHandShake = 3,
         Data  = 10
     }

@@ -107,14 +107,14 @@ namespace FootStone.FrontNetty
 
                     switch ((MessageType)type)
                     {
-                        case MessageType.PlayerBindSilo:
+                        case MessageType.PlayerBindGame:
                             {
                                 var playerId = buffer.ReadStringShortUtf8();
                                 recv.BindChannel(playerId, context.Channel);
 
                                 //添加包头
                                 var header = context.Allocator.DirectBuffer(4 + playerId.Length);
-                                header.WriteUnsignedShort((ushort)MessageType.PlayerBindSilo);
+                                header.WriteUnsignedShort((ushort)MessageType.PlayerBindGame);
                                 header.WriteStringShortUtf8(playerId);
 
                                 buffer.ResetReaderIndex();
@@ -130,7 +130,7 @@ namespace FootStone.FrontNetty
                             {
                                 var playerId = buffer.ReadStringShortUtf8();
                                 logger.Debug($"Game recv data,player:{playerId},size:{buffer.Capacity}!");
-                                recv.Recv(playerId, buffer, context.Channel);
+                                recv.Recv(playerId, buffer);
                                 break;
                             }
                         default:
@@ -150,7 +150,7 @@ namespace FootStone.FrontNetty
         public override void HandlerAdded(IChannelHandlerContext context)
         {
             frontId = context.Channel.RemoteAddress.ToString();
-            ChannelManager.Instance.AddPlayerChannel(frontId,context.Channel);
+           // ChannelManager.Instance.AddPlayerChannel(frontId,context.Channel);
 
             logger.Warn($"Game HandlerAdded:{frontId}!");
             base.HandlerAdded(context);
@@ -161,7 +161,7 @@ namespace FootStone.FrontNetty
             if (frontId != null)
             {
                 logger.Warn($"Game HandlerRemoved:{frontId}!");
-                ChannelManager.Instance.RemovePlayerChannel(frontId);
+            //    ChannelManager.Instance.RemovePlayerChannel(frontId);
                 frontId = null;
             }
             base.HandlerRemoved(context);

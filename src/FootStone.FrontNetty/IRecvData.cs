@@ -8,7 +8,8 @@ namespace FootStone.FrontNetty
 {
     public interface IRecvData
     {
-        void Recv(string playerId, IByteBuffer data, IChannel channel);
+        void Recv(string playerId, IByteBuffer data);
+
         void BindChannel(string playerId, IChannel channel);
     }
 }

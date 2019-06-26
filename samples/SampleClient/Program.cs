@@ -195,7 +195,7 @@ namespace FootStone.Core.Client
                 try
                 {
                     await accountPrx.RegisterRequestAsync(account,new RegisterInfo(account, password));
-                    logger.Info("RegisterRequest ok:" + account);
+                    logger.Debug("RegisterRequest ok:" + account);
                 }
                 catch (Exception ex)
                 {
@@ -205,7 +205,7 @@ namespace FootStone.Core.Client
              //   await accountPrx.TestLoginRequestAsync("11", "22", new Sample.SampleLoginData("code1"));
 
                 await accountPrx.LoginRequestAsync(account, password);
-                logger.Info("LoginRequest ok:" + account);
+                logger.Debug("LoginRequest ok:" + account);
 
                 var worldPrx = WorldPrxHelper.uncheckedCast(sessionPrx, "world");
                 List<ServerInfo> servers = await worldPrx.GetServerListRequestAsync();
@@ -243,7 +243,7 @@ namespace FootStone.Core.Client
                 System.Timers.Timer pingTimer = null;
                 if (netty != null)
                 {
-                    //连接Netty Zone
+                    //连接Netty
                     var host = parseHost(sessionPrx.ice_getConnection().getEndpoint().ToString());
                     logger.Debug("ConnectNetty begin(" + host + ")");
                     channel = await netty.ConnectNettyAsync(host, 8007, playerInfo.playerId);
@@ -251,8 +251,8 @@ namespace FootStone.Core.Client
 
                     //绑定Zone
                     var endPoint = await zonePrx.BindZoneAsync(playerInfo.zoneId, playerInfo.playerId);
-                    var siloId = endPoint.ip + ":" + endPoint.port;
-                    await netty.BindSilo(channel, siloId, playerInfo.playerId);     
+                    var gameServerId = endPoint.ip + ":" + endPoint.port;
+                    await netty.BindGameServer(channel, playerInfo.playerId, gameServerId);     
                
                     //进入Zone
                     await zonePrx.PlayerEnterAsync();

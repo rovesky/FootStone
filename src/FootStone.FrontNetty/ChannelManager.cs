@@ -1,91 +1,57 @@
-﻿using DotNetty.Buffers;
-using DotNetty.Transport.Channels;
-using NLog;
-using System;
+﻿using DotNetty.Transport.Channels;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading;
 
 namespace FootStone.FrontNetty
 {
-    public class ChannelManager
-    {
-        private static readonly ChannelManager instance = new ChannelManager();
+    public class ChannelManager :IChannelManager
+    {   
+     //   private static Logger logger = LogManager.GetCurrentClassLogger();
 
-        private static Logger logger = LogManager.GetCurrentClassLogger();
-
-        private static int msgCount = 0;
-
-        private ChannelManager()
+        private ConcurrentDictionary<string, IChannel> channels = new ConcurrentDictionary<string, IChannel>();
+    
+        public ChannelManager()
         {
+        }    
+
+      
+        public void AddChannel(string id, IChannel channel)
+        {
+            channels.TryAdd(id, channel);
         }
 
-        public static ChannelManager Instance
-        {
-            get
-            {
-                return instance;
-            }
-        }
-
-        private ConcurrentDictionary<string, IChannel> playerChannels = new ConcurrentDictionary<string, IChannel>();
-        private ConcurrentDictionary<string, IChannel> siloChannels = new ConcurrentDictionary<string, IChannel>();
-
-        public void AddPlayerChannel(string id, IChannel channel)
-        {
-            //   logger.Debug("AddPlayerChannel:" + id);
-            this.playerChannels[id] = channel;
-        }
-
-        public void RemovePlayerChannel(string id)
-        {
-            //  logger.Debug("RemovePlayerChannel:" + id);
+        public void RemoveChannel(string id)
+        {    
             IChannel value;
-            playerChannels.TryRemove(id, out value);
+            channels.TryRemove(id, out value);
         }
 
-        public IChannel GetPlayerChannel(string id)
+        public IChannel GetChannel(string id)
         {
-            //  logger.Debug("GetPlayerChannel:" + id);
-            return playerChannels[id];
+            IChannel channel = null;
+            channels.TryGetValue(id, out channel);
+            return channel;
         }
 
-        public int GetPlayerChannelCount()
+        public int GetChannelCount()
         {
-            return playerChannels.Count;
+            return channels.Count;
         }
 
-        public void AddSiloChannel(string id, IChannel channel)
-        {
-            //   logger.Debug("AddPlayerChannel:" + id);
-            siloChannels[id] = channel;
-        }
+       
 
-        public void RemoveSiloChannel(string id)
-        {
-            //  logger.Debug("RemovePlayerChannel:" + id);
-            IChannel value;
-            siloChannels.TryRemove(id, out value);
-        }
+        //public void FlushAllSiloChannel()
+        //{
+        //    foreach (var channel in this.siloChannels.Values)
+        //    {
+        //        channel.Flush();
+        //    }
+        //}
 
-        public IChannel GetSiloChannel(string id)
-        {
-            //  logger.Debug("GetPlayerChannel:" + id);
-            return siloChannels[id];
-        }
-
-        public int GetSiloChannelCount()
-        {
-            return siloChannels.Count;
-        }
-
-        public void FlushAllSiloChannel()
-        {
-            foreach (var channel in this.siloChannels.Values)
-            {
-                channel.Flush();
-            }
-        }
+        //public Task<IChannel> BindPlayerAndZone(string playerId, string siloId)
+        //{
+        //    if()
+        //   // Global.OrleansClient.GetGrain<IG>
+                       
+        //}
     }
 }
