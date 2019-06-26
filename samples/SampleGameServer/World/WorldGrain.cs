@@ -56,12 +56,10 @@ namespace FootStone.Grains
                     var count = await zoneGrain.GetPlayerCount();
                     logger.Warn("{0}  {1}  {2}", zoneId.ToString().PadRight(21), Pad(i, 11), count);
                 }
+
                 logger.Warn("-----------------------------------  -----------  ------------");
-
-
                 logger.Warn($"--  Channel Player Count:{ZoneNetttyData.Instance.GetChannelCount()}  --");
                 logger.Warn($"--  Zone Player Count:{ZoneNetttyData.Instance.GetPlayerZoneCount()}  --");
-
 
                 logger.Warn("---------------------  -----------  ------------");
                 logger.Warn("Server Name            Id           Player Count");
@@ -83,9 +81,26 @@ namespace FootStone.Grains
                     logger.Warn("{0}  {1}  {2}", s.SiloAddress.ToString().PadRight(21), Pad(s.ActivationCount, 11), s.GrainType);
                 logger.Warn("------------------------------  -----------  ------------");
             }
-       , null
-       , TimeSpan.FromSeconds(10)
-       , TimeSpan.FromSeconds(10));
+            , null
+            , TimeSpan.FromSeconds(10)
+            , TimeSpan.FromSeconds(10));
+
+
+            //º”‘ÿ≈‰÷√
+            using (var jsonStream = new JsonTextReader(File.OpenText($"{Environment.CurrentDirectory}/GameData/Games.json")))
+            {
+                var deserializer = new JsonSerializer();
+                var gameConfigs = deserializer.Deserialize<List<GameConfig>>(jsonStream);
+
+                foreach (var config in gameConfigs)
+                {
+                    var gameInfo = new GameState(config.id);
+                    gameInfo.name = config.name;
+                    gameInfo.enabled = true;
+
+                    await AddGame(gameInfo);
+                }
+            }
 
             await base.OnActivateAsync();
         }
@@ -144,23 +159,7 @@ namespace FootStone.Grains
             if (isInited)
                 return;
 
-            isInited = true;
-
-            using (var jsonStream = new JsonTextReader(File.OpenText($"{Environment.CurrentDirectory}/GameData/Games.json")))
-            {
-                var deserializer = new JsonSerializer();
-                var gameConfigs = deserializer.Deserialize<List<GameConfig>>(jsonStream);
-
-                foreach (var config in gameConfigs)
-                {
-                    var gameInfo = new GameState(config.id);
-                    gameInfo.name = config.name;
-                    gameInfo.enabled = true;
-
-                    await AddGame(gameInfo);
-                }
-            }         
-         
+            isInited = true;            
         }
 
         public Task<List<ServerInfo>> GetServerList()

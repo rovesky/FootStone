@@ -16,16 +16,14 @@ namespace FootStone.FrontNetty
     {
         private FrontServerNetty frontSever = new FrontServerNetty();
         private GameClientNetty frontClient = new GameClientNetty();
-       // private NettyGameOptions gameOptions;
+  
         private NettyFrontOptions frontOptions;
         private static Logger logger = LogManager.GetCurrentClassLogger();
         private Timer pingTimer;
 
         public Task Init(IServiceProvider serviceProvider)
         {
-           // this.gameOptions = serviceProvider.GetService<IOptions<NettyGameOptions>>().Value;
             this.frontOptions = serviceProvider.GetService<IOptions<NettyFrontOptions>>().Value;
-
             frontSever.Init();
             frontClient.Init();
             return Task.CompletedTask;
@@ -42,20 +40,25 @@ namespace FootStone.FrontNetty
             }
 
             //flush channel
-            pingTimer = new System.Timers.Timer();
+            pingTimer = new Timer();
             pingTimer.AutoReset = true;
             pingTimer.Interval = 33;
             pingTimer.Enabled = true;
             pingTimer.Elapsed += (_1, _2) =>
             {
-                ChannelManager.Instance.FlushAllSiloChannel();
+                try
+                {
+                    ChannelManager.Instance.FlushAllSiloChannel();
+                }
+                catch(Exception e)
+                {
+                    logger.Error(e);
+                }
             };
-            pingTimer.Start();
+           // pingTimer.Start();
 
             logger.Info("netty connect all silo ok!");
-            await frontSever.Start(frontOptions.FrontPort);       
-
-
+            await frontSever.Start(frontOptions.FrontPort);      
         }
 
         public async Task Stop()
@@ -64,8 +67,8 @@ namespace FootStone.FrontNetty
             {
                 pingTimer.Stop();
             }
-            await frontSever.Stop();
 
+            await frontSever.Stop();
             await frontClient.Fini();
         }
     }

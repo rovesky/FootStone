@@ -62,7 +62,7 @@ namespace FootStone.FrontNetty
 
         public override void HandlerRemoved(IChannelHandlerContext context)
         {       
-            logger.Debug($"HandlerRemoved:{context.Name}");
+            logger.Warn($"Front HandlerRemoved:{context.Name}");
             ChannelManager.Instance.RemovePlayerChannel(context.Name);
       
             base.HandlerRemoved(context);

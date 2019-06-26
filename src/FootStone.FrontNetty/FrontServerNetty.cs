@@ -16,8 +16,6 @@ namespace FootStone.FrontNetty
         private IChannel boundChannel;
         private MultithreadEventLoopGroup bossGroup;
         private MultithreadEventLoopGroup workerGroup;
-
-
         private ServerBootstrap bootstrap;
 
         public void Init()
@@ -27,14 +25,10 @@ namespace FootStone.FrontNetty
 
             try
             {
-                         
                 bootstrap = new ServerBootstrap();
                 bootstrap.Group(bossGroup, workerGroup)
-                         .Channel<TcpServerSocketChannel>()
-                    //  .Option(ChannelOption.SoBacklog, 100)
-                    //  .Option(ChannelOption.SoSndbuf, 100)
-                       .Option(ChannelOption.TcpNodelay, true)
-                    //  .Handler(new LoggingHandler("SRV-LSTN"))
+                    .Channel<TcpServerSocketChannel>()
+                    .Option(ChannelOption.TcpNodelay, true)
                     .Option(ChannelOption.Allocator, PooledByteBufferAllocator.Default)
                     .ChildHandler(new ActionChannelInitializer<IChannel>(channel =>
                     {
@@ -86,7 +80,6 @@ namespace FootStone.FrontNetty
         private string playerId;
         private IChannel siloChannel;
 
-
         public FrontServerHandler()
         {
    
@@ -134,8 +127,8 @@ namespace FootStone.FrontNetty
                             var comBuff = context.Allocator.CompositeDirectBuffer();
                             comBuff.AddComponents(true, header, buffer);
 
-                            //  siloChannel.WriteAndFlushAsync(comBuff);
-                            siloChannel.WriteAsync(comBuff);
+                            siloChannel.WriteAndFlushAsync(comBuff);
+                            //siloChannel.WriteAsync(comBuff);
 
                             //  logger.Debug($"Recieve Message:{playerId},buff.ReadableBytes:{comBuff.ReadableBytes}," +
                             //   $"buff.WritableBytes:{comBuff.WritableBytes},buff.Capacity: {comBuff.Capacity}");
@@ -153,8 +146,7 @@ namespace FootStone.FrontNetty
 
 
         public override void HandlerRemoved(IChannelHandlerContext context)
-        {
-  
+        {  
             if (playerId != null)
             {          
                 ChannelManager.Instance.RemoveSiloChannel(playerId);

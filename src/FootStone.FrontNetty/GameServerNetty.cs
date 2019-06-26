@@ -98,44 +98,51 @@ namespace FootStone.FrontNetty
         
 
         public override void ChannelRead(IChannelHandlerContext context, object message)
-        {          
-            if (message is IByteBuffer buffer)
-            { 
-                ushort type = buffer.ReadUnsignedShort();
-
-                switch ((MessageType)type)
+        {
+            try
+            {
+                if (message is IByteBuffer buffer)
                 {
-                    case MessageType.PlayerBindSilo:
-                        {                          
-                            var playerId = buffer.ReadStringShortUtf8();
-                            recv.BindChannel(playerId, context.Channel);
+                    ushort type = buffer.ReadUnsignedShort();
 
-                            //添加包头
-                            var header = context.Allocator.DirectBuffer(4 + playerId.Length);
-                            header.WriteUnsignedShort((ushort)MessageType.PlayerBindSilo);
-                            header.WriteStringShortUtf8(playerId);
+                    switch ((MessageType)type)
+                    {
+                        case MessageType.PlayerBindSilo:
+                            {
+                                var playerId = buffer.ReadStringShortUtf8();
+                                recv.BindChannel(playerId, context.Channel);
 
-                            buffer.ResetReaderIndex();
-                            var comBuff = context.Allocator.CompositeDirectBuffer();
-                            comBuff.AddComponents(true, header, buffer);
-                        
-                            context.Channel.WriteAndFlushAsync(comBuff);
+                                //添加包头
+                                var header = context.Allocator.DirectBuffer(4 + playerId.Length);
+                                header.WriteUnsignedShort((ushort)MessageType.PlayerBindSilo);
+                                header.WriteStringShortUtf8(playerId);
 
-                            logger.Debug($"Game PlayerBindSilo:{playerId}!" );               
-                            return;
-                        }
-                    case MessageType.Data:
-                        {                   
-                            var playerId = buffer.ReadStringShortUtf8();
-                            logger.Debug($"Game recv data,player:{playerId},size:{buffer.Capacity}!");
-                            recv.Recv(playerId, buffer, context.Channel);                 
+                                buffer.ResetReaderIndex();
+                                var comBuff = context.Allocator.CompositeDirectBuffer();
+                                comBuff.AddComponents(true, header, buffer);
 
-                            break;                      
-                        }
-                    default:
-                        logger.Error($"Unknown type:{type}!");
-                        break;
+                                context.Channel.WriteAndFlushAsync(comBuff);
+
+                                logger.Debug($"Game PlayerBindSilo:{playerId}!");
+                                return;
+                            }
+                        case MessageType.Data:
+                            {
+                                var playerId = buffer.ReadStringShortUtf8();
+                                logger.Debug($"Game recv data,player:{playerId},size:{buffer.Capacity}!");
+                                recv.Recv(playerId, buffer, context.Channel);
+                                break;
+                            }
+                        default:
+                            logger.Error($"Unknown type:{type}!");
+                            break;
+                    }
                 }
+            }
+            catch(Exception e)
+            {
+                logger.Error(e);
+
             }
             base.ChannelRead(context, message);
         }
@@ -145,7 +152,7 @@ namespace FootStone.FrontNetty
             frontId = context.Channel.RemoteAddress.ToString();
             ChannelManager.Instance.AddPlayerChannel(frontId,context.Channel);
 
-            logger.Debug($"HandlerAdded:{frontId}!");
+            logger.Warn($"Game HandlerAdded:{frontId}!");
             base.HandlerAdded(context);
         }
 
@@ -153,7 +160,7 @@ namespace FootStone.FrontNetty
         {  
             if (frontId != null)
             {
-                logger.Debug($"HandlerRemoved:{frontId}!");
+                logger.Warn($"Game HandlerRemoved:{frontId}!");
                 ChannelManager.Instance.RemovePlayerChannel(frontId);
                 frontId = null;
             }

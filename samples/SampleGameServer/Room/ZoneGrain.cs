@@ -42,16 +42,13 @@ namespace FootStone.Core
  
     public  class ZoneGrain : Grain, IZoneGrain,IZoneStream
     {
-        private NLog.Logger logger = NLog.LogManager.GetLogger("FootStone.Core.ZoneGrain");
+        private static NLog.Logger logger = NLog.LogManager.GetLogger("FootStone.Core.ZoneGrain");
         private Dictionary<Guid, ZonePlayer> players = new Dictionary<Guid, ZonePlayer>();
 
         private int nettyPort;
         private Random random = new Random();
 
-
-        private ConcurrentQueue<byte[]> msgQueue = new ConcurrentQueue<byte[]>();
-
-       
+        private ConcurrentQueue<byte[]> msgQueue = new ConcurrentQueue<byte[]>();       
 
         public ZoneGrain(IGrainActivationContext grainActivationContext)
         {  
@@ -91,28 +88,26 @@ namespace FootStone.Core
                              IChannel channel = null;
 
                              foreach (ZonePlayer player in players.Values)
-                             {
-                                 //var size = random.Next() % 200;
-                                 //  if (size < 100)
-                                 //  {
-
-                                 channel = player.channel;
-                                 //添加包头
-                                 var msg = player.channel.Allocator.DirectBuffer(4 + player.id.ToString().Length);
-                                 msg.WriteUnsignedShort((ushort)MessageType.Data);
-                                 msg.WriteStringShortUtf8(player.id.ToString());
-                                 msg.WriteUnsignedShort((ushort)MessageType.Data);
-                                 foreach (var data in datas)
+                             {                               
+                               //  if (random.Next() % 100 < 50)
                                  {
-                                     msg.WriteBytes(data);
-                                 }                               
-                                 //  player.channel.WriteAndFlushAsync(msg);
+                                     channel = player.channel;
+                                     //添加包头
+                                     var msg = player.channel.Allocator.DirectBuffer();
+                                     msg.WriteUnsignedShort((ushort)MessageType.Data);
+                                     msg.WriteStringShortUtf8(player.id.ToString());
+                                     msg.WriteUnsignedShort((ushort)MessageType.Data);
+                                     foreach (var data in datas)
+                                     {
+                                         msg.WriteBytes(data);
+                                     }
+                                     //  player.channel.WriteAndFlushAsync(msg);
 
-                                 player.channel.WriteAsync(msg);
+                                     player.channel.WriteAsync(msg);
 
-                                 //   logger.Debug($"Zone send data:{player.id.ToString()},size:{msg.ReadableBytes}" +
-                                 //     $",threadId:{Thread.CurrentThread.ManagedThreadId}!");
-                                 //  }
+                                     //   logger.Debug($"Zone send data:{player.id.ToString()},size:{msg.ReadableBytes}" +
+                                     //     $",threadId:{Thread.CurrentThread.ManagedThreadId}!");
+                                 }
                              }
                           
                              if(channel != null)

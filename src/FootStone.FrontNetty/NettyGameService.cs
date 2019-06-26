@@ -33,8 +33,6 @@ namespace FootStone.FrontNetty
             logger.Info("Game DotNetty Service Init!");
 
             options = serviceProvider.GetService<IOptions<NettyGameOptions>>().Value;
-
-          //  var recv  = serviceProvider.GetService<IRecvData>();
             server.Init(options.Recv);
 
             return base.Init(serviceProvider);

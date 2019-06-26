@@ -29,38 +29,37 @@ namespace FootStone.FrontNetty
             }
         }
 
-
         private ConcurrentDictionary<string, IChannel> playerChannels = new ConcurrentDictionary<string, IChannel>();
         private ConcurrentDictionary<string, IChannel> siloChannels = new ConcurrentDictionary<string, IChannel>();
 
         public void AddPlayerChannel(string id, IChannel channel)
         {
-         //   logger.Debug("AddPlayerChannel:" + id);
+            //   logger.Debug("AddPlayerChannel:" + id);
             this.playerChannels[id] = channel;
         }
 
         public void RemovePlayerChannel(string id)
         {
-          //  logger.Debug("RemovePlayerChannel:" + id);
+            //  logger.Debug("RemovePlayerChannel:" + id);
             IChannel value;
-            playerChannels.TryRemove(id, out value);            
+            playerChannels.TryRemove(id, out value);
         }
 
         public IChannel GetPlayerChannel(string id)
         {
-          //  logger.Debug("GetPlayerChannel:" + id);
-            return this.playerChannels[id];
+            //  logger.Debug("GetPlayerChannel:" + id);
+            return playerChannels[id];
         }
 
         public int GetPlayerChannelCount()
-        {       
-            return this.playerChannels.Count;
+        {
+            return playerChannels.Count;
         }
 
         public void AddSiloChannel(string id, IChannel channel)
         {
             //   logger.Debug("AddPlayerChannel:" + id);
-            this.siloChannels[id] = channel;
+            siloChannels[id] = channel;
         }
 
         public void RemoveSiloChannel(string id)
@@ -73,21 +72,20 @@ namespace FootStone.FrontNetty
         public IChannel GetSiloChannel(string id)
         {
             //  logger.Debug("GetPlayerChannel:" + id);
-            return this.siloChannels[id];
+            return siloChannels[id];
         }
 
         public int GetSiloChannelCount()
         {
-            return this.siloChannels.Count;
+            return siloChannels.Count;
         }
 
         public void FlushAllSiloChannel()
         {
-           foreach(var channel in this.siloChannels.Values)
+            foreach (var channel in this.siloChannels.Values)
             {
                 channel.Flush();
             }
         }
-
     }
 }
