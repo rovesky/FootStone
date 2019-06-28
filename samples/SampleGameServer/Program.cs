@@ -1,18 +1,14 @@
 using FootStone.Core.GrainInterfaces;
 using FootStone.FrontIce;
 using FootStone.FrontNetty;
-using FootStone.GrainInterfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using NLog;
 using Orleans;
 using Orleans.Configuration;
 using Orleans.Hosting;
 using SampleFrontIce;
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
@@ -119,7 +115,7 @@ namespace FootStone.Core.GameServer
                              options.ConnectionString = mysqlConnectStorage;
                              options.Invariant = "MySql.Data.MySqlClient";
                          })     
-                        .AddGrainService<NettyGameService>()
+                        .AddGrainService<NettyGameGrainService>()
                         .Configure<NettyGameOptions>(options =>
                         {
                             options.Port = 8017;
@@ -132,8 +128,14 @@ namespace FootStone.Core.GameServer
                         //})
                         .EnableDirectClient();
                     })
-                    //添加Ice支持
-                    .AddFrontIce()                    
+                    //添加ICE支持
+                    .AddFrontIce()
+                    //添加Netty支持
+                    .AddFrontNetty(options =>
+                    {
+                        options.FrontPort = 8007;
+                        options.GamePort = 8017;
+                    })
                     .Build();
 
                 logger.Info("FSHost builded!");

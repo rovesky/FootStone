@@ -1,14 +1,9 @@
 ﻿using FootStone.Core;
-using Microsoft.Extensions.Options;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using Orleans.Messaging;
-using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using NLog;
-using System.Timers;
+using System;
+using System.Threading.Tasks;
 
 namespace FootStone.FrontNetty
 {
@@ -19,8 +14,8 @@ namespace FootStone.FrontNetty
         private FrontServerNetty frontServer = new FrontServerNetty();
         private GameClientNetty  gameClient = new GameClientNetty();
 
-        private IChannelManager cmFront = new ChannelManager();
-        private IChannelManager cmGame = new ChannelManager();
+        private IChannelManager frontChannels = new ChannelManager();
+        private IChannelManager gameChannels = new ChannelManager();
 
         private NettyFrontOptions frontOptions; 
 
@@ -29,61 +24,35 @@ namespace FootStone.FrontNetty
         {
             frontOptions = serviceProvider.GetService<IOptions<NettyFrontOptions>>().Value;
 
-            frontServer.Init(cmFront);
+            var channelManagers = new IChannelManager[2];
+            channelManagers[0] = frontChannels;
+            channelManagers[1] = gameChannels;
 
-            gameClient.Init(cmGame);
+            frontServer.Init(channelManagers);
+            gameClient.Init(channelManagers);
     
             return Task.CompletedTask;
         }
 
         public async Task Start()
         {
-            //连接所有的silo
-            //var gatewayProvider = (IGatewayListProvider)Global.OrleansClient.ServiceProvider.GetService(typeof(IGatewayListProvider));
-            //IList<Uri> gateways = await gatewayProvider.GetGateways();
-            //foreach(var uri in gateways)
-            //{
-            //   await gameClient.ConnectNettyAsync(uri.Host, frontOptions.GamePort);
-            //}
-
-            //flush channel
-            //pingTimer = new Timer();
-            //pingTimer.AutoReset = true;
-            //pingTimer.Interval = 33;
-            //pingTimer.Enabled = true;
-            //pingTimer.Elapsed += (_1, _2) =>
-            //{
-            //    try
-            //    {
-            //        ChannelManager.Instance.FlushAllSiloChannel();
-            //    }
-            //    catch(Exception e)
-            //    {
-            //        logger.Error(e);
-            //    }
-            //};
-            // pingTimer.Start();
-
-           // logger.Info("netty connect all silo ok!");
 
             //监听玩家绑定game服的事件
             frontServer.eventBindPlayerAndGameServer += async (playerId, gameServerId) =>
             {
-                var gameChannel = cmGame.GetChannel(gameServerId);
+                var gameChannel = gameChannels.GetChannel(gameServerId);
 
-                //如果找不到gameChannel，新建一个连接
+                //如果找不到game channel，新建一个连接
                 if (gameChannel == null)
                 {
-                    var splits = gameServerId.Split(':');
-                    gameChannel = await gameClient.ConnectNettyAsync(splits[0], int.Parse(splits[1]));
-                    cmGame.AddChannel(gameServerId, gameChannel);
+                    gameChannel = await gameClient.ConnectNettyAsync(gameServerId);
+                    gameChannels.AddChannel(gameServerId, gameChannel);
                 }
 
-                //发送到silo
+                //发送到GameServer
                 var msg = gameChannel.Allocator.DirectBuffer();
                 msg.WriteUnsignedShort((ushort)MessageType.PlayerBindGame);
-                msg.WriteStringShortUtf8(playerId);
-                // msg.WriteStringShortUtf8(siloId);
+                msg.WriteStringShortUtf8(playerId);        
                 gameChannel.WriteAndFlushAsync(msg);
             };
 
@@ -91,12 +60,8 @@ namespace FootStone.FrontNetty
         }
 
         public async Task Stop()
-        {         
-            //if(pingTimer != null)
-            //{
-            //    pingTimer.Stop();
-            //}
-
+        {        
+          
             await frontServer.Fini();
             await gameClient.Fini();
         }

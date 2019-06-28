@@ -11,6 +11,7 @@ namespace FootStone.FrontNetty
     
         public ChannelManager()
         {
+
         }    
 
       
@@ -36,22 +37,5 @@ namespace FootStone.FrontNetty
         {
             return channels.Count;
         }
-
-       
-
-        //public void FlushAllSiloChannel()
-        //{
-        //    foreach (var channel in this.siloChannels.Values)
-        //    {
-        //        channel.Flush();
-        //    }
-        //}
-
-        //public Task<IChannel> BindPlayerAndZone(string playerId, string siloId)
-        //{
-        //    if()
-        //   // Global.OrleansClient.GetGrain<IG>
-                       
-        //}
     }
 }

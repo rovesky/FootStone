@@ -10,16 +10,16 @@ namespace FootStone.FrontNetty
 {
     public static class FrontNettyHostingExtensions
     {
-        //public static IFSHostBuilder AddFrontNetty(this IFSHostBuilder builder, Action<NettyFrontOptions> config)
-        //{
-        //    builder.ConfigureSilo(silo =>
-        //    {
-        //        silo
-        //        .Configure(config)
-        //        .AddGrainService<NettyFrontService>();
-        //    });
-        //    return builder;
-        //}
+        public static IFSHostBuilder AddFrontNetty(this IFSHostBuilder builder, Action<NettyFrontOptions> config)
+        {
+            builder.ConfigureSilo(silo =>
+            {
+                silo
+                .Configure(config)
+                .AddGrainService<NettyFrontGrainService>();
+            });
+            return builder;
+        }
 
         public static IFSClientBuilder AddFrontNetty(this IFSClientBuilder builder, Action<NettyFrontOptions> config)
         {

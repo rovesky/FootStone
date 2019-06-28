@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 namespace FootStone.FrontNetty
 {
     [Reentrant]
-    public class NettyGameService : GrainService, INettyService
+    public class NettyGameGrainService : GrainService, INettyService
     {
         private readonly IGrainFactory GrainFactory;
 
@@ -20,7 +20,7 @@ namespace FootStone.FrontNetty
 
         private GameServerNetty server = new GameServerNetty();
 
-        public NettyGameService(IServiceProvider services, IGrainIdentity id, Silo silo, ILoggerFactory loggerFactory, IGrainFactory grainFactory)
+        public NettyGameGrainService(IServiceProvider services, IGrainIdentity id, Silo silo, ILoggerFactory loggerFactory, IGrainFactory grainFactory)
             : base(id, silo, loggerFactory)
         {
             GrainFactory = grainFactory;
@@ -50,7 +50,6 @@ namespace FootStone.FrontNetty
         public async override Task Stop()
         {
             logger.Info("Game DotNetty Service Stop!");
-
             await server.Stop();
 
             await base.Stop();

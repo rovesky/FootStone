@@ -22,12 +22,12 @@ namespace FootStone.FrontNetty
         public delegate void delegateBindPlayerAndGameServer(string playerId,string siloId);
         public event delegateBindPlayerAndGameServer eventBindPlayerAndGameServer;
 
-        public void EmitEventBindPlayerAndSilo(string playerId,string siloId)
+        public void EmitEventBindPlayerAndGameServer(string playerId,string siloId)
         {
             eventBindPlayerAndGameServer(playerId, siloId);
         }
 
-        public void Init(IChannelManager channelManager)
+        public void Init(IChannelManager[] channelManager)
         {
             bossGroup = new MultithreadEventLoopGroup(1);
             workerGroup = new MultithreadEventLoopGroup(4);
@@ -87,27 +87,21 @@ namespace FootStone.FrontNetty
         private static Logger logger = LogManager.GetCurrentClassLogger();
 
         private string playerId;
-        private IChannel siloChannel;
-
+     
         private FrontServerNetty frontServer;
-        private IChannelManager channelManager;
+        private IChannelManager frontChannels;
+        private IChannelManager gameChannels;
 
-        public FrontServerHandler(FrontServerNetty frontServer,IChannelManager channelManager)
+        private string gameServerId;
+        private IChannel gameServerChannel;
+
+        public FrontServerHandler(FrontServerNetty frontServer,IChannelManager[] channelManagers)
         {
             this.frontServer = frontServer;
-            this.channelManager = channelManager;
+            this.frontChannels = channelManagers[0];
+            this.gameChannels = channelManagers[1];
         }
-
-        private void PlayerBindSilo(IByteBuffer buffer)
-        {
-            var playerId = buffer.ReadStringShortUtf8();
-            var siloId = buffer.ReadStringShortUtf8();
-            frontServer.EmitEventBindPlayerAndSilo(playerId, siloId);
-
-         //   buffer.ResetReaderIndex();
-         //   siloChannel.WriteAndFlushAsync(buffer);
-            logger.Debug($"Player:{playerId} bind silo:{siloId}");
-        }
+  
 
         public override void ChannelRead(IChannelHandlerContext context, object message)
         {
@@ -125,13 +119,16 @@ namespace FootStone.FrontNetty
                             playerId = buffer.ReadStringShortUtf8();                          
                             buffer.ResetReaderIndex();
                             context.Channel.WriteAndFlushAsync(buffer);
-                            channelManager.AddChannel(playerId, context.Channel);
+                            frontChannels.AddChannel(playerId, context.Channel);
                             logger.Debug("Player Handshake:" + playerId);
                             return;
                         }
                     case MessageType.PlayerBindGame:
-                        {                        
-                            PlayerBindSilo(buffer);
+                        {
+                            var playerId = buffer.ReadStringShortUtf8();
+                            gameServerId = buffer.ReadStringShortUtf8();
+                            frontServer.EmitEventBindPlayerAndGameServer(playerId, gameServerId);
+                            logger.Debug($"Player:{playerId} bind gameServer:{gameServerId}");
                             break;
                         }
                     case MessageType.Data:
@@ -145,9 +142,12 @@ namespace FootStone.FrontNetty
                             var comBuff = context.Allocator.CompositeDirectBuffer();
                             comBuff.AddComponents(true, header, buffer);
 
-                            siloChannel.WriteAndFlushAsync(comBuff);
+                            if(gameServerChannel == null)
+                            {
+                                gameServerChannel = gameChannels.GetChannel(gameServerId);
+                            }
+                            gameServerChannel.WriteAndFlushAsync(comBuff);
                             //siloChannel.WriteAsync(comBuff);
-
                             //  logger.Debug($"Recieve Message:{playerId},buff.ReadableBytes:{comBuff.ReadableBytes}," +
                             //   $"buff.WritableBytes:{comBuff.WritableBytes},buff.Capacity: {comBuff.Capacity}");
                             return;
@@ -167,7 +167,7 @@ namespace FootStone.FrontNetty
         {  
             if (playerId != null)
             {          
-                channelManager.RemoveChannel(playerId);
+                frontChannels.RemoveChannel(playerId);
                 playerId = null;
             }
             base.HandlerRemoved(context);

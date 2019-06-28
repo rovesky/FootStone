@@ -188,9 +188,11 @@ namespace FootStone.Core.Client
                 var password = "111111";
                 var playerName = "player" + index;
 
+                //创建连接
                 var sessionPrx = await iceClient.CreateSession(sessionId);
                 //  Console.Out.WriteLine("NetworkIce.Instance.CreateSession ok:"+ account);
 
+                //注册账号
                 var accountPrx = AccountPrxHelper.uncheckedCast(sessionPrx, "account");
                 try
                 {
@@ -202,11 +204,11 @@ namespace FootStone.Core.Client
                     logger.Debug("RegisterRequest fail:" + ex.Message);
                 }
 
-             //   await accountPrx.TestLoginRequestAsync("11", "22", new Sample.SampleLoginData("code1"));
-
+                //账号登录
                 await accountPrx.LoginRequestAsync(account, password);
                 logger.Debug("LoginRequest ok:" + account);
 
+                //选择服务器
                 var worldPrx = WorldPrxHelper.uncheckedCast(sessionPrx, "world");
                 List<ServerInfo> servers = await worldPrx.GetServerListRequestAsync();
 
