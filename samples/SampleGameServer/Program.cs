@@ -127,14 +127,14 @@ namespace FootStone.Core.GameServer
                         options.Port = 8017;
                         options.Recv = ZoneNetttyData.Instance;
                     })
-                    //添加ICE Front支持
-                    .AddFrontIce()
-                    //添加Netty Front支持
-                    .AddFrontNetty(options =>
-                    {
-                        options.FrontPort = 8007;
-                        options.GamePort = 8017;
-                    })
+                    ////添加ICE Front支持
+                    //.AddFrontIce()
+                    ////添加Netty Front支持
+                    //.AddFrontNetty(options =>
+                    //{
+                    //    options.FrontPort = 8007;
+                    //    options.GamePort = 8017;
+                    //})
                     .Build();
 
                 logger.Info("FSHost builded!");

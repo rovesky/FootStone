@@ -41,20 +41,24 @@ namespace FootStone.FrontNetty
                     ushort type = buffer.ReadUnsignedShort();
                     var playerId = buffer.ReadStringShortUtf8();
                     IChannel channel = frontChannels.GetChannel(playerId);
-                    buffer.DiscardReadBytes();
 
-                    switch ((MessageType)type)
+                    if (channel != null)
                     {
-                        case MessageType.Data:
-                         //   ReferenceCountUtil.Release(buffer);
-                            channel.WriteAndFlushAsync(buffer);
-                            break;
-                        default:
-                            channel.WriteAndFlushAsync(buffer);
-                            break;
-                    } 
-                    //   logger.Debug($"Send Data to client:{playerId}");
-                    return;
+                        buffer.DiscardReadBytes();
+
+                        switch ((MessageType)type)
+                        {
+                            case MessageType.Data:
+                                //   ReferenceCountUtil.Release(buffer);
+                                channel.WriteAndFlushAsync(buffer);
+                                break;
+                            default:
+                                channel.WriteAndFlushAsync(buffer);
+                                break;
+                        }
+                        //   logger.Debug($"Send Data to client:{playerId}");
+                        return;
+                    }
                 }
             }
             catch (Exception e)

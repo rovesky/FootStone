@@ -18,27 +18,48 @@ using System.Timers;
 
 namespace FootStone.Core.Client
 {
-
-    struct Point2D
+    public static class ByteBufferExtensions
     {
-        int x;
-        int y;
+
+        public static IByteBuffer WritePoint2D(this IByteBuffer buffer, Point2D point2d)
+        {
+            return buffer.WriteFloat(point2d.x)
+                         .WriteFloat(point2d.y);
+
+        }
     }
 
     [Serializable]
-    struct Move
+    public struct Point2D
     {
-        byte direction;
-        byte speed;
+       public  float x;
+       public  float y;
+   
+    }
 
+    [Serializable]
+    public struct Move
+    {
+        public static ushort Type = 0x03;
 
+        public byte direction;
+        public byte speed;
+        public Point2D point;
+
+        public void Encoder(IByteBuffer buffer)
+        {
+            buffer.WriteUnsignedShort(Type)
+                .WriteByte(direction)
+                .WriteByte(speed)
+                .WritePoint2D(point);
+        }
     }
 
     class SocketNettyHandler : ChannelHandlerAdapter
     {
    
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
-     //   private static int msgCount = 0;
+
         public static int playerCount = 0;
 
         public static ConcurrentQueue<IByteBuffer> msgQueue = new ConcurrentQueue<IByteBuffer>();
@@ -105,6 +126,8 @@ namespace FootStone.Core.Client
         private System.Timers.Timer pingTimer;
         private int msgCount = 0;
 
+        private int printCount = 0;
+
         public NetworkClientNetty()
         {
 
@@ -134,7 +157,7 @@ namespace FootStone.Core.Client
 
                 pingTimer = new System.Timers.Timer();
                 pingTimer.AutoReset = true;
-                pingTimer.Interval = 10;
+                pingTimer.Interval = 100;
                 pingTimer.Enabled = true;
                 pingTimer.Elapsed += (_1, _2) =>
                 {
@@ -143,28 +166,26 @@ namespace FootStone.Core.Client
                         IByteBuffer[] buffers = SocketNettyHandler.msgQueue.ToArray();
                         SocketNettyHandler.msgQueue.Clear();
 
-                        foreach (var buffer in buffers)
-                        {
-                            msgCount++;
+                        printCount++;
+                       // logger.Info($"Received buffers.Length: {buffers.Length}");
 
-                            if (msgCount % (10 * SocketNettyHandler.playerCount) == 0)
+                        if (buffers.Length > 0)
+                        {
+                            msgCount += buffers.Length;                          
+
+                            if (printCount% 10 == 0)
                             {
-                                logger.Info("Received from server msg count: " + msgCount + ",msg length:" + buffer.ReadableBytes);
+                                logger.Info("Received from server msg count: " + msgCount + ",msg length:" + buffers[0].ReadableBytes);
                             }
 
-                            //int len = buffer.ReadableBytes;
-                            //for (int i = 0; i < len / 7; ++i)
-                            //{
-                            //    var size = buffer.ReadUnsignedShort();
-                            //    var msg = buffer.ReadString(size, Encoding.UTF8);
 
-                            //    logger.Debug($"{msgCount}-{i}Received from server msg:{msg}");
-                            //}
-                            ReferenceCountUtil.Release(buffer);
-              
+                            foreach (var buffer in buffers)
+                            {
+                                ReferenceCountUtil.Release(buffer);
+                            }
                         }
                     }
-                    catch(Exception e)
+                    catch (Exception e)
                     {
                         logger.Error(e);
                     }
@@ -228,6 +249,23 @@ namespace FootStone.Core.Client
             data.WriteUnsignedShort((ushort)message.Length);
             data.WriteString(message, Encoding.UTF8);
 
+            await channel.WriteAndFlushAsync(data);
+        }
+
+        public async Task SendMove(IChannel channel,ushort actorId)
+        {
+            var data = channel.Allocator.DirectBuffer(100);
+            data.WriteUnsignedShort((ushort)MessageType.Data);
+            data.WriteUnsignedShort((ushort)14);
+
+            data.WriteUnsignedShort(actorId);            
+
+            var move = new Move();
+            move.direction = 1;
+            move.speed = 10;
+            move.point.x = 10.6f;
+            move.point.y = 300.1f;
+            move.Encoder(data);
             await channel.WriteAndFlushAsync(data);
         }
     }

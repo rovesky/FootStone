@@ -137,7 +137,7 @@ namespace FootStone.Core.Client
             {
                 //  ConnectNettyAsync("127.0.0.1", 8007,"11").Wait();
                 int count = args.Length > 0? int.Parse(args[0]) : 1;
-                int startIndex = args.Length > 1 ? int.Parse(args[1]) : 0;
+                ushort startIndex = args.Length > 1 ? ushort.Parse(args[1]) : (ushort)0;
                 bool needNetty = args.Length > 2 ? bool.Parse(args[2]) : true;
 
                 Test(count, startIndex, needNetty).Wait();
@@ -153,7 +153,7 @@ namespace FootStone.Core.Client
 
         private static List<NetworkClientIce> clients = new List<NetworkClientIce>();
 
-        private static async Task Test(int count,int startIndex, bool needNetty)
+        private static async Task Test(int count,ushort startIndex, bool needNetty)
         {       
             NetworkClientIce clientIce = new NetworkClientIce();          
             clientIce.Init("192.168.0.128", 4061);
@@ -166,7 +166,7 @@ namespace FootStone.Core.Client
                 clientNetty.Init();
             }
 
-            for (int i = startIndex; i < startIndex+ count; ++i)
+            for (ushort i = startIndex; i < startIndex+ count; ++i)
             {
                 if(i%100 == 0)
                 {
@@ -180,7 +180,7 @@ namespace FootStone.Core.Client
             logger.Info("all session created:" + count);
         }
 
-        private static async Task runTest(int index,int count, NetworkClientIce iceClient,NetworkClientNetty netty)
+        private static async Task runTest(ushort index,int count, NetworkClientIce iceClient,NetworkClientNetty netty)
         {
             try
             {              
@@ -263,11 +263,11 @@ namespace FootStone.Core.Client
                     //发送消息
                     pingTimer = new System.Timers.Timer();
                     pingTimer.AutoReset = true;
-                    pingTimer.Interval = 150;
+                    pingTimer.Interval = 500;
                     pingTimer.Enabled = true;
                     pingTimer.Elapsed += (_1,_2)=>
                     {
-                        netty.SendMessage(channel, "Hello");
+                        netty.SendMove(channel,index);
                     };
                     pingTimer.Start();                 
                 }

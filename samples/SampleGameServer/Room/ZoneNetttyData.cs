@@ -86,7 +86,7 @@ namespace FootStone.Core
 
         public void Recv(string playerId, IByteBuffer data)
         {
-            logger.Debug($"Player{playerId}Recv Data!");
+            logger.Debug($"Player:{playerId} Recv Data!");
             IZoneStream zoneStream = getPlayerZone(playerId);
             if (zoneStream != null)
             {

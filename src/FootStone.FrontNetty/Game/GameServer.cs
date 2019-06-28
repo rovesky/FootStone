@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace FootStone.FrontNetty
 {
-    public class GameServer
+    class GameServer
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
 

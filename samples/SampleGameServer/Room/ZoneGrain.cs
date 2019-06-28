@@ -84,29 +84,35 @@ namespace FootStone.Core
                          {
                              List<byte[]> datas = msgQueue.ToList();
                              msgQueue.Clear();
-                         
+
+                             var datas1 = datas.GetRange(0, random.Next() % (datas.Count / 2 +2));
                              IChannel channel = null;
 
-                             foreach (ZonePlayer player in players.Values)
-                             {                               
-                                 if (random.Next() % 100 < 50)
+                             if (datas1.Count > 0)
+                             {
+                                 foreach (ZonePlayer player in players.Values)
                                  {
-                                     channel = player.channel;
-                                     //添加包头
-                                     var msg = player.channel.Allocator.DirectBuffer();
-                                     msg.WriteUnsignedShort((ushort)MessageType.Data);
-                                     msg.WriteStringShortUtf8(player.id.ToString());
-                                     msg.WriteUnsignedShort((ushort)MessageType.Data);
-                                     foreach (var data in datas)
+                                     if (random.Next() % 100 < 50)
                                      {
-                                         msg.WriteBytes(data);
+                                         channel = player.channel;
+                                         //添加包头
+                                         var msg = player.channel.Allocator.DirectBuffer();
+                                         msg.WriteUnsignedShort((ushort)MessageType.Data);
+                                         msg.WriteStringShortUtf8(player.id.ToString());
+                                         msg.WriteUnsignedShort((ushort)MessageType.Data);
+                                         foreach (var data in datas1)
+                                         {
+                                             msg.WriteBytes(data);
+                                         }
+                                         //  player.channel.WriteAndFlushAsync(msg);
+
+                                        // logger.Debug($"Zone send data:{player.id.ToString()},size:{msg.ReadableBytes}" +
+                                        //  $",threadId:{Thread.CurrentThread.ManagedThreadId}" +
+                                         // $",data size:{datas.Count},data1 size:{datas1.Count}!");
+
+                                         player.channel.WriteAsync(msg);
+
                                      }
-                                     //  player.channel.WriteAndFlushAsync(msg);
-
-                                     player.channel.WriteAsync(msg);
-
-                                     //   logger.Debug($"Zone send data:{player.id.ToString()},size:{msg.ReadableBytes}" +
-                                     //     $",threadId:{Thread.CurrentThread.ManagedThreadId}!");
                                  }
                              }
                           
