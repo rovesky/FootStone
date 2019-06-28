@@ -14,7 +14,7 @@ namespace FootStone.FrontIce
             {
                 silo
                 .Configure(config)
-                .AddGrainService<IceService>();
+                .AddGrainService<IceFrontGrainService>();
             });
             return builder;
         }

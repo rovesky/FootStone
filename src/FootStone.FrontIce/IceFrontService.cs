@@ -11,7 +11,7 @@ namespace FootStone.FrontIce
     public class IceFrontService :IClientService
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
-        private NetworkIceServer network = new NetworkIceServer();
+        private FrontServer network = new FrontServer();
 
         public IceFrontService()          
         {

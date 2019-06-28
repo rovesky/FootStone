@@ -12,12 +12,12 @@ using System.Threading.Tasks;
 namespace FootStone.FrontIce
 {
     [Reentrant]
-    public class IceService : GrainService, IIceService
+    public class IceFrontGrainService : GrainService, IIceService
     {
         private NLog.Logger logger = LogManager.GetCurrentClassLogger();
-        private NetworkIceServer network = new NetworkIceServer();
+        private FrontServer network = new FrontServer();
 
-        public IceService(IServiceProvider services, IGrainIdentity id, Silo silo, ILoggerFactory loggerFactory)
+        public IceFrontGrainService(IServiceProvider services, IGrainIdentity id, Silo silo, ILoggerFactory loggerFactory)
             : base(id, silo, loggerFactory)
         {
 

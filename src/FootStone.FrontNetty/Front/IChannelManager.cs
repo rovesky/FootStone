@@ -2,7 +2,7 @@
 
 namespace FootStone.FrontNetty
 {
-    public interface IChannelManager
+    interface IChannelManager
     {  
         void AddChannel(string id, IChannel channel);
 

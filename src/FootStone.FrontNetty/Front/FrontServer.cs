@@ -10,9 +10,10 @@ using System.Threading.Tasks;
 
 namespace FootStone.FrontNetty
 {
-    public class FrontServerNetty
+    class FrontServer
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
+
         private IChannel boundChannel;
         private MultithreadEventLoopGroup bossGroup;
         private MultithreadEventLoopGroup workerGroup;
@@ -45,7 +46,7 @@ namespace FootStone.FrontNetty
                         //    pipeline.AddLast(new LoggingHandler("SRV-CONN"));
                         pipeline.AddLast("framing-enc", new LengthFieldPrepender(2));
                         pipeline.AddLast("framing-dec", new LengthFieldBasedFrameDecoder(ushort.MaxValue, 0, 2, 0, 2));
-                        pipeline.AddLast("echo", new FrontServerHandler(this,channelManager));
+                        pipeline.AddLast("front-server", new FrontServerHandler(this,channelManager));
                     }));
 
                 logger.Info("DotNetty FrontServer Inited!");
@@ -88,14 +89,14 @@ namespace FootStone.FrontNetty
 
         private string playerId;
      
-        private FrontServerNetty frontServer;
+        private FrontServer frontServer;
         private IChannelManager frontChannels;
         private IChannelManager gameChannels;
 
         private string gameServerId;
         private IChannel gameServerChannel;
 
-        public FrontServerHandler(FrontServerNetty frontServer,IChannelManager[] channelManagers)
+        public FrontServerHandler(FrontServer frontServer,IChannelManager[] channelManagers)
         {
             this.frontServer = frontServer;
             this.frontChannels = channelManagers[0];
@@ -108,7 +109,6 @@ namespace FootStone.FrontNetty
 
             if (message is IByteBuffer buffer)
             {
-
                 //读取消息类型
                 ushort type = buffer.ReadUnsignedShort();
 

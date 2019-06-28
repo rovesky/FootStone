@@ -12,11 +12,12 @@
   <ItemGroup>
     <PackageReference Include="DotNetty.Handlers" Version="0.6.0" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
-    <PackageReference Include="NLog" Version="4.6.4" />
+    <PackageReference Include="NLog" Version="4.6.5" />
     <PackageReference Include="zeroc.ice.net" Version="3.7.1" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\FootStone.FrontNetty\FootStone.FrontNetty.csproj" />
     <ProjectReference Include="..\SampleProtocolIce\SampleProtocolIce.csproj" />
   </ItemGroup>
 

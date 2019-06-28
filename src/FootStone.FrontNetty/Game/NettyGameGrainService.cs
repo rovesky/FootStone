@@ -18,7 +18,7 @@ namespace FootStone.FrontNetty
 
         private NLog.Logger logger = LogManager.GetCurrentClassLogger();
 
-        private GameServerNetty server = new GameServerNetty();
+        private GameServer server = new GameServer();
 
         public NettyGameGrainService(IServiceProvider services, IGrainIdentity id, Silo silo, ILoggerFactory loggerFactory, IGrainFactory grainFactory)
             : base(id, silo, loggerFactory)

@@ -22,8 +22,6 @@ namespace FootStone.FrontNetty
         private IChannelManager frontChannels;
         private IChannelManager gameChannels;
 
-      //  private string gameServerId;
-
         public string GameServerId { get; internal set; }
 
         public GameClientHandler(IChannelManager[] channelManagers)
@@ -69,14 +67,14 @@ namespace FootStone.FrontNetty
 
         public override void HandlerAdded(IChannelHandlerContext context)
         {
-            logger.Warn($"Front HandlerAdded:{GameServerId}");
-          //  gameChannels.AddChannel(GameServerId, context.Channel);
+            logger.Warn($"GameClient HandlerAdded:{GameServerId}");
+    
             base.HandlerAdded(context);
         }
 
         public override void HandlerRemoved(IChannelHandlerContext context)
         {       
-            logger.Warn($"Front HandlerRemoved:{GameServerId}");
+            logger.Warn($"GameClient HandlerRemoved:{GameServerId}");
             gameChannels.RemoveChannel(GameServerId);      
             base.HandlerRemoved(context);
         }
@@ -89,14 +87,14 @@ namespace FootStone.FrontNetty
         }
     }
 
-    public class GameClientNetty
+    class GameClient
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
 
         private Bootstrap bootstrap;
         private MultithreadEventLoopGroup group;
 
-        public GameClientNetty()
+        public GameClient()
         {
 
         }
@@ -112,8 +110,8 @@ namespace FootStone.FrontNetty
                     .Channel<TcpSocketChannel>()
                     .Option(ChannelOption.Allocator, PooledByteBufferAllocator.Default)
                     .Option(ChannelOption.TcpNodelay, false)
-                    .Option(ChannelOption.SoSndbuf, 512 * 1024)
-                    .Option(ChannelOption.SoRcvbuf, 512 * 1024)
+                    .Option(ChannelOption.SoSndbuf, 1 * 1024 * 1024)
+                    .Option(ChannelOption.SoRcvbuf, 1 * 1024 * 1024)
                     .Handler(new ActionChannelInitializer<ISocketChannel>(channel =>
                     {
                         IChannelPipeline pipeline = channel.Pipeline;
@@ -145,16 +143,13 @@ namespace FootStone.FrontNetty
 
 
         }
-        public async Task<IChannel> ConnectNettyAsync(string gameServerId)
+        public async Task<IChannel> ConnectGameServerAsync(string gameServerId)
         {
-            var splits = gameServerId.Split(':');
-            var channel = await bootstrap.ConnectAsync(new IPEndPoint(IPAddress.Parse(splits[0]), int.Parse(splits[1])));
+            var endpoint = FrontNettyUtility.GameServerId2Endpoint(gameServerId);
+            var channel = await bootstrap.ConnectAsync(endpoint);
 
             var handler = channel.Pipeline.Get<GameClientHandler>();
-            handler.GameServerId = gameServerId;
-        //    var siloId = host + ":" + port;
-        //    ChannelManager.Instance.AddSiloChannel(siloId, channel);
-        //   logger.Debug($"Netty Add Silo：{siloId}");      
+            handler.GameServerId = gameServerId;  
             return channel;
         }
 

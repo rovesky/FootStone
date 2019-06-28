@@ -7,7 +7,7 @@ namespace FootStone.FrontIce
 {
     public class SessionI : ISessionDisp_,IDisposable
     {
-         public SessionI(string account)
+        public SessionI(string account)
         {
             this.Account = account;  
         }

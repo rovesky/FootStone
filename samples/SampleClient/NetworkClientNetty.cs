@@ -5,6 +5,7 @@ using DotNetty.Handlers.Logging;
 using DotNetty.Transport.Bootstrapping;
 using DotNetty.Transport.Channels;
 using DotNetty.Transport.Channels.Sockets;
+using FootStone.FrontNetty;
 using NLog;
 using System;
 using System.Collections.Concurrent;
@@ -194,11 +195,10 @@ namespace FootStone.Core.Client
         public async Task<IChannel> ConnectNettyAsync(string host, int port, string playerId)
         {
             var channel =  await bootstrap.ConnectAsync(new IPEndPoint(IPAddress.Parse(host), port));
-      
-            var message = channel.Allocator.Buffer(50);
-            message.WriteUnsignedShort(1);
-            message.WriteUnsignedShort((ushort)playerId.Length);
-            message.WriteString(playerId, Encoding.UTF8);
+
+            var message = channel.Allocator.DirectBuffer();
+            message.WriteUnsignedShort((ushort)MessageType.PlayerHandshake);
+            message.WriteStringShortUtf8(playerId);     
             await channel.WriteAndFlushAsync(message);
 
             var handler = channel.Pipeline.Get<SocketNettyHandler>();
@@ -209,14 +209,11 @@ namespace FootStone.Core.Client
 
         public async Task BindGameServer(IChannel channel, string playerId,string gameServerId)
         {          
-            var data = channel.Allocator.Buffer(100);
-            data.WriteUnsignedShort(2);
+            var data = channel.Allocator.DirectBuffer();
+            data.WriteUnsignedShort((ushort)MessageType.PlayerBindGame);
 
-            data.WriteUnsignedShort((ushort)playerId.Length);
-            data.WriteString(playerId, Encoding.UTF8);
-
-            data.WriteUnsignedShort((ushort)gameServerId.Length);
-            data.WriteString(gameServerId, Encoding.UTF8);
+            data.WriteStringShortUtf8(playerId);
+            data.WriteStringShortUtf8(gameServerId);
             await channel.WriteAndFlushAsync(data);
 
             var handler = channel.Pipeline.Get<SocketNettyHandler>();
@@ -225,8 +222,8 @@ namespace FootStone.Core.Client
 
         public async Task SendMessage(IChannel channel, string message)
         {
-            var data = channel.Allocator.Buffer(100);
-            data.WriteUnsignedShort(10);
+            var data = channel.Allocator.DirectBuffer(100);
+            data.WriteUnsignedShort((ushort)MessageType.Data);
             data.WriteUnsignedShort((ushort)(message.Length+2));
             data.WriteUnsignedShort((ushort)message.Length);
             data.WriteString(message, Encoding.UTF8);

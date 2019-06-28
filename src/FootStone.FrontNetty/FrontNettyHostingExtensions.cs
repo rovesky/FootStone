@@ -35,7 +35,18 @@ namespace FootStone.FrontNetty
             return builder;
         }
 
-     
+
+        public static IFSHostBuilder AddGameNetty(this IFSHostBuilder builder, Action<NettyGameOptions> config)
+        {
+            builder.ConfigureSilo(silo =>
+            {
+                silo
+                .Configure(config)
+                .AddGrainService<NettyGameGrainService>();
+            });
+            return builder;
+        }
+
         public static IByteBuffer WriteStringShort(this IByteBuffer buffer, string value, Encoding encoding)
         {
             buffer.WriteUnsignedShort((ushort)value.Length).

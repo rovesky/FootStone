@@ -8,7 +8,7 @@ namespace FootStone.FrontNetty
     {
         PlayerHandshake = 1,
         PlayerBindGame = 2,
-        SiloHandShake = 3,
+        SiloHandshake = 3,
         Data  = 10
     }
 }

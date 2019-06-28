@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 namespace FootStone.FrontIce
 {
   
-    public class NetworkIceServer
+    class FrontServer
     {
-        public NetworkIceServer()
+        public FrontServer()
         {
 
         }

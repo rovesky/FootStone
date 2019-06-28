@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace FootStone.FrontIce
 {
-    public class FSInterceptor : DispatchInterceptor,IDisposable
+    class FSInterceptor : DispatchInterceptor,IDisposable
     {
         private Ice.Object servant;
         private Logger logger;

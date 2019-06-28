@@ -11,8 +11,8 @@ namespace FootStone.FrontNetty
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
 
-        private FrontServerNetty frontServer = new FrontServerNetty();
-        private GameClientNetty  gameClient = new GameClientNetty();
+        private FrontServer frontServer = new FrontServer();
+        private GameClient  gameClient = new GameClient();
 
         private IChannelManager frontChannels = new ChannelManager();
         private IChannelManager gameChannels = new ChannelManager();
@@ -37,7 +37,7 @@ namespace FootStone.FrontNetty
         public async Task Start()
         {
 
-            //监听玩家绑定game服的事件
+            //监听事件:玩家绑定game服
             frontServer.eventBindPlayerAndGameServer += async (playerId, gameServerId) =>
             {
                 var gameChannel = gameChannels.GetChannel(gameServerId);
@@ -45,7 +45,7 @@ namespace FootStone.FrontNetty
                 //如果找不到game channel，新建一个连接
                 if (gameChannel == null)
                 {
-                    gameChannel = await gameClient.ConnectNettyAsync(gameServerId);
+                    gameChannel = await gameClient.ConnectGameServerAsync(gameServerId);
                     gameChannels.AddChannel(gameServerId, gameChannel);
                 }
 

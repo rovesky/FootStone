@@ -25,24 +25,19 @@ namespace FootStone.FrontNetty
 
 
         public override Task Init(IServiceProvider serviceProvider)
-        {
-           // logger.Info("Front DotNetty Service Init!");
-   
+        {      
             service.Init(serviceProvider);
             return base.Init(serviceProvider);
         }
 
         public async override Task Start()
-        {
-          //  logger.Info("Game DotNetty Service Start!");
-
+        {    
             await service.Start();
             await base.Start();
         }
 
         public async override Task Stop()
         {
-          //  logger.Info("Game DotNetty Service Stop!");
             await service.Stop();
             await base.Stop();
         }

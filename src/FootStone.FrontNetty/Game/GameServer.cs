@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace FootStone.FrontNetty
 {
-    public class GameServerNetty
+    public class GameServer
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
 
@@ -43,10 +43,9 @@ namespace FootStone.FrontNetty
                     {
                         IChannelPipeline pipeline = channel.Pipeline;
 
-                        //    pipeline.AddLast(new LoggingHandler("SRV-CONN"));
                         pipeline.AddLast("framing-enc", new LengthFieldPrepender(2));
                         pipeline.AddLast("framing-dec", new LengthFieldBasedFrameDecoder(ushort.MaxValue, 0, 2, 0, 2));
-                        pipeline.AddLast("echo", new GameServerHandler(recv));
+                        pipeline.AddLast("game-server", new GameServerHandler(recv));
                     }));
 
                 logger.Info("DotNetty Inited!");
@@ -93,9 +92,7 @@ namespace FootStone.FrontNetty
         public GameServerHandler(IRecvData recv)
         {
             this.recv = recv;   
-        }    
-
-        
+        }            
 
         public override void ChannelRead(IChannelHandlerContext context, object message)
         {
@@ -129,7 +126,7 @@ namespace FootStone.FrontNetty
                         case MessageType.Data:
                             {
                                 var playerId = buffer.ReadStringShortUtf8();
-                                logger.Debug($"Game recv data,player:{playerId},size:{buffer.Capacity}!");
+                              //  logger.Debug($"Game recv data,player:{playerId},size:{buffer.Capacity}!");
                                 recv.Recv(playerId, buffer);
                                 break;
                             }

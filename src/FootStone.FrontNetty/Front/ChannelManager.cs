@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 
 namespace FootStone.FrontNetty
 {
-    public class ChannelManager :IChannelManager
+    class ChannelManager :IChannelManager
     {   
      //   private static Logger logger = LogManager.GetCurrentClassLogger();
 

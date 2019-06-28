@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using System.Timers;
 using NLog;
+using FootStone.FrontNetty;
 
 namespace FootStone.Core.Client
 {
@@ -253,7 +254,7 @@ namespace FootStone.Core.Client
 
                     //绑定Zone
                     var endPoint = await zonePrx.BindZoneAsync(playerInfo.zoneId, playerInfo.playerId);
-                    var gameServerId = endPoint.ip + ":" + endPoint.port;
+                    var gameServerId = FrontNettyUtility.Endpoint2GameServerId(endPoint.ip ,endPoint.port);
                     await netty.BindGameServer(channel, playerInfo.playerId, gameServerId);     
                
                     //进入Zone

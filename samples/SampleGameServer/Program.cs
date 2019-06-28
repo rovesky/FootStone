@@ -54,7 +54,7 @@ namespace FootStone.Core.GameServer
         {
             try
             {
-              
+
                 Console.CancelKeyPress += (s, a) =>
                 {
                     a.Cancel = true;
@@ -87,7 +87,7 @@ namespace FootStone.Core.GameServer
                             options.ClusterId = "lsj";
                             options.ServiceId = "FootStone";
                         })
-                        .ConfigureEndpoints(IPAddress.Parse(GetLocalIP()),11111, 30000)                      
+                        .ConfigureEndpoints(IPAddress.Parse(GetLocalIP()), 11111, 30000)
                         //.Configure<StatisticsOptions>(options =>
                         //{
                         //    options.LogWriteInterval = TimeSpan.FromSeconds(10);
@@ -97,13 +97,12 @@ namespace FootStone.Core.GameServer
                         {
                             var grainFactory = services.GetRequiredService<IGrainFactory>();
                             var grain = grainFactory.GetGrain<IWorldGrain>("1");
-                            await grain.Init();                         
+                            await grain.Init();
 
-                        })
-                        //  .Configure<EndpointOptions>(options => options.AdvertisedIPAddress = IPAddress.Any)
+                        })              
                         //  .ConfigureApplicationParts(parts => parts.AddApplicationPart(typeof(IAccountGrain).Assembly).WithReferences())
                         .ConfigureLogging(logging =>
-                        {               
+                        {
                             //logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Warning);
                             logging.AddProvider(new NLogLoggerProvider());
                         })
@@ -114,13 +113,7 @@ namespace FootStone.Core.GameServer
                              options.UseJsonFormat = true;
                              options.ConnectionString = mysqlConnectStorage;
                              options.Invariant = "MySql.Data.MySqlClient";
-                         })     
-                        .AddGrainService<NettyGameGrainService>()
-                        .Configure<NettyGameOptions>(options =>
-                        {
-                            options.Port = 8017;
-                            options.Recv = ZoneNetttyData.Instance;
-                        })           
+                         })                   
                         //.AddMemoryGrainStorage("PubSubStore")
                         //.AddSimpleMessageStreamProvider("Zone", cfg =>
                         //{
@@ -128,9 +121,15 @@ namespace FootStone.Core.GameServer
                         //})
                         .EnableDirectClient();
                     })
-                    //添加ICE支持
+                    //添加Netty Game支持
+                    .AddGameNetty(options =>
+                    {
+                        options.Port = 8017;
+                        options.Recv = ZoneNetttyData.Instance;
+                    })
+                    //添加ICE Front支持
                     .AddFrontIce()
-                    //添加Netty支持
+                    //添加Netty Front支持
                     .AddFrontNetty(options =>
                     {
                         options.FrontPort = 8007;
@@ -145,7 +144,7 @@ namespace FootStone.Core.GameServer
                 RunAsync(footStone).Wait();
 
                 _siloStopped.WaitOne();
-             
+
             }
             catch (Exception ex)
             {
