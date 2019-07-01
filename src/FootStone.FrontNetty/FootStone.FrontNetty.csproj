@@ -8,6 +8,10 @@
     <OutputPath>..\..\output</OutputPath>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <OutputPath>../../output/server</OutputPath>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="DotNetty.Handlers" Version="0.6.0" />
     <PackageReference Include="Microsoft.Orleans.Client" Version="2.2.4" />

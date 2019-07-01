@@ -123,6 +123,25 @@ namespace FootStone.FrontNetty
                                 logger.Debug($"Game PlayerBindSilo:{playerId}!");
                                 return;
                             }
+                        case MessageType.Ping:
+                            {
+                                //添加包头
+                                //var playerId = buffer.ReadStringShortUtf8();
+                                //var header = context.Allocator.DirectBuffer(4 + playerId.Length);
+                                //header.WriteUnsignedShort((ushort)MessageType.p);
+                                //header.WriteStringShortUtf8(playerId);
+
+                                //buffer.ResetReaderIndex();
+                                //var comBuff = context.Allocator.CompositeDirectBuffer();
+                                //comBuff.AddComponents(true, header, buffer);
+
+                                var playerId = buffer.ReadStringShortUtf8();
+                                buffer.ResetReaderIndex();
+                                context.Channel.WriteAndFlushAsync(buffer);
+
+                                logger.Debug($"Game Ping:{playerId}!");
+                                return;
+                            }
                         case MessageType.Data:
                             {
                                 var playerId = buffer.ReadStringShortUtf8();

@@ -8,6 +8,10 @@
     <OutputPath>..\..\output</OutputPath>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <OutputPath>../../output/server</OutputPath>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Microsoft.Orleans.Core.Abstractions" Version="2.2.0" />
     <PackageReference Include="Microsoft.Orleans.Core.Legacy" Version="2.2.4" />

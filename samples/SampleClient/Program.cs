@@ -243,6 +243,7 @@ namespace FootStone.Core.Client
                 logger.Debug($"{account} playerInfo:" + JsonConvert.SerializeObject(playerInfo));
 
                 IChannel channel = null;
+                System.Timers.Timer moveTimer = null;
                 System.Timers.Timer pingTimer = null;
                 if (netty != null)
                 {
@@ -260,16 +261,27 @@ namespace FootStone.Core.Client
                     //进入Zone
                     await zonePrx.PlayerEnterAsync();
 
-                    //发送消息
-                    pingTimer = new System.Timers.Timer();
-                    pingTimer.AutoReset = true;
-                    pingTimer.Interval = 500;
-                    pingTimer.Enabled = true;
-                    pingTimer.Elapsed += (_1,_2)=>
+                    //发送move消息
+                    moveTimer = new System.Timers.Timer();
+                    moveTimer.AutoReset = true;
+                    moveTimer.Interval = 500;
+                    moveTimer.Enabled = true;
+                    moveTimer.Elapsed += (_1,_2)=>
                     {
                         netty.SendMove(channel,index);
                     };
-                    pingTimer.Start();                 
+                    moveTimer.Start();
+
+                    //发送ping消息
+                    pingTimer = new System.Timers.Timer();
+                    pingTimer.AutoReset = true;
+                    pingTimer.Interval = 2000;
+                    pingTimer.Enabled = true;
+                    pingTimer.Elapsed += (_1, _2) =>
+                    {
+                        netty.SendPing(channel, index);
+                    };
+                    pingTimer.Start();
                 }
 
                 logger.Info($"{account} playerPrx begin!" );
@@ -293,7 +305,12 @@ namespace FootStone.Core.Client
                     await channel.CloseAsync();
                 }
 
-                if(pingTimer != null)
+                if(moveTimer != null)
+                {
+                    moveTimer.Stop();
+                }
+
+                if (pingTimer != null)
                 {
                     pingTimer.Stop();
                 }

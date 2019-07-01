@@ -84,19 +84,28 @@ namespace FootStone.Core.Client
         {
             var buffer = message as IByteBuffer;
             if (buffer != null)
-            {           
-             
-                ushort type = buffer.ReadUnsignedShort();
-                if(type == 1)
+            {
+
+                MessageType type = (MessageType)buffer.ReadUnsignedShort();
+                if(type == MessageType.PlayerHandshake)
                 {
                     tcsConnected.SetResult(null);
                 }
-                else if(type == 2)
+                else if(type == MessageType.PlayerBindGame)
                 {
                     tcsBindSiloed.SetResult(null);
                 }
-                else if (type == 10)
+                else if (type == MessageType.Ping)
                 {
+                    var now = DateTime.Now.Ticks;
+                    var pingTime = buffer.ReadLong();
+                    var timer = (now - pingTime) / 10000;
+                    logger.Debug($"ping value:{timer}ms");
+                   // tcsBindSiloed.SetResult(null);
+                }
+                else if (type == MessageType.Data)
+                {
+                    logger.Debug("recevie Data!");
                     msgQueue.Enqueue(buffer);
                     return;
                 }
@@ -166,13 +175,13 @@ namespace FootStone.Core.Client
                         IByteBuffer[] buffers = SocketNettyHandler.msgQueue.ToArray();
                         SocketNettyHandler.msgQueue.Clear();
 
-                        printCount++;
+              
                        // logger.Info($"Received buffers.Length: {buffers.Length}");
 
                         if (buffers.Length > 0)
                         {
-                            msgCount += buffers.Length;                          
-
+                            msgCount += buffers.Length;
+                            printCount++;
                             if (printCount% 10 == 0)
                             {
                                 logger.Info("Received from server msg count: " + msgCount + ",msg length:" + buffers[0].ReadableBytes);
@@ -254,7 +263,7 @@ namespace FootStone.Core.Client
 
         public async Task SendMove(IChannel channel,ushort actorId)
         {
-            var data = channel.Allocator.DirectBuffer(100);
+            var data = channel.Allocator.DirectBuffer(16);
             data.WriteUnsignedShort((ushort)MessageType.Data);
             data.WriteUnsignedShort((ushort)14);
 
@@ -266,6 +275,15 @@ namespace FootStone.Core.Client
             move.point.x = 10.6f;
             move.point.y = 300.1f;
             move.Encoder(data);
+            await channel.WriteAndFlushAsync(data);
+        }
+
+        public async Task SendPing(IChannel channel, ushort actorId)
+        {
+            var data = channel.Allocator.DirectBuffer(4);
+            data.WriteUnsignedShort((ushort)MessageType.Ping);
+            data.WriteLong(DateTime.Now.Ticks);   
+
             await channel.WriteAndFlushAsync(data);
         }
     }

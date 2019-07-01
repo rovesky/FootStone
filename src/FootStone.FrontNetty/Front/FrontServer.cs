@@ -131,11 +131,30 @@ namespace FootStone.FrontNetty
                             logger.Debug($"Player:{playerId} bind gameServer:{gameServerId}");
                             break;
                         }
-                    case MessageType.Data:
+                    case MessageType.Ping:
                         {
                             //添加包头
                             var header = context.Allocator.DirectBuffer(4 + playerId.Length);
-                            header.WriteUnsignedShort((ushort)MessageType.Data);
+                            header.WriteUnsignedShort(type);
+                            header.WriteStringShortUtf8(playerId);
+
+                            buffer.ResetReaderIndex();
+                            var comBuff = context.Allocator.CompositeDirectBuffer();
+                            comBuff.AddComponents(true, header, buffer);
+
+                            if (gameServerChannel == null)
+                            {
+                                gameServerChannel = gameChannels.GetChannel(gameServerId);
+                            }
+                            gameServerChannel.WriteAndFlushAsync(comBuff);
+                            return;
+                        }
+
+                    case MessageType.Data:                  
+                        {
+                            //添加包头
+                            var header = context.Allocator.DirectBuffer(4 + playerId.Length);
+                            header.WriteUnsignedShort(type);
                             header.WriteStringShortUtf8(playerId);
 
                             buffer.DiscardReadBytes();

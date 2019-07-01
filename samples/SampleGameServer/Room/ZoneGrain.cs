@@ -106,9 +106,9 @@ namespace FootStone.Core
                                          }
                                          //  player.channel.WriteAndFlushAsync(msg);
 
-                                        // logger.Debug($"Zone send data:{player.id.ToString()},size:{msg.ReadableBytes}" +
-                                        //  $",threadId:{Thread.CurrentThread.ManagedThreadId}" +
-                                         // $",data size:{datas.Count},data1 size:{datas1.Count}!");
+                                         logger.Debug($"Zone send data:{player.id.ToString()},size:{msg.ReadableBytes}" +
+                                          $",threadId:{Thread.CurrentThread.ManagedThreadId}" +
+                                          $",data size:{datas.Count},data1 size:{datas1.Count}!");
 
                                          player.channel.WriteAsync(msg);
 
@@ -172,7 +172,7 @@ namespace FootStone.Core
         {
             logger.Debug($"zone {this.GetPrimaryKey().ToString()} ,PlayerLeave:{playerId.ToString()} ,zone player count:{ players.Count}");
             ZoneNetttyData.Instance.UnBindPlayerZone(playerId.ToString());
-            ZoneNetttyData.Instance.RemoveChannel(playerId.ToString());
+          //  ZoneNetttyData.Instance.RemoveChannel(playerId.ToString());
             players.Remove(playerId);
             return Task.CompletedTask;
         }

@@ -8,6 +8,10 @@
     <OutputPath>..\..\output</OutputPath>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <OutputPath>../../output/server</OutputPath>
+  </PropertyGroup>
+
   <ItemGroup> 
     <ProjectReference Include="..\FootStone.Core\FootStone.Core.csproj" />
     <ProjectReference Include="..\FootStone.GrainInterfaces\FootStone.GrainInterfaces.csproj" />

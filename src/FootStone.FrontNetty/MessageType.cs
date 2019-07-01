@@ -6,9 +6,12 @@ namespace FootStone.FrontNetty
 {
     public enum MessageType
     {
-        PlayerHandshake = 1,
-        PlayerBindGame = 2,
-        SiloHandshake = 3,
-        Data  = 10
+        PlayerHandshake = 0x01,
+        PlayerBindGame = 0x02,
+
+        Ping = 0x04,
+        Pong = 0x05,
+      
+        Data  = 0x10
     }
 }

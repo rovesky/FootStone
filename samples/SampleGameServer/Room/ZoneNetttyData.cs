@@ -37,7 +37,7 @@ namespace FootStone.Core
         public void AddChannel(string id, IChannel channel)
         {
             logger.Debug("AddChannel:" + id);
-            this.channels[id] = channel;
+            this.channels.TryAdd(id, channel);
         }
 
         public void RemoveChannel(string id)
