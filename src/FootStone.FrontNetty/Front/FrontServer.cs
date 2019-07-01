@@ -3,6 +3,7 @@ using DotNetty.Codecs;
 using DotNetty.Transport.Bootstrapping;
 using DotNetty.Transport.Channels;
 using DotNetty.Transport.Channels.Sockets;
+using FootStone.ProtocolNetty;
 using NLog;
 using System;
 using System.Text;

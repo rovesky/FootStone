@@ -12,6 +12,7 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using FootStone.ProtocolNetty;
 
 namespace FootStone.FrontNetty
 {
@@ -56,7 +57,7 @@ namespace FootStone.FrontNetty
                                 channel.WriteAndFlushAsync(buffer);
                                 break;
                         }
-                        logger.Debug($"Send Data to client:{playerId}");
+                     //   logger.Debug($"Send Data to client:{playerId}");
                         return;
                     }
                 }
@@ -113,7 +114,7 @@ namespace FootStone.FrontNetty
                     .Group(group)
                     .Channel<TcpSocketChannel>()
                     .Option(ChannelOption.Allocator, PooledByteBufferAllocator.Default)
-                    .Option(ChannelOption.TcpNodelay, false)
+                    .Option(ChannelOption.TcpNodelay, true)
                     .Option(ChannelOption.SoSndbuf, 1 * 1024 * 1024)
                     .Option(ChannelOption.SoRcvbuf, 1 * 1024 * 1024)
                     .Handler(new ActionChannelInitializer<ISocketChannel>(channel =>
@@ -149,7 +150,7 @@ namespace FootStone.FrontNetty
         }
         public async Task<IChannel> ConnectGameServerAsync(string gameServerId)
         {
-            var endpoint = FrontNettyUtility.GameServerId2Endpoint(gameServerId);
+            var endpoint = ProtocolNettyUtility.GameServerId2Endpoint(gameServerId);
             var channel = await bootstrap.ConnectAsync(endpoint);
 
             var handler = channel.Pipeline.Get<GameClientHandler>();

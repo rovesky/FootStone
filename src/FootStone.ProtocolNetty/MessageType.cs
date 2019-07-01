@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace FootStone.FrontNetty
+namespace FootStone.ProtocolNetty
 {
     public enum MessageType
     {

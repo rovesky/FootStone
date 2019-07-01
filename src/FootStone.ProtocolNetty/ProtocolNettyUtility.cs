@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Net;
 using System.Text;
 
-namespace FootStone.FrontNetty
+namespace FootStone.ProtocolNetty
 {
-    public  class FrontNettyUtility
+    public  class ProtocolNettyUtility
     {
         public static string  Endpoint2GameServerId(string host,int port)
         {

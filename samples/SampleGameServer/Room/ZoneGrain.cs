@@ -1,25 +1,19 @@
-using DotNetty.Buffers;
 using DotNetty.Transport.Channels;
 using FootStone.Core.GrainInterfaces;
 using FootStone.FrontNetty;
 using FootStone.GrainInterfaces;
-using Microsoft.Extensions.Options;
 using Microsoft.Extensions.DependencyInjection;
-
+using Microsoft.Extensions.Options;
 using Orleans;
-using Orleans.Core;
-using Orleans.Providers;
 using Orleans.Runtime;
-using Orleans.Streams;
 using SampleGameServer.Room;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Threading;
-using System.Collections.Concurrent;
+using System.Threading.Tasks;
 
 namespace FootStone.Core
 {
@@ -106,9 +100,9 @@ namespace FootStone.Core
                                          }
                                          //  player.channel.WriteAndFlushAsync(msg);
 
-                                         logger.Debug($"Zone send data:{player.id.ToString()},size:{msg.ReadableBytes}" +
-                                          $",threadId:{Thread.CurrentThread.ManagedThreadId}" +
-                                          $",data size:{datas.Count},data1 size:{datas1.Count}!");
+                                         //logger.Debug($"Zone send data:{player.id.ToString()},size:{msg.ReadableBytes}" +
+                                         // $",threadId:{Thread.CurrentThread.ManagedThreadId}" +
+                                         // $",data size:{datas.Count},data1 size:{datas1.Count}!");
 
                                          player.channel.WriteAsync(msg);
 
@@ -172,7 +166,7 @@ namespace FootStone.Core
         {
             logger.Debug($"zone {this.GetPrimaryKey().ToString()} ,PlayerLeave:{playerId.ToString()} ,zone player count:{ players.Count}");
             ZoneNetttyData.Instance.UnBindPlayerZone(playerId.ToString());
-          //  ZoneNetttyData.Instance.RemoveChannel(playerId.ToString());
+            ZoneNetttyData.Instance.RemoveChannel(playerId.ToString());
             players.Remove(playerId);
             return Task.CompletedTask;
         }

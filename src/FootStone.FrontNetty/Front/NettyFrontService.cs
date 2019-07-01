@@ -1,4 +1,5 @@
 ﻿using FootStone.Core;
+using FootStone.ProtocolNetty;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using NLog;
