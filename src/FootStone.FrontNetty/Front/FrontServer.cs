@@ -121,7 +121,7 @@ namespace FootStone.FrontNetty
                             buffer.ResetReaderIndex();
                             context.Channel.WriteAndFlushAsync(buffer);
                             frontChannels.AddChannel(playerId, context.Channel);
-                            logger.Debug("Player Handshake:" + playerId);
+                            logger.Info("Player Handshake:" + playerId);
                             return;
                         }
                     case MessageType.PlayerBindGame:
