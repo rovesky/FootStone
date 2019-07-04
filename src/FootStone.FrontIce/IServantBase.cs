@@ -10,7 +10,7 @@ namespace FootStone.FrontIce
 
         string GetFacet();
 
-        void setSessionI(SessionI sessionI);
+         void setSessionI(SessionI sessionI);
       
     }
 }

@@ -48,3 +48,5 @@ output
 /test/TestNettyClient/bin
 /test/TestNettyServer/bin
 /src/FootStone.FrontNetty/bin
+/src/FootStone.Client/bin
+/src/FootStone.ProtocolNetty/bin

@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NLog" Version="4.6.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FootStone.Protocolce\FootStone.ProtocolIce.csproj" />
+    <ProjectReference Include="..\FootStone.ProtocolNetty\FootStone.ProtocolNetty.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\FootStone.Client\FootStone.Client.csproj" />
     <ProjectReference Include="..\..\src\FootStone.ProtocolNetty\FootStone.ProtocolNetty.csproj" />
     <ProjectReference Include="..\SampleProtocolIce\SampleProtocolIce.csproj" />
   </ItemGroup>
