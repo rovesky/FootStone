@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace FootStone.Core
 {
-    public interface IFSClient : IDisposable
+    public interface IFSFront : IDisposable
     {
         /// <summary>
         /// Starts this silo.

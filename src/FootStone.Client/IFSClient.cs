@@ -9,14 +9,14 @@ namespace FootStone.Client
     public interface IFSClient
     {
         /// <summary>
-        /// Starts this silo.
+        /// 启动fs 
         /// </summary>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>A <see cref="Task"/> representing the work performed.</returns>
         Task StartAsync(CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
-        /// Stops this silo.
+        /// 停止fs
         /// </summary>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>A <see cref="Task"/> representing the work performed.</returns>
@@ -27,9 +27,18 @@ namespace FootStone.Client
         Task StopAsync(CancellationToken cancellationToken = default(CancellationToken));
 
 
-        
+        /// <summary>
+        /// 创建Session
+        /// </summary>
+        /// <param name="ip"></param>
+        /// <param name="port"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
         Task<IFSSession> CreateSession(string ip, int port, string id);
 
+        /// <summary>
+        /// 主线程调用
+        /// </summary>
         void Update();
     }
 }

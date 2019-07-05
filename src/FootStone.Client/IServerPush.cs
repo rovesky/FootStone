@@ -4,11 +4,10 @@ using System.Text;
 
 namespace FootStone.Client
 {
-    interface IServerPush
+    public interface IServerPush
     {
         string GetFacet();
 
-        void setSessionI(SessionPushI sessionI);
-
+        void setSessionPushI(SessionPushI sessionPushI);
     }
 }

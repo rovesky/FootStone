@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace FootStone.FrontIce
 {
-    public class IceFrontService :IClientService
+    public class IceFrontService :IFrontService
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
         private FrontServer network = new FrontServer();

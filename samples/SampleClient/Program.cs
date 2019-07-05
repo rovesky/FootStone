@@ -1,5 +1,4 @@
-﻿using FootStone.Client;
-using NLog;
+﻿using NLog;
 using SampleClient;
 using System;
 using System.Threading.Tasks;
@@ -22,11 +21,10 @@ namespace FootStone.Core.Client
                 string ip = args.Length > 3 ?args[3] : "192.168.0.128";
                 int port = args.Length > 4 ? int.Parse(args[4]) : 4061;
 
+               // OldTest(count, startIndex, needNetty);
+                NewTest(ip,port,count, startIndex, needNetty).Wait();
 
-                //OldTest(args);
-                NewTest(ip,port,count, startIndex, needNetty);
-
-                Console.ReadLine();
+              //  Console.ReadLine();
             }
             catch (Exception ex)
             {

@@ -6,14 +6,14 @@ using NLog;
 
 namespace FootStone.Client
 {
-    public class NLoggerI : Ice.Logger
+    public class NLoggerIce : Ice.Logger
     {
         private NLog.Logger logger;
 
         public string Prefix { get; set; }
 
 
-        public NLoggerI(NLog.Logger logger)
+        public NLoggerIce(NLog.Logger logger)
         {
             this.logger = logger;
         }

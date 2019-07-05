@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace FootStone.Core
 {
-    public interface  IClientService
+    public interface  IFrontService
     {
         Task Init(IServiceProvider serviceProvider);
 

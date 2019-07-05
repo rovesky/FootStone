@@ -75,11 +75,19 @@ namespace SampleFrontIce
             var gpid = Guid.Parse(playerId);
             playerGrain = Global.OrleansClient.GetGrain<IPlayerGrain>(gpid);
 
-            await observer.Subscribe(playerGrain, new PlayerObserver(IPlayerPushPrxHelper.uncheckedCast(session.SessionPushPrx,"playerPush")));
+            await observer.Subscribe(playerGrain, new PlayerObserver(
+                IPlayerPushPrxHelper.uncheckedCast(session.SessionPushPrx,"playerPush")));
 
             await playerGrain.PlayerOnline();
 
-            session.PlayerId = gpid;
+            try
+            {
+                session.PlayerId = gpid;
+            }
+            catch(System.Exception e)
+            {
+                logger.Error(e);
+            }
 
 
             pingTimer = new Timer();
@@ -122,6 +130,5 @@ namespace SampleFrontIce
             if(playerGrain != null)
                  playerGrain.PlayerOffline();
         }
-
     }
 }

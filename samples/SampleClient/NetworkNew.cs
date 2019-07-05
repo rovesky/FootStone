@@ -1,6 +1,5 @@
 ﻿using DotNetty.Transport.Channels;
 using FootStone.Client;
-using FootStone.Core.Client;
 using FootStone.GrainInterfaces;
 using FootStone.ProtocolNetty;
 using Newtonsoft.Json;
@@ -9,71 +8,139 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
+using Ice;
 
 namespace SampleClient
 {
+
+    internal class ZonePushI : IZonePushDisp_,IServerPush
+    {
+      
+        private int count = 0;
+
+        public ZonePushI()
+        {
+           
+        }
+        private NLog.Logger logger = LogManager.GetCurrentClassLogger();
+        private SessionPushI sessionPushI;
+
+        public override void ZoneSync(byte[] data, Current current = null)
+        {
+            //count++;
+            //if (count % 330 == 0)
+            //{
+            //    logger.Info(name + " zone sync:" + count);
+            //}
+        }
+
+        public string GetFacet()
+        {
+            return "zonePush";
+        }       
+
+        public void setSessionPushI(SessionPushI sessionPushI)
+        {
+            this.sessionPushI = sessionPushI;
+        }
+    }
+
+    internal class PlayerPushI : IPlayerPushDisp_, IServerPush
+    {
+       // private string name;
+        private NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        private SessionPushI sessionPushI;
+
+        public PlayerPushI()
+        {
+           // this.name = name;
+        }
+
+        public string GetFacet()
+        {
+           return "playerPush";
+        }
+
+        public void setSessionPushI(SessionPushI sessionPushI)
+        {
+            this.sessionPushI = sessionPushI;
+        }
+
+        public override void hpChanged(int hp, Current current = null)
+        {
+            logger.Info(sessionPushI.Account + " hp changed !");
+            //Test.HpChangeCount++;
+            //if (Test.HpChangeCount % 1000 == 0)
+            //{
+            //    logger.Info(name + " hp changed::" + Test.HpChangeCount);
+            //}
+
+            //      logger.Info(name+" hp changed:" + hp);
+        }
+
+      
+    }
+
     public class NetworkNew
     {
-        private static Logger logger = LogManager.GetCurrentClassLogger();
+        private static NLog.Logger logger = LogManager.GetCurrentClassLogger();
+        private Timer updateTimer;
 
-        //private string parseHost(string endPoint)
-        //{
-        //    var strs = endPoint.Split(' ');
-        //    for (int i = 0; i < strs.Length; ++i)
-        //    {
-        //        if (strs[i] == "-h")
-        //        {
-        //            return strs[i + 1];
-        //        }
-        //    }
-        //    return "";
-        //}
-      
-
-
-        public   async Task Test(string ip,int port,int count, ushort startIndex, bool needNetty)
+        public async Task Test(string ip, int port, int count, ushort startIndex, bool needNetty)
         {
             logger.Info($"begin test,count:${count},startIndex:{startIndex},needNetty:{needNetty}");
 
             var client = new FSClientBuilder()
-                .IceOptions(initData =>
+                .IceOptions(iceOptions =>
                 {
-                    initData.properties = Ice.Util.createProperties();
-                    //initData.properties.setProperty("Ice.ACM.Client.Heartbeat", "Always");
-                    //initData.properties.setProperty("Ice.RetryIntervals", "-1");
-                    initData.properties.setProperty("Ice.FactoryAssemblies", "client");
-                    initData.properties.setProperty("Ice.Trace.Network", "1");
-                    initData.properties.setProperty("Ice.Default.Timeout", "15000");
+                    iceOptions.PushObjects = new List<Ice.Object>();
+                    iceOptions.PushObjects.Add(new PlayerPushI());
+                    iceOptions.PushObjects.Add(new ZonePushI());
                     //    initData.properties.setProperty("SessionFactory.Proxy", "SessionFactory:default -h "+ IP + " -p " + port +" -t 10000");
-                    initData.properties.setProperty("Ice.Default.Locator", "FootStone/Locator:default -h " + ip + " -p " + port);
+                    //    initData.properties.setProperty("Ice.Default.Locator", "FootStone/Locator:default -h " + ip + " -p " + port);
 
                 })
                 .NettyOptions(bootstrap =>
                 {
-                    
+
                 })
                 .Build();
 
+            updateTimer = new System.Timers.Timer();
+            updateTimer.AutoReset = true;
+            updateTimer.Interval = 33;
+            updateTimer.Enabled = true;
+            updateTimer.Elapsed += (_1, _2) =>
+            {
+                client.Update();
+            };
+            updateTimer.Start();
             await client.StartAsync();
 
             for (ushort i = startIndex; i < startIndex + count; ++i)
             {
                 var sessionId = "session" + i;
                 var session = await client.CreateSession(ip, port, sessionId);
-                RunSession(session,i, 20, needNetty);
+
+                session.OnDestroyed += (sender, e) =>
+                {
+                    logger.Info($"session:{session.GetId()}");
+                };
+                RunSession(session, i, 20, needNetty);
                 await Task.Delay(20);
             }
-            logger.Info("all session created:" + count);           
+            logger.Info("all session created:" + count);
         }
 
         private  async Task RunSession(IFSSession session,ushort index, int count,bool needNetty)
         {
+            var account = "account" + index;
+            var password = "111111";
+            var playerName = "player" + index;
+
             try
             {
-                var account = "account" + index;
-                var password = "111111";
-                var playerName = "player" + index;
-
                 //获取SessionPrx
                 var sessionPrx = session.GetSessionPrx();
 
@@ -84,7 +151,7 @@ namespace SampleClient
                     await accountPrx.RegisterRequestAsync(account, new RegisterInfo(account, password));
                     logger.Debug("RegisterRequest ok:" + account);
                 }
-                catch (Exception ex)
+                catch (Ice.Exception ex)
                 {
                     logger.Debug("RegisterRequest fail:" + ex.Message);
                 }
@@ -93,8 +160,20 @@ namespace SampleClient
                 await accountPrx.LoginRequestAsync(account, password);
                 logger.Debug("LoginRequest ok:" + account);
 
+                //var connection = accountPrx.ice_getConnection();
+                //logger.Debug("accountPrx:" + connection.getInfo().connectionId + " session connection: ACM=" +
+                //       connection.getACM().ToString() + ",Endpoint=" + connection.getEndpoint().ToString());
+
                 //选择服务器
                 var worldPrx = WorldPrxHelper.uncheckedCast(sessionPrx, "world");
+                //worldPrx.ice_fixed(sessionPrx.ice_getConnection());
+
+                //logger.Debug("WorldPrx:" + worldPrx.ice_getConnectionId());
+
+                //connection = worldPrx.ice_getConnection();
+                //logger.Debug("WorldPrx:" + connection.getInfo().connectionId + " session connection: ACM=" +
+                //       connection.getACM().ToString() + ",Endpoint=" + connection.getEndpoint().ToString());
+
                 List<ServerInfo> servers = await worldPrx.GetServerListRequestAsync();
 
                 if (servers.Count == 0)
@@ -151,7 +230,7 @@ namespace SampleClient
             }
             catch (System.Exception e)
             {
-                logger.Error(e);
+                logger.Error(account + ":" + e.ToString());
             }
         }
 

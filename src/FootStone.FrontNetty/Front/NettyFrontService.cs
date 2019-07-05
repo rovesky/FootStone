@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace FootStone.FrontNetty
 {
-    public class NettyFrontService : IClientService
+    public class NettyFrontService : IFrontService
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
 

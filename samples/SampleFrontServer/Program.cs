@@ -29,7 +29,7 @@ namespace FootStone.Core.FrontServer
             try
             {
 
-                IFSClient client = null;
+                IFSFront client = null;
                 Console.CancelKeyPress += (s, a) =>
                 {
                     a.Cancel = true;
@@ -51,7 +51,7 @@ namespace FootStone.Core.FrontServer
                 {
                     try
                     {
-                        client = new FSClientBuilder()
+                        client = new FSFrontBuilder()
                         .ConfigureOrleans(orleansBuilder =>
                         {
                             //.UseLocalhostClustering()

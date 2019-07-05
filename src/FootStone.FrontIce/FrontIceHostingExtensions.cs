@@ -19,7 +19,7 @@ namespace FootStone.FrontIce
             return builder;
         }
 
-        public static IFSClientBuilder AddFrontIce(this IFSClientBuilder builder, Action<IceOptions> config)
+        public static IFSFrontBuilder AddFrontIce(this IFSFrontBuilder builder, Action<IceOptions> config)
         {
             builder.ConfigureOrleans(client =>
             {
@@ -27,7 +27,7 @@ namespace FootStone.FrontIce
                 .Configure(config)
                 .ConfigureServices(s =>
                 {
-                    s.AddSingleton<IClientService, IceFrontService>();
+                    s.AddSingleton<IFrontService, IceFrontService>();
                 });
             });
             return builder;

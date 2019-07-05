@@ -28,7 +28,7 @@ namespace SampleFrontIce
             return builder;
         }
 
-        public static IFSClientBuilder AddFrontIce(this IFSClientBuilder builder)
+        public static IFSFrontBuilder AddFrontIce(this IFSFrontBuilder builder)
         {
             builder.AddFrontIce(iceOptions =>
             {

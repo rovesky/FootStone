@@ -8,11 +8,11 @@ using Orleans.Runtime;
 
 namespace FootStone.Core
 {
-    internal class FSClient : IFSClient
+    internal class FSFront : IFSFront
     {
         private IClusterClient clusterClient;
 
-        public FSClient(IClusterClient clusterClient)
+        public FSFront(IClusterClient clusterClient)
         {
             this.clusterClient = clusterClient;
         }
@@ -32,7 +32,7 @@ namespace FootStone.Core
         {          
             await clusterClient.Connect();
 
-            var clientServices = Services.GetServices<IClientService>();
+            var clientServices = Services.GetServices<IFrontService>();
             foreach (var clientService in clientServices)
             {
                 await clientService.Init(Services);
@@ -43,7 +43,7 @@ namespace FootStone.Core
 
         public async Task StopAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
-            var clientServices = Services.GetServices<IClientService>();
+            var clientServices = Services.GetServices<IFrontService>();
             foreach (var clientService in clientServices)
             {
                 await clientService.Stop();

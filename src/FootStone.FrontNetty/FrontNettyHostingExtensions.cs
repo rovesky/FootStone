@@ -21,7 +21,7 @@ namespace FootStone.FrontNetty
             return builder;
         }
 
-        public static IFSClientBuilder AddFrontNetty(this IFSClientBuilder builder, Action<NettyFrontOptions> config)
+        public static IFSFrontBuilder AddFrontNetty(this IFSFrontBuilder builder, Action<NettyFrontOptions> config)
         {
             builder.ConfigureOrleans(client =>
             {
@@ -29,7 +29,7 @@ namespace FootStone.FrontNetty
                 .Configure<NettyFrontOptions>(config)
                 .ConfigureServices(s =>
                 {
-                    s.AddSingleton<IClientService, NettyFrontService>();
+                    s.AddSingleton<IFrontService, NettyFrontService>();
                 });
             });
             return builder;

@@ -127,7 +127,7 @@ namespace FootStone.Client
 
 
 
-    public class ClientNetty
+    public class NetworkNetty
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
 
@@ -139,7 +139,7 @@ namespace FootStone.Client
 
        // private int printCount = 0;
 
-        public ClientNetty(Bootstrap bootstrap)
+        public NetworkNetty(Bootstrap bootstrap)
         {
             this.bootstrap = bootstrap;
         }

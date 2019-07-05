@@ -9,11 +9,11 @@ namespace FootStone.Client
     public class FSClientBuilder
     {
         private readonly List<Action<Bootstrap>> configureNettyActions = new List<Action<Bootstrap>>();
-        private readonly List<Action<Ice.InitializationData>> configureIceActions = new List<Action<Ice.InitializationData>>();
+        private readonly List<Action<IceClientOptions>> configureIceActions = new List<Action<IceClientOptions>>();
 
         private bool built = false;
         private Bootstrap nettyBootstrap;
-        private InitializationData iceInitData;
+        private IceClientOptions iceClientOptions;
 
         public FSClientBuilder  NettyOptions(Action<Bootstrap> configureNetty)
         {
@@ -21,7 +21,7 @@ namespace FootStone.Client
             return this;
         }
 
-        public FSClientBuilder IceOptions(Action<Ice.InitializationData> configureIce)
+        public FSClientBuilder IceOptions(Action<IceClientOptions> configureIce)
         {
             this.configureIceActions.Add(configureIce ?? throw new ArgumentNullException(nameof(configureIce)));
             return this;
@@ -36,7 +36,7 @@ namespace FootStone.Client
             BuildIceConfiguration();
             BuildNettyConfiguration();
 
-            return new FSClient(iceInitData,nettyBootstrap);
+            return new FSClient(iceClientOptions,nettyBootstrap);
         }
 
         private void BuildNettyConfiguration()
@@ -50,10 +50,10 @@ namespace FootStone.Client
 
         private void BuildIceConfiguration()
         {
-            iceInitData = new Ice.InitializationData();
+            iceClientOptions = new IceClientOptions();
             foreach (var buildAction in this.configureIceActions)
             {
-                buildAction(iceInitData);
+                buildAction(iceClientOptions);
             }
         }
     }

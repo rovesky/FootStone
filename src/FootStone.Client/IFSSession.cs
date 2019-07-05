@@ -1,14 +1,16 @@
-﻿using FootStone.GrainInterfaces;
-using Ice;
+﻿using DotNetty.Transport.Channels;
+using FootStone.GrainInterfaces;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace FootStone.Client
 {
     public interface IFSSession
     {
+        string GetId();
+
         ISessionPrx GetSessionPrx();
+
+        IChannel GetChannel();
 
         event EventHandler OnDestroyed;
 
