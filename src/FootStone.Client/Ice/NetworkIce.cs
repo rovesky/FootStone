@@ -3,17 +3,14 @@ using Ice;
 using NLog;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
 
 namespace FootStone.Client
-{   
+{
     public class  SessionIce
-    {
-     
+    {     
         public SessionIce(ISessionPrx sessionPrx, SessionPushI sessionPush)
         {
             this.SessionPrx = sessionPrx;
@@ -24,6 +21,28 @@ namespace FootStone.Client
         public SessionPushI SessionPush { get; set; }
     }
 
+
+
+    public class SessionPushI : ISessionPushDisp_
+    {
+        public string Account { get; private set; }
+
+        internal SessionPushI(string account)
+        {
+            this.Account = account;
+        }
+
+        public event EventHandler OnDestroyed;
+
+        public override void SessionDestroyed(Current current = null)
+        {
+            OnDestroyed(this, null);
+        }
+    }
+
+    /// <summary>
+    /// ICE 网络类
+    /// </summary>
     class NetworkIce
     {
         private static NLog.Logger logger = LogManager.GetCurrentClassLogger();       
@@ -39,13 +58,17 @@ namespace FootStone.Client
         protected ObjectAdapter Adapter { get; private set; }
         protected Communicator  Communicator { get; private set; }    
    
-
+        /// <summary>
+        /// 开启ICE
+        /// </summary>
+        /// <returns></returns>
         public async Task Start()
         {
             try
             {
                 var initData = new InitializationData();
 
+                //设置属性
                 if (iceClientOptions.Properties != null)
                 {
                     initData.properties = iceClientOptions.Properties;
@@ -60,8 +83,10 @@ namespace FootStone.Client
                 initData.properties.setProperty("Ice.Trace.Network", "1");
                 initData.properties.setProperty("Ice.Default.Timeout", "15000");
 
+                //设置日志
                 initData.logger = new NLoggerIce(LogManager.GetLogger("Ice"));
 
+                //设置dispatcher，由主线程调用
                 initData.dispatcher = delegate (Action action, Connection connection)
                 {
                     lock (this)
@@ -80,6 +105,8 @@ namespace FootStone.Client
                     logger.Info("ice closed!");
                 }));
                 thread.Start();
+
+                logger.Info("ice started!");
             }
             catch (System.Exception ex)
             {
@@ -88,11 +115,12 @@ namespace FootStone.Client
         }
 
         /// <summary>
+        /// 停止ICE
         /// </summary>
         public async Task Stop()
         {
             Communicator.shutdown();
-            logger.Info("ice shutdown!");
+            logger.Info("ice stopped!");
         }
 
 
@@ -119,11 +147,7 @@ namespace FootStone.Client
 
             //建立网络连接,设置心跳为30秒
             Connection connection = await sessionFactoryPrx.ice_getConnectionAsync();
-            connection.setACM(30, ACMClose.CloseOff, ACMHeartbeat.HeartbeatAlways);
-            connection.setCloseCallback(_ =>
-            {
-                logger.Warn($"{account} connecton closed!");
-            });
+            connection.setACM(30, ACMClose.CloseOff, ACMHeartbeat.HeartbeatAlways);         
 
             logger.Debug(connection.getInfo().connectionId + " session connection:Endpoint=" + connection.getEndpoint().ToString());
 
@@ -133,6 +157,9 @@ namespace FootStone.Client
 
             //注册push回调对象          
             var sessionPushI = new SessionPushI(account);
+
+
+            //添加push Prx
             var proxy = ISessionPushPrxHelper.uncheckedCast(Adapter.addWithUUID(sessionPushI));
             foreach (var proto in iceClientOptions.PushObjects)
             {
@@ -141,21 +168,24 @@ namespace FootStone.Client
                 serverPush.setSessionPushI(sessionPushI);
                 Adapter.addFacet(pushObj, proxy.ice_getIdentity(), serverPush.GetFacet());
             }
-
-            // Associate the object adapter with the bidirectional connection.
+          
+            //监听连接断开事件,并且绑定该连接到adapter
+            connection.setCloseCallback(_ =>
+            {
+                logger.Warn($"{account} connecton closed!");
+                sessionPushI.SessionDestroyed();
+            });
             connection.setAdapter(Adapter);
 
-            // Provide the proxy of the callback receiver object to the server and wait for
-            // shutdown.               
+            //注册push Prx到服务器              
             await sessionPrx.AddPushAsync(proxy);
 
-            return new SessionIce(sessionPrx, sessionPushI);
-           // return sessionPrx;
+            return new SessionIce(sessionPrx, sessionPushI);       
         }
 
 
         /// <summary>
-        /// 由主线程调用
+        /// 心跳更新，由主线程调用
         /// </summary>
         public void Update()
         {
@@ -169,27 +199,6 @@ namespace FootStone.Client
             {
                 each();
             }
-        }
-    }
-
-
-
-    public class SessionPushI : ISessionPushDisp_
-    {
-        public string Account { get; private set; }
-
-
-        internal SessionPushI(string account)
-        {
-            this.Account = account;
-      
-        }
-
-        public event EventHandler OnDestroyed;
-
-        public override void SessionDestroyed(Current current = null)
-        {
-            OnDestroyed(this, null);
         }
     }
 }

@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using DotNetty.Transport.Channels;
+﻿using DotNetty.Transport.Channels;
 using FootStone.GrainInterfaces;
-using Ice;
+using System;
 
 namespace FootStone.Client
 {
@@ -25,7 +21,6 @@ namespace FootStone.Client
                 OnDestroyed(sender, e);
             };
         }
-
      
 
         public event EventHandler OnDestroyed;
@@ -40,8 +35,8 @@ namespace FootStone.Client
             return session.SessionPrx;
         }
 
-        public IChannel GetChannel()
-        {
+        public IChannel GetStreamChannel()
+        { 
             return channel;
         }
 

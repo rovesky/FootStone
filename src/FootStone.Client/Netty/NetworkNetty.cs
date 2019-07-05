@@ -106,6 +106,8 @@ namespace FootStone.Client
                 else if (type == MessageType.Data)
                 {
                     logger.Debug("recevie Data!");
+
+                
                     msgQueue.Enqueue(buffer);
                     return;
                 }
@@ -124,24 +126,23 @@ namespace FootStone.Client
             base.ExceptionCaught(context, exception);
         }
     }
-
-
+    
 
     public class NetworkNetty
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
 
-
         private Bootstrap bootstrap;
         private MultithreadEventLoopGroup group;
-        private System.Timers.Timer pingTimer;
-      //  private int msgCount = 0;
+        private NettyClientOptions options;
 
-       // private int printCount = 0;
 
-        public NetworkNetty(Bootstrap bootstrap)
+        // private System.Timers.Timer pingTimer;
+
+
+        public NetworkNetty(NettyClientOptions options)
         {
-            this.bootstrap = bootstrap;
+            this.options = options;
         }
 
         public async Task Start()
@@ -150,8 +151,7 @@ namespace FootStone.Client
 
             try
             {
-              //  this.bootstrap = bootstrap;
-
+                bootstrap = new Bootstrap();
                 bootstrap
                     .Group(group)
                     .Channel<TcpSocketChannel>()
@@ -221,22 +221,19 @@ namespace FootStone.Client
             if(group!= null)
             {
                 await group.ShutdownGracefullyAsync(TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(1));
-            }
-
-          
+            }          
         }
 
         /// <summary>
         /// 建立连接
         /// </summary>
         /// <param name="host"></param>
-        /// <param name="port"></param>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<IChannel> ConnectAsync(string host, int port, string id)
+        public async Task<IChannel> ConnectAsync(string host, string id)
         {
-            var channel =  await bootstrap.ConnectAsync(new IPEndPoint(IPAddress.Parse(host), port));
-
+            var channel =  await bootstrap.ConnectAsync(new IPEndPoint(IPAddress.Parse(host), options.Port));
+      
             var message = channel.Allocator.DirectBuffer();
             message.WriteUnsignedShort((ushort)MessageType.PlayerHandshake);
             message.WriteStringShortUtf8(id);     

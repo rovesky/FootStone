@@ -1,6 +1,4 @@
-﻿using DotNetty.Transport.Bootstrapping;
-using DotNetty.Transport.Channels;
-using Ice;
+﻿using DotNetty.Transport.Channels;
 using NLog;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,16 +7,15 @@ namespace FootStone.Client
 {
     public class FSClient : IFSClient
     {
-        private static NLog.Logger logger = LogManager.GetCurrentClassLogger();
+        private static Logger logger = LogManager.GetCurrentClassLogger();
 
         private NetworkIce networkIce;
         private NetworkNetty networkNetty;
 
-        public FSClient(IceClientOptions iceInitData, Bootstrap nettyBootstrap)
+        public FSClient(IceClientOptions iceOptions, NettyClientOptions nettyOptions)
         {
-            networkIce = new NetworkIce(iceInitData);
-            networkNetty = new NetworkNetty(nettyBootstrap);
-  
+            networkIce = new NetworkIce(iceOptions);
+            networkNetty = new NetworkNetty(nettyOptions);  
         }
 
         private string parseHost(string endPoint)
@@ -37,13 +34,13 @@ namespace FootStone.Client
         public async Task<IFSSession> CreateSession(string ip, int port, string id)
         {
             var sessionIce = await networkIce.CreateSession(ip, port, id);
+
+            //创建netty连接
             IChannel channel = null;
             if(networkNetty != null)
             {
-                var host = parseHost(sessionIce.SessionPrx.ice_getConnection().getEndpoint().ToString());
-            //    logger.Debug("ConnectNetty begin(" + host + ")");
-                channel = await networkNetty.ConnectAsync(host, 8007, id);
-           //     logger.Debug("ConnectNetty end(" + host + ")");
+                var host = parseHost(sessionIce.SessionPrx.ice_getConnection().getEndpoint().ToString());      
+                channel = await networkNetty.ConnectAsync(host,id);         
             }
 
             return new FSSession(id,sessionIce, channel);

@@ -10,7 +10,7 @@ namespace FootStone.Client
 
         ISessionPrx GetSessionPrx();
 
-        IChannel GetChannel();
+        IChannel GetStreamChannel();
 
         event EventHandler OnDestroyed;
 

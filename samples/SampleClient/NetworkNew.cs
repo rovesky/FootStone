@@ -10,15 +10,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
 using Ice;
+using System.Threading;
 
 namespace SampleClient
 {
 
     internal class ZonePushI : IZonePushDisp_,IServerPush
-    {
-      
+    {      
         private int count = 0;
-
         public ZonePushI()
         {
            
@@ -47,14 +46,13 @@ namespace SampleClient
     }
 
     internal class PlayerPushI : IPlayerPushDisp_, IServerPush
-    {
-       // private string name;
+    {    
         private NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
         private SessionPushI sessionPushI;
 
         public PlayerPushI()
         {
-           // this.name = name;
+
         }
 
         public string GetFacet()
@@ -77,15 +75,12 @@ namespace SampleClient
             //}
 
             //      logger.Info(name+" hp changed:" + hp);
-        }
-
-      
+        }      
     }
 
     public class NetworkNew
     {
         private static NLog.Logger logger = LogManager.GetCurrentClassLogger();
-        private Timer updateTimer;
 
         public async Task Test(string ip, int port, int count, ushort startIndex, bool needNetty)
         {
@@ -97,36 +92,33 @@ namespace SampleClient
                     iceOptions.PushObjects = new List<Ice.Object>();
                     iceOptions.PushObjects.Add(new PlayerPushI());
                     iceOptions.PushObjects.Add(new ZonePushI());
-                    //    initData.properties.setProperty("SessionFactory.Proxy", "SessionFactory:default -h "+ IP + " -p " + port +" -t 10000");
-                    //    initData.properties.setProperty("Ice.Default.Locator", "FootStone/Locator:default -h " + ip + " -p " + port);
-
                 })
-                .NettyOptions(bootstrap =>
+                .NettyOptions(nettyOptions =>
                 {
-
+                    nettyOptions.Port = 8007;
                 })
                 .Build();
 
-            updateTimer = new System.Timers.Timer();
-            updateTimer.AutoReset = true;
-            updateTimer.Interval = 33;
-            updateTimer.Enabled = true;
-            updateTimer.Elapsed += (_1, _2) =>
+            Thread thread = new Thread(new ThreadStart(  () =>
             {
-                client.Update();
-            };
-            updateTimer.Start();
+                do
+                {
+                    client.Update();   
+
+                    Thread.Sleep(33);
+      
+                } while (true);
+            }));
+            thread.Start();
+
+
             await client.StartAsync();
 
             for (ushort i = startIndex; i < startIndex + count; ++i)
             {
                 var sessionId = "session" + i;
                 var session = await client.CreateSession(ip, port, sessionId);
-
-                session.OnDestroyed += (sender, e) =>
-                {
-                    logger.Info($"session:{session.GetId()}");
-                };
+             
                 RunSession(session, i, 20, needNetty);
                 await Task.Delay(20);
             }
@@ -139,8 +131,16 @@ namespace SampleClient
             var password = "111111";
             var playerName = "player" + index;
 
+        //    bool sessionDestroyed = false;
+
             try
             {
+                session.OnDestroyed += (sender, e) =>
+                {
+               //     sessionDestroyed = true;
+                    logger.Info($"session:{session.GetId()} destroyed!");
+                };
+
                 //获取SessionPrx
                 var sessionPrx = session.GetSessionPrx();
 
@@ -160,20 +160,9 @@ namespace SampleClient
                 await accountPrx.LoginRequestAsync(account, password);
                 logger.Debug("LoginRequest ok:" + account);
 
-                //var connection = accountPrx.ice_getConnection();
-                //logger.Debug("accountPrx:" + connection.getInfo().connectionId + " session connection: ACM=" +
-                //       connection.getACM().ToString() + ",Endpoint=" + connection.getEndpoint().ToString());
-
                 //选择服务器
                 var worldPrx = WorldPrxHelper.uncheckedCast(sessionPrx, "world");
-                //worldPrx.ice_fixed(sessionPrx.ice_getConnection());
-
-                //logger.Debug("WorldPrx:" + worldPrx.ice_getConnectionId());
-
-                //connection = worldPrx.ice_getConnection();
-                //logger.Debug("WorldPrx:" + connection.getInfo().connectionId + " session connection: ACM=" +
-                //       connection.getACM().ToString() + ",Endpoint=" + connection.getEndpoint().ToString());
-
+        
                 List<ServerInfo> servers = await worldPrx.GetServerListRequestAsync();
 
                 if (servers.Count == 0)

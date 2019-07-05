@@ -1,21 +1,19 @@
 ﻿using DotNetty.Transport.Bootstrapping;
-using Ice;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace FootStone.Client
 {
     public class FSClientBuilder
     {
-        private readonly List<Action<Bootstrap>> configureNettyActions = new List<Action<Bootstrap>>();
+        private readonly List<Action<NettyClientOptions>> configureNettyActions = new List<Action<NettyClientOptions>>();
         private readonly List<Action<IceClientOptions>> configureIceActions = new List<Action<IceClientOptions>>();
 
         private bool built = false;
-        private Bootstrap nettyBootstrap;
-        private IceClientOptions iceClientOptions;
+        private NettyClientOptions nettyOptions;
+        private IceClientOptions   iceOptions;
 
-        public FSClientBuilder  NettyOptions(Action<Bootstrap> configureNetty)
+        public FSClientBuilder  NettyOptions(Action<NettyClientOptions> configureNetty)
         {
             this.configureNettyActions.Add(configureNetty ?? throw new ArgumentNullException(nameof(configureNetty)));
             return this;
@@ -36,24 +34,24 @@ namespace FootStone.Client
             BuildIceConfiguration();
             BuildNettyConfiguration();
 
-            return new FSClient(iceClientOptions,nettyBootstrap);
+            return new FSClient(iceOptions,nettyOptions);
         }
 
         private void BuildNettyConfiguration()
         {
-            nettyBootstrap = new Bootstrap();
+            nettyOptions = new NettyClientOptions();
             foreach (var buildAction in this.configureNettyActions)
             {
-                buildAction(nettyBootstrap);
+                buildAction(nettyOptions);
             }         
         }
 
         private void BuildIceConfiguration()
         {
-            iceClientOptions = new IceClientOptions();
+            iceOptions = new IceClientOptions();
             foreach (var buildAction in this.configureIceActions)
             {
-                buildAction(iceClientOptions);
+                buildAction(iceOptions);
             }
         }
     }
