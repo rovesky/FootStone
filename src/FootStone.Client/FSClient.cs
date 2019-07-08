@@ -1,5 +1,4 @@
-﻿using DotNetty.Transport.Channels;
-using NLog;
+﻿using NLog;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -31,12 +30,19 @@ namespace FootStone.Client
             return "";
         }
 
+        /// <summary>
+        /// 创建session
+        /// </summary>
+        /// <param name="ip"></param>
+        /// <param name="port"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<IFSSession> CreateSession(string ip, int port, string id)
         {
             var sessionIce = await networkIce.CreateSession(ip, port, id);
 
             //创建netty连接
-            IChannel channel = null;
+            IFSChannel channel = null;
             if(networkNetty != null)
             {
                 var host = parseHost(sessionIce.SessionPrx.ice_getConnection().getEndpoint().ToString());      
@@ -46,12 +52,22 @@ namespace FootStone.Client
             return new FSSession(id,sessionIce, channel);
         }
 
+        /// <summary>
+        /// 启动客户端网络
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         public async Task StartAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
             await networkIce.Start();
             await networkNetty.Start();
         }
 
+        /// <summary>
+        /// 停止客户端网络
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         public async Task StopAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
             await networkIce.Stop();
@@ -59,6 +75,9 @@ namespace FootStone.Client
             
         }
 
+        /// <summary>
+        /// 定时刷新，注意必须要用主线程调用这个函数，以保证所有的网络回调都是在主线程运行
+        /// </summary>
         public void Update()
         {
             networkIce.Update();

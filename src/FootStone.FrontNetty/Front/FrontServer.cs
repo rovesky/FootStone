@@ -126,8 +126,9 @@ namespace FootStone.FrontNetty
                         }
                     case MessageType.PlayerBindGame:
                         {
-                            var playerId = buffer.ReadStringShortUtf8();
+                            playerId = buffer.ReadStringShortUtf8();
                             gameServerId = buffer.ReadStringShortUtf8();
+                            frontChannels.AddChannel(playerId, context.Channel);
                             frontServer.EmitEventBindPlayerAndGameServer(playerId, gameServerId);
                             logger.Debug($"Player:{playerId} bind gameServer:{gameServerId}");
                             break;
@@ -188,6 +189,7 @@ namespace FootStone.FrontNetty
             if (playerId != null)
             {          
                 frontChannels.RemoveChannel(playerId);
+                logger.Debug($"HandlerRemoved:{playerId}");
                 playerId = null;
             }
             base.HandlerRemoved(context);

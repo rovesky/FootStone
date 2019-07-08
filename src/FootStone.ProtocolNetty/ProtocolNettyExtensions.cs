@@ -33,5 +33,7 @@ namespace FootStone.ProtocolNetty
             var len = buffer.ReadUnsignedShort();
             return buffer.ReadString(len, Encoding.UTF8);
         }
+
+
     }
 }

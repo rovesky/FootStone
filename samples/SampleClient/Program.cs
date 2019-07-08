@@ -21,7 +21,7 @@ namespace FootStone.Core.Client
                 string ip = args.Length > 3 ?args[3] : "192.168.0.128";
                 int port = args.Length > 4 ? int.Parse(args[4]) : 4061;
 
-               // OldTest(count, startIndex, needNetty);
+                //OldTest(count, startIndex, needNetty);
                 NewTest(ip,port,count, startIndex, needNetty).Wait();
 
               //  Console.ReadLine();

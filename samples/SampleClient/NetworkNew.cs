@@ -196,7 +196,7 @@ namespace SampleClient
 
                 if (needNetty)
                 {
-                    await RunNetty(session);
+                    await RunNetty(session,zonePrx,playerInfo,index);
                 }
 
                 logger.Info($"{account} playerPrx begin!");
@@ -223,50 +223,62 @@ namespace SampleClient
             }
         }
 
-        private async Task RunNetty(IFSSession session)
+        private async Task RunNetty(IFSSession session,IZonePrx zonePrx,PlayerInfo playerInfo,int index)
         {
-
-            IChannel channel = null;
+           
             System.Timers.Timer moveTimer = null;
             System.Timers.Timer pingTimer = null;
-            //if (netty != null)
-            //{
-            //    //连接Netty
-            //    var host = parseHost(sessionPrx.ice_getConnection().getEndpoint().ToString());
-            //    logger.Debug("ConnectNetty begin(" + host + ")");
-            //    channel = await netty.ConnectNettyAsync(host, 8007, playerInfo.playerId);
-            //    logger.Debug("ConnectNetty end(" + host + ")");
 
-            //    //绑定Zone
-            //    var endPoint = await zonePrx.BindZoneAsync(playerInfo.zoneId, playerInfo.playerId);
-            //    var gameServerId = ProtocolNettyUtility.Endpoint2GameServerId(endPoint.ip, endPoint.port);
-            //    await netty.BindGameServer(channel, playerInfo.playerId, gameServerId);
 
-            //    //进入Zone
-            //    await zonePrx.PlayerEnterAsync();
+            //绑定Zone
+            var endPoint = await zonePrx.BindZoneAsync(playerInfo.zoneId, playerInfo.playerId);
+            var gameServerId = ProtocolNettyUtility.Endpoint2GameServerId(endPoint.ip, endPoint.port);
 
-            //    //发送move消息
-            //    moveTimer = new System.Timers.Timer();
-            //    moveTimer.AutoReset = true;
-            //    moveTimer.Interval = 500;
-            //    moveTimer.Enabled = true;
-            //    moveTimer.Elapsed += (_1, _2) =>
-            //    {
-            //        netty.SendMove(channel, index);
-            //    };
-            //    moveTimer.Start();
+            var  channel = session.GetStreamChannel();
+            await channel.BindGameServer(playerInfo.playerId, gameServerId);
 
-            //    //发送ping消息
-            //    pingTimer = new System.Timers.Timer();
-            //    pingTimer.AutoReset = true;
-            //    pingTimer.Interval = 2000;
-            //    pingTimer.Enabled = true;
-            //    pingTimer.Elapsed += (_1, _2) =>
-            //    {
-            //        netty.SendPing(channel, index);
-            //    };
-            //    pingTimer.Start();
-            //}
+            //进入Zone
+            await zonePrx.PlayerEnterAsync();
+
+            //发送move消息
+            moveTimer = new System.Timers.Timer();
+            moveTimer.AutoReset = true;
+            moveTimer.Interval = 500;
+            moveTimer.Enabled = true;
+            moveTimer.Elapsed += (_1, _2) =>
+            {
+                var data = channel.Allocator.DirectBuffer(16);
+                data.WriteUnsignedShort((ushort)MessageType.Data);
+                data.WriteUnsignedShort((ushort)14);
+                data.WriteUnsignedShort((ushort)index);
+
+                var move = new Move();
+                move.direction = 1;
+                move.speed = 10;
+                move.point.x = 10.6f;
+                move.point.y = 300.1f;
+                move.Encoder(data);
+                channel.WriteAndFlushAsync(data);
+
+              //  logger.Debug($"send move!");
+            };
+            moveTimer.Start();
+
+            //发送ping消息
+            pingTimer = new System.Timers.Timer();
+            pingTimer.AutoReset = true;
+            pingTimer.Interval = 2000;
+            pingTimer.Enabled = true;
+            pingTimer.Elapsed += async (_1, _2) =>
+            {
+              //  logger.Debug($"send ping!");
+                var pingTime = await channel.Ping(DateTime.Now.Ticks);
+                var now = DateTime.Now.Ticks;
+                var value = (now - pingTime) / 10000;
+                logger.Debug($"ping:{value}ms");
+            };
+            pingTimer.Start();
+
         }
     }
 }

@@ -57,7 +57,7 @@ namespace FootStone.FrontNetty
                                 channel.WriteAndFlushAsync(buffer);
                                 break;
                         }
-                     //   logger.Debug($"Send Data to client:{playerId}");
+                        logger.Debug($"Send Data to client:{playerId},type:{type}");
                         return;
                     }
                 }

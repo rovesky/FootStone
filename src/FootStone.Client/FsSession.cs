@@ -8,9 +8,9 @@ namespace FootStone.Client
     {
         private string id;
         private SessionIce session;
-        private IChannel channel;
+        private IFSChannel channel;
 
-        public FSSession(string id, SessionIce session,IChannel channel)
+        public FSSession(string id, SessionIce session,IFSChannel channel)
         {
             this.id = id;
             this.session = session;
@@ -35,7 +35,7 @@ namespace FootStone.Client
             return session.SessionPrx;
         }
 
-        public IChannel GetStreamChannel()
+        public IFSChannel GetStreamChannel()
         { 
             return channel;
         }
