@@ -38,11 +38,7 @@ namespace FootStone.Client
             {
                 logger.Debug("recevie Data!");
                 MessageType type = (MessageType)buffer.ReadUnsignedShort();
-                if (type == MessageType.PlayerHandshake)
-                {
-                    (context.Channel as IFSChannel).HandshakeResponse(); 
-                }
-                else if (type == MessageType.PlayerBindGame)
+                if (type == MessageType.BindGameServer)
                 {
                     (context.Channel as IFSChannel).BindGameServerResponse();                 
                 }

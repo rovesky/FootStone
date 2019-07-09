@@ -105,14 +105,14 @@ namespace FootStone.FrontNetty
 
                     switch ((MessageType)type)
                     {
-                        case MessageType.PlayerBindGame:
+                        case MessageType.BindGameServer:
                             {
                                 var playerId = buffer.ReadStringShortUtf8();
                                 recv.BindChannel(playerId, context.Channel);
 
                                 //添加包头
                                 var header = context.Allocator.DirectBuffer(4 + playerId.Length);
-                                header.WriteUnsignedShort((ushort)MessageType.PlayerBindGame);
+                                header.WriteUnsignedShort((ushort)MessageType.BindGameServer);
                                 header.WriteStringShortUtf8(playerId);
 
                                 buffer.ResetReaderIndex();

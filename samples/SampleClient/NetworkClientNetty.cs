@@ -87,11 +87,7 @@ namespace FootStone.Core.Client
             {
 
                 MessageType type = (MessageType)buffer.ReadUnsignedShort();
-                if(type == MessageType.PlayerHandshake)
-                {
-                    tcsConnected.SetResult(null);
-                }
-                else if(type == MessageType.PlayerBindGame)
+                if(type == MessageType.BindGameServer)
                 {
                     tcsBindSiloed.SetResult(null);
                 }
@@ -227,7 +223,7 @@ namespace FootStone.Core.Client
             var channel =  await bootstrap.ConnectAsync(new IPEndPoint(IPAddress.Parse(host), port));
 
             var message = channel.Allocator.DirectBuffer();
-            message.WriteUnsignedShort((ushort)MessageType.PlayerHandshake);
+        //    message.WriteUnsignedShort((ushort)MessageType.PlayerHandshake);
             message.WriteStringShortUtf8(playerId);     
             await channel.WriteAndFlushAsync(message);
 
@@ -240,7 +236,7 @@ namespace FootStone.Core.Client
         public async Task BindGameServer(IChannel channel, string playerId,string gameServerId)
         {          
             var data = channel.Allocator.DirectBuffer();
-            data.WriteUnsignedShort((ushort)MessageType.PlayerBindGame);
+            data.WriteUnsignedShort((ushort)MessageType.BindGameServer);
 
             data.WriteStringShortUtf8(playerId);
             data.WriteStringShortUtf8(gameServerId);

@@ -16,7 +16,7 @@ namespace FootStone.Client
         public async Task Handshake(string id)
         {          
             var message = Allocator.DirectBuffer();
-            message.WriteUnsignedShort((ushort)MessageType.PlayerHandshake);
+         //   message.WriteUnsignedShort((ushort)MessageType.PlayerHandshake);
             message.WriteStringShortUtf8(id);
             await WriteAndFlushAsync(message);
             
@@ -37,7 +37,7 @@ namespace FootStone.Client
         public async Task BindGameServer(string id, string gameServerId)
         {
             var data = Allocator.DirectBuffer();
-            data.WriteUnsignedShort((ushort)MessageType.PlayerBindGame);
+            data.WriteUnsignedShort((ushort)MessageType.BindGameServer);
             data.WriteStringShortUtf8(id);
             data.WriteStringShortUtf8(gameServerId);
 

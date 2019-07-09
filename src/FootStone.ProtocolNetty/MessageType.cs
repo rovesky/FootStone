@@ -6,8 +6,8 @@ namespace FootStone.ProtocolNetty
 {
     public enum MessageType
     {
-        PlayerHandshake = 0x01,
-        PlayerBindGame = 0x02,
+      //  PlayerHandshake = 0x01,
+        BindGameServer = 0x02,
 
         Ping = 0x04,
         Pong = 0x05,

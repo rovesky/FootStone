@@ -1,41 +1,90 @@
 ﻿using DotNetty.Transport.Channels;
+using System;
 using System.Collections.Concurrent;
 
 namespace FootStone.FrontNetty
 {
+
+    class PlayerChannel
+    {
+        public IChannel ClientChannel { get; set; }
+        public IChannel GameChannel { get; set; }
+    }
+
+
     class ChannelManager :IChannelManager
     {   
      //   private static Logger logger = LogManager.GetCurrentClassLogger();
 
-        private ConcurrentDictionary<string, IChannel> channels = new ConcurrentDictionary<string, IChannel>();
+        private ConcurrentDictionary<string, PlayerChannel> channels = new ConcurrentDictionary<string, PlayerChannel>();
     
         public ChannelManager()
         {
 
         }    
-
-      
-        public void AddChannel(string id, IChannel channel)
+              
+        public void AddChannel(string id, IChannel clientChannel,IChannel gameChannel)
         {
-            channels.TryAdd(id, channel);
+            var playerChannel = new PlayerChannel();
+            playerChannel.ClientChannel = clientChannel;
+            playerChannel.GameChannel = gameChannel;
+            channels.TryAdd(id, playerChannel);
         }
 
         public void RemoveChannel(string id)
-        {    
-            IChannel value;
+        {
+            PlayerChannel value;
             channels.TryRemove(id, out value);
         }
-
-        public IChannel GetChannel(string id)
-        {
-            IChannel channel = null;
-            channels.TryGetValue(id, out channel);
-            return channel;
-        }
+            
 
         public int GetChannelCount()
         {
             return channels.Count;
+        }
+
+        public void BindGameChannel(string id, IChannel channel)
+        {
+            PlayerChannel playerChannel = null;
+            channels.TryGetValue(id, out playerChannel);
+
+            if (playerChannel == null)
+                throw new Exception($"{id} BindGameChannel error: playerChannel == null");
+
+            playerChannel.GameChannel = channel;
+        }
+
+        public IChannel GetClientChannel(string id)
+        {
+            PlayerChannel playerChannel = null;
+            channels.TryGetValue(id, out playerChannel);
+
+            if (playerChannel == null)
+                throw new Exception($"{id} GetClientChannel error: playerChannel == null");
+
+            return playerChannel.ClientChannel;
+        }
+
+        public IChannel GetGameChannel(string id)
+        {
+            PlayerChannel playerChannel = null;
+            channels.TryGetValue(id, out playerChannel);
+
+            if (playerChannel == null)
+                throw new Exception($"{id} GetGameChannel error: playerChannel == null");
+
+            return playerChannel.ClientChannel;
+        }
+
+        public void CloseChannelByGameChannel(IChannel gameChannel)
+        {
+            foreach(var playerChannel in channels.Values)
+            {
+                if(playerChannel.GameChannel == gameChannel)
+                {
+                    playerChannel.ClientChannel.CloseAsync();
+                }
+            }
         }
     }
 }

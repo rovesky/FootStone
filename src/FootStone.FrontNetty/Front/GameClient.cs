@@ -1,34 +1,27 @@
 ﻿using DotNetty.Buffers;
 using DotNetty.Codecs;
-using DotNetty.Common.Utilities;
-using DotNetty.Handlers.Logging;
 using DotNetty.Transport.Bootstrapping;
 using DotNetty.Transport.Channels;
 using DotNetty.Transport.Channels.Sockets;
+using FootStone.ProtocolNetty;
 using NLog;
 using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
-using FootStone.ProtocolNetty;
 
 namespace FootStone.FrontNetty
 {
     class GameClientHandler : ChannelHandlerAdapter
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
-  
-        private IChannelManager frontChannels;
-        private IChannelManager gameChannels;
 
+        private NettyFrontService frontService;
+        private IChannelManager playerChannels;
         public string GameServerId { get; internal set; }
 
-        public GameClientHandler(IChannelManager[] channelManagers)
+        public GameClientHandler(NettyFrontService frontService, IChannelManager playerChannels)
         {
-            this.frontChannels = channelManagers[0]; 
-            this.gameChannels = channelManagers[1];
+            this.frontService = frontService;
+            this.playerChannels = playerChannels;       
         }
 
 
@@ -41,7 +34,7 @@ namespace FootStone.FrontNetty
                 {
                     ushort type = buffer.ReadUnsignedShort();
                     var playerId = buffer.ReadStringShortUtf8();
-                    IChannel channel = frontChannels.GetChannel(playerId);
+                    IChannel channel = playerChannels.GetClientChannel(playerId);
 
                     if (channel != null)
                     {
@@ -57,7 +50,7 @@ namespace FootStone.FrontNetty
                                 channel.WriteAndFlushAsync(buffer);
                                 break;
                         }
-                        logger.Debug($"Send Data to client:{playerId},type:{type}");
+                      //  logger.Debug($"Send Data to client:{playerId},type:{type}");
                         return;
                     }
                 }
@@ -80,7 +73,8 @@ namespace FootStone.FrontNetty
         public override void HandlerRemoved(IChannelHandlerContext context)
         {       
             logger.Warn($"GameClient HandlerRemoved:{GameServerId}");
-            gameChannels.RemoveChannel(GameServerId);      
+
+            frontService.GameChannelRemove(GameServerId);
             base.HandlerRemoved(context);
         }
 
@@ -104,7 +98,7 @@ namespace FootStone.FrontNetty
 
         }
 
-        public void Init(IChannelManager[] channelManager)
+        public void Init(NettyFrontService frontService,IChannelManager playerChannels)
         {
             group = new MultithreadEventLoopGroup();
             try
@@ -124,7 +118,7 @@ namespace FootStone.FrontNetty
                         // pipeline.AddLast(new LoggingHandler());
                         pipeline.AddLast("framing-enc", new LengthFieldPrepender(2));
                         pipeline.AddLast("framing-dec", new LengthFieldBasedFrameDecoder(ushort.MaxValue, 0, 2, 0, 2));
-                        pipeline.AddLast("game-client", new GameClientHandler(channelManager));
+                        pipeline.AddLast("game-client", new GameClientHandler(frontService,playerChannels));
                     }));
             }
 
