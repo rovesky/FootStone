@@ -18,7 +18,7 @@ module FootStone
    
 		interface ISession
 		{      		
-		    void AddPush(ISessionPush* playerPush);
+		    void AddPush(ISessionPush* sessionPush);
 		
 			void Destroy();
 		}  

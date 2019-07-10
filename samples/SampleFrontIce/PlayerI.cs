@@ -23,12 +23,13 @@ namespace SampleFrontIce
         readonly IPlayerPushPrx playerPush;
         public PlayerObserver(IPlayerPushPrx playerPush)
         {
+            logger.Info($"IPlayerPushPrx is oneway:{playerPush.ice_isOneway()}");
             this.playerPush = playerPush;
         }
         public void HpChanged(int hp)
         {
             logger.Debug("HpChanged:" + hp);
-            playerPush.begin_hpChanged(hp);
+            playerPush.hpChanged(hp);
         }
 
         public void LevelChanged(Guid id, int newLevel)
@@ -53,7 +54,7 @@ namespace SampleFrontIce
 
         public string GetFacet()
         {
-            return "player";
+            return typeof(IPlayerPrx).Name;
         }
 
         public void setSessionI(SessionI sessionI)
@@ -76,7 +77,8 @@ namespace SampleFrontIce
             playerGrain = Global.OrleansClient.GetGrain<IPlayerGrain>(gpid);
 
             await observer.Subscribe(playerGrain, new PlayerObserver(
-                IPlayerPushPrxHelper.uncheckedCast(session.SessionPushPrx,"playerPush")));
+                session.UncheckedCastPush(IPlayerPushPrxHelper.uncheckedCast)));
+            //    IPlayerPushPrxHelper.uncheckedCast(session.SessionPushPrx, typeof(IPlayerPush).Name)));
 
             await playerGrain.PlayerOnline();
 

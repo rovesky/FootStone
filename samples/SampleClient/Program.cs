@@ -41,8 +41,8 @@ namespace FootStone.Core.Client
 
         static void OldTest(int count, ushort startIndex, bool needNetty)
         {
-            var network = new Network();
-            network.Test(count, startIndex, needNetty).Wait();
+            //var network = new Network();
+            //network.Test(count, startIndex, needNetty).Wait();
          
         }
     }

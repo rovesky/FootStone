@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace SampleFrontIce
 {       
 
-    public class WorldI :WorldDisp_, IServantBase
+    public class WorldI :IWorldDisp_, IServantBase
     {
         private SessionI session;
        
@@ -19,7 +19,7 @@ namespace SampleFrontIce
 
         public string GetFacet()
         {
-            return "world";
+            return typeof(IWorldPrx).Name;
         }
 
         public void setSessionI(SessionI sessionI)

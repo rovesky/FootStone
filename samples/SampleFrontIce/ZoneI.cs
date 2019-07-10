@@ -64,7 +64,7 @@ namespace SampleFrontIce
 
         public string GetFacet()
         {
-            return "zone";
+            return typeof(IZonePrx).Name;
         }
 
         public void setSessionI(SessionI sessionI)

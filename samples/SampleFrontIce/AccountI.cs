@@ -35,7 +35,7 @@ namespace SampleFrontIce
     }
 
 
-    public class AccountI : AccountDisp_, IServantBase
+    public class AccountI : IAccountDisp_, IServantBase
     {
         private SessionI session;
         private ObserverClient<IAccountObserver> observer = new ObserverClient<IAccountObserver>(Global.OrleansClient);
@@ -49,7 +49,7 @@ namespace SampleFrontIce
 
         public string GetFacet()
         {
-            return "account";
+            return typeof(IAccountPrx).Name;
         }
 
         public void setSessionI(SessionI sessionI)

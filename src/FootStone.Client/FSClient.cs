@@ -17,18 +17,6 @@ namespace FootStone.Client
             networkNetty = new NetworkNetty(nettyOptions);  
         }
 
-        private string parseHost(string endPoint)
-        {
-            var strs = endPoint.Split(' ');
-            for (int i = 0; i < strs.Length; ++i)
-            {
-                if (strs[i] == "-h")
-                {
-                    return strs[i + 1];
-                }
-            }
-            return "";
-        }
 
         /// <summary>
         /// 创建session
@@ -39,18 +27,22 @@ namespace FootStone.Client
         /// <returns></returns>
         public async Task<IFSSession> CreateSession(string ip, int port, string id)
         {
-            var sessionIce = await networkIce.CreateSession(ip, port, id);
+            var sessionIce = await networkIce.CreateSession(ip, port, id);        
 
+            return new FSSession(id,sessionIce, this);
+        }
+
+        public async Task<IFSChannel> CreateStreamChannel(string ip,string id)
+        {
             //创建netty连接
             IFSChannel channel = null;
-            if(networkNetty != null)
+            if (networkNetty != null)
             {
-                var host = parseHost(sessionIce.SessionPrx.ice_getConnection().getEndpoint().ToString());      
-                channel = await networkNetty.ConnectAsync(host,id);         
+                 channel = await networkNetty.ConnectAsync(ip, id);
             }
-
-            return new FSSession(id,sessionIce, channel);
+            return channel;
         }
+
 
         /// <summary>
         /// 启动客户端网络
@@ -83,5 +75,7 @@ namespace FootStone.Client
             networkIce.Update();
             networkNetty.Update();
         }
+
+     
     }
 }

@@ -122,15 +122,15 @@ namespace FootStone
         [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
         public interface ISessionPrx : Ice.ObjectPrx
         {
-            void AddPush(ISessionPushPrx playerPush, Ice.OptionalContext context = new Ice.OptionalContext());
+            void AddPush(ISessionPushPrx sessionPush, Ice.OptionalContext context = new Ice.OptionalContext());
 
-            _System.Threading.Tasks.Task AddPushAsync(ISessionPushPrx playerPush, Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken());
+            _System.Threading.Tasks.Task AddPushAsync(ISessionPushPrx sessionPush, Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken());
 
-            Ice.AsyncResult<Callback_ISession_AddPush> begin_AddPush(ISessionPushPrx playerPush, Ice.OptionalContext context = new Ice.OptionalContext());
+            Ice.AsyncResult<Callback_ISession_AddPush> begin_AddPush(ISessionPushPrx sessionPush, Ice.OptionalContext context = new Ice.OptionalContext());
 
-            Ice.AsyncResult begin_AddPush(ISessionPushPrx playerPush, Ice.AsyncCallback callback, object cookie);
+            Ice.AsyncResult begin_AddPush(ISessionPushPrx sessionPush, Ice.AsyncCallback callback, object cookie);
 
-            Ice.AsyncResult begin_AddPush(ISessionPushPrx playerPush, Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie);
+            Ice.AsyncResult begin_AddPush(ISessionPushPrx sessionPush, Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie);
 
             void end_AddPush(Ice.AsyncResult asyncResult);
 
@@ -192,7 +192,7 @@ namespace FootStone
         public interface ISessionOperations_
         {
             [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-            void AddPush(ISessionPushPrx playerPush, Ice.Current current = null);
+            void AddPush(ISessionPushPrx sessionPush, Ice.Current current = null);
 
             [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
             void Destroy(Ice.Current current = null);
@@ -468,11 +468,11 @@ namespace FootStone
 
             #region Synchronous operations
 
-            public void AddPush(ISessionPushPrx playerPush, Ice.OptionalContext context = new Ice.OptionalContext())
+            public void AddPush(ISessionPushPrx sessionPush, Ice.OptionalContext context = new Ice.OptionalContext())
             {
                 try
                 {
-                    _iceI_AddPushAsync(playerPush, context, null, _System.Threading.CancellationToken.None, true).Wait();
+                    _iceI_AddPushAsync(sessionPush, context, null, _System.Threading.CancellationToken.None, true).Wait();
                 }
                 catch(_System.AggregateException ex_)
                 {
@@ -496,21 +496,21 @@ namespace FootStone
 
             #region Async Task operations
 
-            public _System.Threading.Tasks.Task AddPushAsync(ISessionPushPrx playerPush, Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken())
+            public _System.Threading.Tasks.Task AddPushAsync(ISessionPushPrx sessionPush, Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken())
             {
-                return _iceI_AddPushAsync(playerPush, context, progress, cancel, false);
+                return _iceI_AddPushAsync(sessionPush, context, progress, cancel, false);
             }
 
-            private _System.Threading.Tasks.Task _iceI_AddPushAsync(ISessionPushPrx iceP_playerPush, Ice.OptionalContext context, _System.IProgress<bool> progress, _System.Threading.CancellationToken cancel, bool synchronous)
+            private _System.Threading.Tasks.Task _iceI_AddPushAsync(ISessionPushPrx iceP_sessionPush, Ice.OptionalContext context, _System.IProgress<bool> progress, _System.Threading.CancellationToken cancel, bool synchronous)
             {
                 var completed = new IceInternal.OperationTaskCompletionCallback<object>(progress, cancel);
-                _iceI_AddPush(iceP_playerPush, context, synchronous, completed);
+                _iceI_AddPush(iceP_sessionPush, context, synchronous, completed);
                 return completed.Task;
             }
 
             private const string _AddPush_name = "AddPush";
 
-            private void _iceI_AddPush(ISessionPushPrx iceP_playerPush, _System.Collections.Generic.Dictionary<string, string> context, bool synchronous, IceInternal.OutgoingAsyncCompletionCallback completed)
+            private void _iceI_AddPush(ISessionPushPrx iceP_sessionPush, _System.Collections.Generic.Dictionary<string, string> context, bool synchronous, IceInternal.OutgoingAsyncCompletionCallback completed)
             {
                 var outAsync = getOutgoingAsync<object>(completed);
                 outAsync.invoke(
@@ -521,7 +521,7 @@ namespace FootStone
                     synchronous,
                     write: (Ice.OutputStream ostr) =>
                     {
-                        ISessionPushPrxHelper.write(ostr, iceP_playerPush);
+                        ISessionPushPrxHelper.write(ostr, iceP_sessionPush);
                     });
             }
 
@@ -554,19 +554,19 @@ namespace FootStone
 
             #region Asynchronous operations
 
-            public Ice.AsyncResult<Callback_ISession_AddPush> begin_AddPush(ISessionPushPrx playerPush, Ice.OptionalContext context = new Ice.OptionalContext())
+            public Ice.AsyncResult<Callback_ISession_AddPush> begin_AddPush(ISessionPushPrx sessionPush, Ice.OptionalContext context = new Ice.OptionalContext())
             {
-                return begin_AddPush(playerPush, context, null, null, false);
+                return begin_AddPush(sessionPush, context, null, null, false);
             }
 
-            public Ice.AsyncResult begin_AddPush(ISessionPushPrx playerPush, Ice.AsyncCallback callback, object cookie)
+            public Ice.AsyncResult begin_AddPush(ISessionPushPrx sessionPush, Ice.AsyncCallback callback, object cookie)
             {
-                return begin_AddPush(playerPush, new Ice.OptionalContext(), callback, cookie, false);
+                return begin_AddPush(sessionPush, new Ice.OptionalContext(), callback, cookie, false);
             }
 
-            public Ice.AsyncResult begin_AddPush(ISessionPushPrx playerPush, Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie)
+            public Ice.AsyncResult begin_AddPush(ISessionPushPrx sessionPush, Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie)
             {
-                return begin_AddPush(playerPush, context, callback, cookie, false);
+                return begin_AddPush(sessionPush, context, callback, cookie, false);
             }
 
             public void end_AddPush(Ice.AsyncResult asyncResult)
@@ -575,7 +575,7 @@ namespace FootStone
                 ((IceInternal.OutgoingAsyncT<object>)resultI_.OutgoingAsync).getResult(resultI_.wait());
             }
 
-            private Ice.AsyncResult<Callback_ISession_AddPush> begin_AddPush(ISessionPushPrx iceP_playerPush, _System.Collections.Generic.Dictionary<string, string> context, Ice.AsyncCallback completedCallback, object cookie, bool synchronous)
+            private Ice.AsyncResult<Callback_ISession_AddPush> begin_AddPush(ISessionPushPrx iceP_sessionPush, _System.Collections.Generic.Dictionary<string, string> context, Ice.AsyncCallback completedCallback, object cookie, bool synchronous)
             {
                 var completed = new IceInternal.OperationAsyncResultCompletionCallback<Callback_ISession_AddPush, object>(
                     (Callback_ISession_AddPush cb, object ret) =>
@@ -586,7 +586,7 @@ namespace FootStone
                         }
                     },
                     this, _AddPush_name, cookie, completedCallback);
-                _iceI_AddPush(iceP_playerPush, context, synchronous, completed);
+                _iceI_AddPush(iceP_sessionPush, context, synchronous, completed);
                 return completed;
             }
 
@@ -1208,7 +1208,7 @@ namespace FootStone
         {
             #region Slice operations
 
-            public abstract void AddPush(ISessionPushPrx playerPush, Ice.Current current = null);
+            public abstract void AddPush(ISessionPushPrx sessionPush, Ice.Current current = null);
 
             public abstract void Destroy(Ice.Current current = null);
 
@@ -1252,10 +1252,10 @@ namespace FootStone
             {
                 Ice.ObjectImpl.iceCheckMode(Ice.OperationMode.Normal, current.mode);
                 var istr = inS.startReadParams();
-                ISessionPushPrx iceP_playerPush;
-                iceP_playerPush = ISessionPushPrxHelper.read(istr);
+                ISessionPushPrx iceP_sessionPush;
+                iceP_sessionPush = ISessionPushPrxHelper.read(istr);
                 inS.endReadParams();
-                obj.AddPush(iceP_playerPush, current);
+                obj.AddPush(iceP_sessionPush, current);
                 return inS.setResult(inS.writeEmptyParams());
             }
 

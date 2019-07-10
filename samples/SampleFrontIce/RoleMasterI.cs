@@ -12,7 +12,7 @@ namespace SampleFrontIce
 
         public string GetFacet()
         {
-            return "roleMaster";
+            return typeof(IRoleMasterPrx).Name;
         }
 
         public void setSessionI(SessionI sessionI)

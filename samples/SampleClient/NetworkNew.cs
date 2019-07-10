@@ -36,7 +36,7 @@ namespace SampleClient
 
         public string GetFacet()
         {
-            return "zonePush";
+            return typeof(IZonePushPrx).Name;
         }       
 
         public void setSessionPushI(SessionPushI sessionPushI)
@@ -57,7 +57,7 @@ namespace SampleClient
 
         public string GetFacet()
         {
-           return "playerPush";
+           return typeof(IPlayerPushPrx).Name;
         }
 
         public void setSessionPushI(SessionPushI sessionPushI)
@@ -99,6 +99,7 @@ namespace SampleClient
                 })
                 .Build();
 
+            //启动主线程
             Thread thread = new Thread(new ThreadStart(  () =>
             {
                 do
@@ -131,21 +132,18 @@ namespace SampleClient
             var password = "111111";
             var playerName = "player" + index;
 
-        //    bool sessionDestroyed = false;
-
             try
             {
                 session.OnDestroyed += (sender, e) =>
-                {
-               //     sessionDestroyed = true;
+                { 
                     logger.Info($"session:{session.GetId()} destroyed!");
                 };
 
                 //获取SessionPrx
-                var sessionPrx = session.GetSessionPrx();
+                //    var sessionPrx = session.GetSessionPrx();
 
-                //注册账号
-                var accountPrx = AccountPrxHelper.uncheckedCast(sessionPrx, "account");
+                //注册账号           
+                var accountPrx = session.UncheckedCast(IAccountPrxHelper.uncheckedCast);
                 try
                 {
                     await accountPrx.RegisterRequestAsync(account, new RegisterInfo(account, password));
@@ -160,9 +158,8 @@ namespace SampleClient
                 await accountPrx.LoginRequestAsync(account, password);
                 logger.Debug("LoginRequest ok:" + account);
 
-                //选择服务器
-                var worldPrx = WorldPrxHelper.uncheckedCast(sessionPrx, "world");
-        
+                //选择服务器         
+                var worldPrx = session.UncheckedCast(IWorldPrxHelper.uncheckedCast);
                 List<ServerInfo> servers = await worldPrx.GetServerListRequestAsync();
 
                 if (servers.Count == 0)
@@ -176,8 +173,7 @@ namespace SampleClient
 
                 //获取角色列表
                 List<PlayerShortInfo> players = await worldPrx.GetPlayerListRequestAsync(serverId);
-                var playerPrx = IPlayerPrxHelper.uncheckedCast(sessionPrx, "player");
-
+                var playerPrx = session.UncheckedCast(IPlayerPrxHelper.uncheckedCast);
                 //如果角色列表为0，创建新角色
                 if (players.Count == 0)
                 {
@@ -186,9 +182,10 @@ namespace SampleClient
                 }
                 //选择第一个角色
                 await playerPrx.SelectPlayerRequestAsync(players[0].playerId);
+          
+                var roleMasterPrx = session.UncheckedCast(IRoleMasterPrxHelper.uncheckedCast);
 
-                var roleMasterPrx = IRoleMasterPrxHelper.uncheckedCast(sessionPrx, "roleMaster");
-                var zonePrx = IZonePrxHelper.uncheckedCast(sessionPrx, "zone");
+                var zonePrx = session.UncheckedCast(IZonePrxHelper.uncheckedCast);
 
                 //获取角色信息
                 var playerInfo = await playerPrx.GetPlayerInfoAsync();
@@ -234,7 +231,7 @@ namespace SampleClient
             var endPoint = await zonePrx.BindZoneAsync(playerInfo.zoneId, playerInfo.playerId);
             var gameServerId = ProtocolNettyUtility.Endpoint2GameServerId(endPoint.ip, endPoint.port);
 
-            var  channel = session.GetStreamChannel();
+            var channel = await session.createStreamChannel();
             await channel.BindGameServer(playerInfo.playerId, gameServerId);
 
             //进入Zone

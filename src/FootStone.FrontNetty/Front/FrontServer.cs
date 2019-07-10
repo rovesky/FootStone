@@ -6,7 +6,6 @@ using DotNetty.Transport.Channels.Sockets;
 using FootStone.ProtocolNetty;
 using NLog;
 using System;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace FootStone.FrontNetty
@@ -141,12 +140,7 @@ namespace FootStone.FrontNetty
 
                             buffer.ResetReaderIndex();
                             var comBuff = context.Allocator.CompositeDirectBuffer();
-                            comBuff.AddComponents(true, header, buffer);
-
-                            //if (gameServerChannel == null)
-                            //{
-                            //    gameServerChannel = gameChannels.GetChannel(gameServerId);
-                            //}
+                            comBuff.AddComponents(true, header, buffer);                  
                             gameServerChannel.WriteAndFlushAsync(comBuff);
                             return;
                         }
@@ -162,10 +156,6 @@ namespace FootStone.FrontNetty
                             var comBuff = context.Allocator.CompositeDirectBuffer();
                             comBuff.AddComponents(true, header, buffer);
 
-                            //if(gameServerChannel == null)
-                            //{
-                            //    gameServerChannel = gameChannels.GetChannel(gameServerId);
-                            //}
                             gameServerChannel.WriteAndFlushAsync(comBuff);
                             //siloChannel.WriteAsync(comBuff);
                             //  logger.Debug($"Recieve Message:{playerId},buff.ReadableBytes:{comBuff.ReadableBytes}," +

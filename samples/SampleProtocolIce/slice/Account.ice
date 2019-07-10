@@ -27,7 +27,7 @@ module FootStone
 		{
 		}
 
-		["amd"]interface Account
+		["amd"]interface IAccount
 		{
   
 		   void LoginRequest(string account,string pwd) throws AccountException;

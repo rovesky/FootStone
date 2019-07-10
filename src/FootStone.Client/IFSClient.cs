@@ -36,9 +36,12 @@ namespace FootStone.Client
         /// <returns></returns>
         Task<IFSSession> CreateSession(string ip, int port, string id);
 
+        Task<IFSChannel> CreateStreamChannel(string ip, string id);
+
         /// <summary>
         /// 主线程调用
         /// </summary>
         void Update();
+     
     }
 }

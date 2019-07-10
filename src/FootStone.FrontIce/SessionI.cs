@@ -14,7 +14,7 @@ namespace FootStone.FrontIce
 
         public  override void AddPush(ISessionPushPrx sessionPush, Current current = null)
         {
-            SessionPushPrx = (ISessionPushPrx)sessionPush.ice_fixed(current.con);
+            SessionPushPrx = (ISessionPushPrx)sessionPush.ice_fixed(current.con).ice_oneway();
         }
 
         public override void Destroy(Current current = null)
@@ -56,7 +56,12 @@ namespace FootStone.FrontIce
             if(SessionPushPrx!= null)
                 SessionPushPrx.begin_SessionDestroyed();
         }
-       
+
+        public T UncheckedCastPush<T>(Func<ObjectPrx, string, T> uncheckedCast) where T : ObjectPrx
+        {
+            return uncheckedCast(SessionPushPrx, typeof(T).Name);
+        }
+
 
         public string Account { set; get; }
         public Guid   PlayerId { set; get; }

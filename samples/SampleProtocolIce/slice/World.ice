@@ -35,7 +35,7 @@ module FootStone
 		["clr:generic:List"]sequence<PlayerShortInfo> PlayerList;
 
 
-		interface World
+		interface IWorld
 		{
       	  ["amd"] ServerList GetServerListRequest() throws WorldException;
 		 

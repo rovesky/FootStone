@@ -518,7 +518,7 @@ namespace FootStone
         [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1720")]
         [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1722")]
         [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1724")]
-        public partial interface World : Ice.Object, WorldOperations_
+        public partial interface IWorld : Ice.Object, IWorldOperations_
         {
         }
     }
@@ -529,10 +529,10 @@ namespace FootStone
     namespace GrainInterfaces
     {
         [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-        public delegate void Callback_World_GetServerListRequest(_System.Collections.Generic.List<ServerInfo> ret);
+        public delegate void Callback_IWorld_GetServerListRequest(_System.Collections.Generic.List<ServerInfo> ret);
 
         [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-        public delegate void Callback_World_GetPlayerListRequest(_System.Collections.Generic.List<PlayerShortInfo> ret);
+        public delegate void Callback_IWorld_GetPlayerListRequest(_System.Collections.Generic.List<PlayerShortInfo> ret);
     }
 }
 
@@ -541,13 +541,13 @@ namespace FootStone
     namespace GrainInterfaces
     {
         [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-        public interface WorldPrx : Ice.ObjectPrx
+        public interface IWorldPrx : Ice.ObjectPrx
         {
             _System.Collections.Generic.List<ServerInfo> GetServerListRequest(Ice.OptionalContext context = new Ice.OptionalContext());
 
             _System.Threading.Tasks.Task<_System.Collections.Generic.List<ServerInfo>> GetServerListRequestAsync(Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken());
 
-            Ice.AsyncResult<Callback_World_GetServerListRequest> begin_GetServerListRequest(Ice.OptionalContext context = new Ice.OptionalContext());
+            Ice.AsyncResult<Callback_IWorld_GetServerListRequest> begin_GetServerListRequest(Ice.OptionalContext context = new Ice.OptionalContext());
 
             Ice.AsyncResult begin_GetServerListRequest(Ice.AsyncCallback callback, object cookie);
 
@@ -559,7 +559,7 @@ namespace FootStone
 
             _System.Threading.Tasks.Task<_System.Collections.Generic.List<PlayerShortInfo>> GetPlayerListRequestAsync(int serverId, Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken());
 
-            Ice.AsyncResult<Callback_World_GetPlayerListRequest> begin_GetPlayerListRequest(int serverId, Ice.OptionalContext context = new Ice.OptionalContext());
+            Ice.AsyncResult<Callback_IWorld_GetPlayerListRequest> begin_GetPlayerListRequest(int serverId, Ice.OptionalContext context = new Ice.OptionalContext());
 
             Ice.AsyncResult begin_GetPlayerListRequest(int serverId, Ice.AsyncCallback callback, object cookie);
 
@@ -575,7 +575,7 @@ namespace FootStone
     namespace GrainInterfaces
     {
         [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-        public interface WorldOperations_
+        public interface IWorldOperations_
         {
             [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
             _System.Threading.Tasks.Task<_System.Collections.Generic.List<ServerInfo>> GetServerListRequestAsync(Ice.Current current = null);
@@ -665,13 +665,13 @@ namespace FootStone
         [_System.Runtime.InteropServices.ComVisible(false)]
         [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
         [_System.Serializable]
-        public sealed class WorldPrxHelper : Ice.ObjectPrxHelperBase, WorldPrx
+        public sealed class IWorldPrxHelper : Ice.ObjectPrxHelperBase, IWorldPrx
         {
-            public WorldPrxHelper()
+            public IWorldPrxHelper()
             {
             }
 
-            public WorldPrxHelper(_System.Runtime.Serialization.SerializationInfo info, _System.Runtime.Serialization.StreamingContext context) : base(info, context)
+            public IWorldPrxHelper(_System.Runtime.Serialization.SerializationInfo info, _System.Runtime.Serialization.StreamingContext context) : base(info, context)
             {
             }
 
@@ -805,7 +805,7 @@ namespace FootStone
 
             #region Asynchronous operations
 
-            public Ice.AsyncResult<Callback_World_GetPlayerListRequest> begin_GetPlayerListRequest(int serverId, Ice.OptionalContext context = new Ice.OptionalContext())
+            public Ice.AsyncResult<Callback_IWorld_GetPlayerListRequest> begin_GetPlayerListRequest(int serverId, Ice.OptionalContext context = new Ice.OptionalContext())
             {
                 return begin_GetPlayerListRequest(serverId, context, null, null, false);
             }
@@ -827,11 +827,11 @@ namespace FootStone
                 return outgoing_.getResult(resultI_.wait());
             }
 
-            private Ice.AsyncResult<Callback_World_GetPlayerListRequest> begin_GetPlayerListRequest(int iceP_serverId, _System.Collections.Generic.Dictionary<string, string> context, Ice.AsyncCallback completedCallback, object cookie, bool synchronous)
+            private Ice.AsyncResult<Callback_IWorld_GetPlayerListRequest> begin_GetPlayerListRequest(int iceP_serverId, _System.Collections.Generic.Dictionary<string, string> context, Ice.AsyncCallback completedCallback, object cookie, bool synchronous)
             {
                 iceCheckAsyncTwowayOnly(_GetPlayerListRequest_name);
-                var completed = new IceInternal.OperationAsyncResultCompletionCallback<Callback_World_GetPlayerListRequest, _System.Collections.Generic.List<PlayerShortInfo>>(
-                    (Callback_World_GetPlayerListRequest cb, _System.Collections.Generic.List<PlayerShortInfo> ret) =>
+                var completed = new IceInternal.OperationAsyncResultCompletionCallback<Callback_IWorld_GetPlayerListRequest, _System.Collections.Generic.List<PlayerShortInfo>>(
+                    (Callback_IWorld_GetPlayerListRequest cb, _System.Collections.Generic.List<PlayerShortInfo> ret) =>
                     {
                         if(cb != null)
                         {
@@ -843,7 +843,7 @@ namespace FootStone
                 return completed;
             }
 
-            public Ice.AsyncResult<Callback_World_GetServerListRequest> begin_GetServerListRequest(Ice.OptionalContext context = new Ice.OptionalContext())
+            public Ice.AsyncResult<Callback_IWorld_GetServerListRequest> begin_GetServerListRequest(Ice.OptionalContext context = new Ice.OptionalContext())
             {
                 return begin_GetServerListRequest(context, null, null, false);
             }
@@ -865,11 +865,11 @@ namespace FootStone
                 return outgoing_.getResult(resultI_.wait());
             }
 
-            private Ice.AsyncResult<Callback_World_GetServerListRequest> begin_GetServerListRequest(_System.Collections.Generic.Dictionary<string, string> context, Ice.AsyncCallback completedCallback, object cookie, bool synchronous)
+            private Ice.AsyncResult<Callback_IWorld_GetServerListRequest> begin_GetServerListRequest(_System.Collections.Generic.Dictionary<string, string> context, Ice.AsyncCallback completedCallback, object cookie, bool synchronous)
             {
                 iceCheckAsyncTwowayOnly(_GetServerListRequest_name);
-                var completed = new IceInternal.OperationAsyncResultCompletionCallback<Callback_World_GetServerListRequest, _System.Collections.Generic.List<ServerInfo>>(
-                    (Callback_World_GetServerListRequest cb, _System.Collections.Generic.List<ServerInfo> ret) =>
+                var completed = new IceInternal.OperationAsyncResultCompletionCallback<Callback_IWorld_GetServerListRequest, _System.Collections.Generic.List<ServerInfo>>(
+                    (Callback_IWorld_GetServerListRequest cb, _System.Collections.Generic.List<ServerInfo> ret) =>
                     {
                         if(cb != null)
                         {
@@ -885,39 +885,39 @@ namespace FootStone
 
             #region Checked and unchecked cast operations
 
-            public static WorldPrx checkedCast(Ice.ObjectPrx b)
+            public static IWorldPrx checkedCast(Ice.ObjectPrx b)
             {
                 if(b == null)
                 {
                     return null;
                 }
-                WorldPrx r = b as WorldPrx;
+                IWorldPrx r = b as IWorldPrx;
                 if((r == null) && b.ice_isA(ice_staticId()))
                 {
-                    WorldPrxHelper h = new WorldPrxHelper();
+                    IWorldPrxHelper h = new IWorldPrxHelper();
                     h.iceCopyFrom(b);
                     r = h;
                 }
                 return r;
             }
 
-            public static WorldPrx checkedCast(Ice.ObjectPrx b, _System.Collections.Generic.Dictionary<string, string> ctx)
+            public static IWorldPrx checkedCast(Ice.ObjectPrx b, _System.Collections.Generic.Dictionary<string, string> ctx)
             {
                 if(b == null)
                 {
                     return null;
                 }
-                WorldPrx r = b as WorldPrx;
+                IWorldPrx r = b as IWorldPrx;
                 if((r == null) && b.ice_isA(ice_staticId(), ctx))
                 {
-                    WorldPrxHelper h = new WorldPrxHelper();
+                    IWorldPrxHelper h = new IWorldPrxHelper();
                     h.iceCopyFrom(b);
                     r = h;
                 }
                 return r;
             }
 
-            public static WorldPrx checkedCast(Ice.ObjectPrx b, string f)
+            public static IWorldPrx checkedCast(Ice.ObjectPrx b, string f)
             {
                 if(b == null)
                 {
@@ -928,7 +928,7 @@ namespace FootStone
                 {
                     if(bb.ice_isA(ice_staticId()))
                     {
-                        WorldPrxHelper h = new WorldPrxHelper();
+                        IWorldPrxHelper h = new IWorldPrxHelper();
                         h.iceCopyFrom(bb);
                         return h;
                     }
@@ -939,7 +939,7 @@ namespace FootStone
                 return null;
             }
 
-            public static WorldPrx checkedCast(Ice.ObjectPrx b, string f, _System.Collections.Generic.Dictionary<string, string> ctx)
+            public static IWorldPrx checkedCast(Ice.ObjectPrx b, string f, _System.Collections.Generic.Dictionary<string, string> ctx)
             {
                 if(b == null)
                 {
@@ -950,7 +950,7 @@ namespace FootStone
                 {
                     if(bb.ice_isA(ice_staticId(), ctx))
                     {
-                        WorldPrxHelper h = new WorldPrxHelper();
+                        IWorldPrxHelper h = new IWorldPrxHelper();
                         h.iceCopyFrom(bb);
                         return h;
                     }
@@ -961,37 +961,37 @@ namespace FootStone
                 return null;
             }
 
-            public static WorldPrx uncheckedCast(Ice.ObjectPrx b)
+            public static IWorldPrx uncheckedCast(Ice.ObjectPrx b)
             {
                 if(b == null)
                 {
                     return null;
                 }
-                WorldPrx r = b as WorldPrx;
+                IWorldPrx r = b as IWorldPrx;
                 if(r == null)
                 {
-                    WorldPrxHelper h = new WorldPrxHelper();
+                    IWorldPrxHelper h = new IWorldPrxHelper();
                     h.iceCopyFrom(b);
                     r = h;
                 }
                 return r;
             }
 
-            public static WorldPrx uncheckedCast(Ice.ObjectPrx b, string f)
+            public static IWorldPrx uncheckedCast(Ice.ObjectPrx b, string f)
             {
                 if(b == null)
                 {
                     return null;
                 }
                 Ice.ObjectPrx bb = b.ice_facet(f);
-                WorldPrxHelper h = new WorldPrxHelper();
+                IWorldPrxHelper h = new IWorldPrxHelper();
                 h.iceCopyFrom(bb);
                 return h;
             }
 
             private static readonly string[] _ids =
             {
-                "::FootStone::GrainInterfaces::World",
+                "::FootStone::GrainInterfaces::IWorld",
                 "::Ice::Object"
             };
 
@@ -1004,17 +1004,17 @@ namespace FootStone
 
             #region Marshaling support
 
-            public static void write(Ice.OutputStream ostr, WorldPrx v)
+            public static void write(Ice.OutputStream ostr, IWorldPrx v)
             {
                 ostr.writeProxy(v);
             }
 
-            public static WorldPrx read(Ice.InputStream istr)
+            public static IWorldPrx read(Ice.InputStream istr)
             {
                 Ice.ObjectPrx proxy = istr.readProxy();
                 if(proxy != null)
                 {
-                    WorldPrxHelper result = new WorldPrxHelper();
+                    IWorldPrxHelper result = new IWorldPrxHelper();
                     result.iceCopyFrom(proxy);
                     return result;
                 }
@@ -1032,7 +1032,7 @@ namespace FootStone
     {
         [_System.Runtime.InteropServices.ComVisible(false)]
         [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-        public abstract class WorldDisp_ : Ice.ObjectImpl, World
+        public abstract class IWorldDisp_ : Ice.ObjectImpl, IWorld
         {
             #region Slice operations
 
@@ -1046,7 +1046,7 @@ namespace FootStone
 
             private static readonly string[] _ids =
             {
-                "::FootStone::GrainInterfaces::World",
+                "::FootStone::GrainInterfaces::IWorld",
                 "::Ice::Object"
             };
 
@@ -1076,7 +1076,7 @@ namespace FootStone
 
             [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011")]
             public static _System.Threading.Tasks.Task<Ice.OutputStream>
-            iceD_GetServerListRequest(World obj, IceInternal.Incoming inS, Ice.Current current)
+            iceD_GetServerListRequest(IWorld obj, IceInternal.Incoming inS, Ice.Current current)
             {
                 Ice.ObjectImpl.iceCheckMode(Ice.OperationMode.Normal, current.mode);
                 inS.readEmptyParams();
@@ -1089,7 +1089,7 @@ namespace FootStone
 
             [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011")]
             public static _System.Threading.Tasks.Task<Ice.OutputStream>
-            iceD_GetPlayerListRequest(World obj, IceInternal.Incoming inS, Ice.Current current)
+            iceD_GetPlayerListRequest(IWorld obj, IceInternal.Incoming inS, Ice.Current current)
             {
                 Ice.ObjectImpl.iceCheckMode(Ice.OperationMode.Normal, current.mode);
                 var istr = inS.startReadParams();

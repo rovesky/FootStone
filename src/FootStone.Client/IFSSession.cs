@@ -1,16 +1,16 @@
-﻿using DotNetty.Transport.Channels;
-using FootStone.GrainInterfaces;
+﻿using Ice;
 using System;
+using System.Threading.Tasks;
 
 namespace FootStone.Client
 {
     public interface IFSSession
     {
         string GetId();
+        
+        T UncheckedCast<T>(Func<ObjectPrx,string,T> uncheckedCast) where T : ObjectPrx;
 
-        ISessionPrx GetSessionPrx();
-
-        IFSChannel GetStreamChannel();
+        Task<IFSChannel> createStreamChannel();
 
         event EventHandler OnDestroyed;
 
