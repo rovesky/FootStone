@@ -45,16 +45,7 @@ namespace FootStone.Client
             session.SessionPrx.begin_Destroy();          
         }
 
-        //public ISessionPrx GetSessionPrx()
-        //{
-        //    return session.SessionPrx;
-        //}
-
-        //public IFSChannel GetStreamChannel()
-        //{ 
-        //    return channel;
-        //}
-
+     
         public string GetId()
         {
             return id;
@@ -66,7 +57,7 @@ namespace FootStone.Client
         }
 
 
-        private string parseHost(string endPoint)
+        private string ParseHost(string endPoint)
         {
             var strs = endPoint.Split(' ');
             for (int i = 0; i < strs.Length; ++i)
@@ -79,9 +70,9 @@ namespace FootStone.Client
             return "";
         }
 
-        public async Task<IFSChannel> createStreamChannel()
+        public async Task<IFSChannel> CreateStreamChannel()
         {
-            var ip = parseHost(session.SessionPrx.ice_getConnection().getEndpoint().ToString());
+            var ip = ParseHost(session.SessionPrx.ice_getConnection().getEndpoint().ToString());
             channel = await client.CreateStreamChannel(ip, id);
             return channel;
         }
@@ -93,8 +84,6 @@ namespace FootStone.Client
                 await channel.CloseAsync();
                 channel = null;
             }
-        }
-
-        
+        }        
     }
 }

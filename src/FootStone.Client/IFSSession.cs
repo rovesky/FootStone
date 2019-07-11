@@ -10,7 +10,8 @@ namespace FootStone.Client
         
         T UncheckedCast<T>(Func<ObjectPrx,string,T> uncheckedCast) where T : ObjectPrx;
 
-        Task<IFSChannel> createStreamChannel();
+        Task<IFSChannel> CreateStreamChannel();
+
 
         event EventHandler OnDestroyed;
 

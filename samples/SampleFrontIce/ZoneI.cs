@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
 
 namespace SampleFrontIce
 {
@@ -56,11 +57,16 @@ namespace SampleFrontIce
 
     public class ZoneI : IZoneDisp_, IServantBase
     {
+        private NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         private SessionI sessionI;
+        private IZonePushPrx zonePushPrx;
+        private Timer moveTimer;
 
         public object GrainFactory { get; private set; }
 
         private IZoneGrain zoneGrain;
+        private byte[] data;
 
         public string GetFacet()
         {
@@ -70,9 +76,15 @@ namespace SampleFrontIce
         public void setSessionI(SessionI sessionI)
         {
             this.sessionI = sessionI;
+
+       
         }
         public void Dispose()
         {
+            if(moveTimer != null)
+            {
+                moveTimer.Close();
+            }
 
             if (zoneGrain != null)
             {
@@ -89,6 +101,22 @@ namespace SampleFrontIce
             var ret = await zoneGrain.GetEndPoint();
 
             sessionI.Bind("zoneId", zoneId);
+
+            zonePushPrx = sessionI.UncheckedCastPush(IZonePushPrxHelper.uncheckedCast);
+                       
+            moveTimer = new System.Timers.Timer();
+            moveTimer.AutoReset = true;
+            moveTimer.Interval = 33;
+            moveTimer.Enabled = true;
+            moveTimer.Elapsed += (_1, _2) =>
+            {
+                if (data != null)
+                {
+                  //  logger.Debug("zonePushPrx.RecvData!");
+                    zonePushPrx.RecvData(data);
+                }
+            };
+            moveTimer.Start();
             return ret;
         }
 
@@ -100,6 +128,13 @@ namespace SampleFrontIce
         public async override Task PlayerLeaveAsync(Current current = null)
         {
             await zoneGrain.PlayerLeave(sessionI.PlayerId);
-        }        
+        }
+
+        public override Task SendDataAsync(byte[] data, Current current = null)
+        {
+            this.data = data;
+            return Task.CompletedTask;
+           // zonePushPrx.RecvData(data);
+        }
     }
 }

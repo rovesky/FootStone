@@ -23,7 +23,7 @@ namespace SampleFrontIce
         readonly IPlayerPushPrx playerPush;
         public PlayerObserver(IPlayerPushPrx playerPush)
         {
-            logger.Info($"IPlayerPushPrx is oneway:{playerPush.ice_isOneway()}");
+          //  logger.Info($"IPlayerPushPrx is oneway:{playerPush.ice_isOneway()}");
             this.playerPush = playerPush;
         }
         public void HpChanged(int hp)
@@ -40,7 +40,7 @@ namespace SampleFrontIce
 
     public class PlayerI : IPlayerDisp_, IServantBase
     {
-        private SessionI session;
+        private SessionI sessionI;
 
         private ObserverClient<IPlayerObserver> observer = new ObserverClient<IPlayerObserver>(Global.OrleansClient);
         private IPlayerGrain playerGrain;
@@ -59,7 +59,7 @@ namespace SampleFrontIce
 
         public void setSessionI(SessionI sessionI)
         {
-            this.session = sessionI;
+            this.sessionI = sessionI;
         }
              
 
@@ -67,7 +67,7 @@ namespace SampleFrontIce
         {
             var playerId = Guid.NewGuid();
             var playerGrain = Global.OrleansClient.GetGrain<IPlayerGrain>(playerId);
-            await playerGrain.CreatePlayer(session.Account, gameId, info);
+            await playerGrain.CreatePlayer(sessionI.Account, gameId, info);
             return playerId.ToString();
         }
 
@@ -77,14 +77,14 @@ namespace SampleFrontIce
             playerGrain = Global.OrleansClient.GetGrain<IPlayerGrain>(gpid);
 
             await observer.Subscribe(playerGrain, new PlayerObserver(
-                session.UncheckedCastPush(IPlayerPushPrxHelper.uncheckedCast)));
+                sessionI.UncheckedCastPush(IPlayerPushPrxHelper.uncheckedCast)));
             //    IPlayerPushPrxHelper.uncheckedCast(session.SessionPushPrx, typeof(IPlayerPush).Name)));
 
             await playerGrain.PlayerOnline();
 
             try
             {
-                session.PlayerId = gpid;
+                sessionI.PlayerId = gpid;
             }
             catch(System.Exception e)
             {
@@ -99,7 +99,7 @@ namespace SampleFrontIce
             pingTimer.Elapsed += Timer_Elapsed;
             pingTimer.Start();
 
-            logger.Debug($"Session Bind {session.Account}:{session.PlayerId}");
+            logger.Debug($"Session Bind {sessionI.Account}:{sessionI.PlayerId}");
         }
 
         private void Timer_Elapsed(object sender, ElapsedEventArgs e)

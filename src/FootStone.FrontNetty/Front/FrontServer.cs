@@ -1,5 +1,6 @@
 ﻿using DotNetty.Buffers;
 using DotNetty.Codecs;
+using DotNetty.Common.Utilities;
 using DotNetty.Transport.Bootstrapping;
 using DotNetty.Transport.Channels;
 using DotNetty.Transport.Channels.Sockets;
@@ -157,10 +158,12 @@ namespace FootStone.FrontNetty
                             comBuff.AddComponents(true, header, buffer);
 
                             gameServerChannel.WriteAndFlushAsync(comBuff);
+                          //  ReferenceCountUtil.Release(comBuff);
                             //siloChannel.WriteAsync(comBuff);
                             //  logger.Debug($"Recieve Message:{playerId},buff.ReadableBytes:{comBuff.ReadableBytes}," +
                             //   $"buff.WritableBytes:{comBuff.WritableBytes},buff.Capacity: {comBuff.Capacity}");
                             return;
+                          
                         }
                     default:
                         {

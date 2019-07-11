@@ -6,17 +6,22 @@ using System.Threading.Tasks;
 
 namespace FootStone.Client
 {
+    public delegate void EventRecvData(byte[] data);
+
     public interface IFSChannel : ISocketChannel
     {
         void SendData(byte[] bytes);
 
-        Task Handshake(string id);
-        void HandshakeResponse();
+        //Task Handshake(string id);
+        //void HandshakeResponse();
 
         Task BindGameServer(string id, string gameServerId);
-        void BindGameServerResponse();
+      ///  void BindGameServerResponse();
 
         Task<long> Ping(long time);
-        void PingResponse(long pingTime);
+
+        
+        event EventRecvData eventRecvData;
+      //  void PingResponse(long pingTime);
     }
 }

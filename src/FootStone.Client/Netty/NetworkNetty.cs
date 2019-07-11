@@ -74,11 +74,7 @@ namespace FootStone.Client
         public async Task<IFSChannel> ConnectAsync(string host, string id)
         {
             var channel =  await bootstrap.ConnectAsync(new IPEndPoint(IPAddress.Parse(host), options.Port)) as IFSChannel;
-
-          //  await channel.Handshake(id);            
-
             return channel ;
-        }        
-
+        }
     }
 }

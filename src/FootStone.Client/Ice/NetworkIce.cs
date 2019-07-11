@@ -87,13 +87,16 @@ namespace FootStone.Client
                 initData.logger = new NLoggerIce(LogManager.GetLogger("Ice"));
 
                 //设置dispatcher，由主线程调用
-                initData.dispatcher = delegate (Action action, Connection connection)
+                if (iceClientOptions.EnableDispatcher)
                 {
-                    lock (this)
+                    initData.dispatcher = delegate (Action action, Connection connection)
                     {
-                        actions.Add(action);
-                    }
-                };
+                        lock (this)
+                        {
+                            actions.Add(action);
+                        }
+                    };
+                }
 
                 Communicator = Util.initialize(initData);
              
@@ -166,6 +169,7 @@ namespace FootStone.Client
                 var pushObj = (Ice.Object)proto.Clone();
                 IServerPush serverPush = (IServerPush)pushObj;
                 serverPush.setSessionPushI(sessionPushI);
+                serverPush.setAccount(account);
                 Adapter.addFacet(pushObj, proxy.ice_getIdentity(), serverPush.GetFacet());
             }
           

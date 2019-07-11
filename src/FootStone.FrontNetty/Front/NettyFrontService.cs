@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using NLog;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace FootStone.FrontNetty
@@ -13,13 +14,18 @@ namespace FootStone.FrontNetty
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
 
+        private NettyFrontOptions frontOptions;
+
         private FrontServer frontServer = new FrontServer();
         private GameClient  gameClient = new GameClient();
 
         private IChannelManager playerChannels = new ChannelManager();    
+
         private ConcurrentDictionary<string, IChannel> gameChannels = new ConcurrentDictionary<string, IChannel>();
-        private NettyFrontOptions frontOptions; 
-        
+
+        private HashSet<string> gameCreating = new HashSet<string>();
+
+
         public Task Init(IServiceProvider serviceProvider)
         {
             frontOptions = serviceProvider.GetService<IOptions<NettyFrontOptions>>().Value;
@@ -46,11 +52,29 @@ namespace FootStone.FrontNetty
             IChannel gameChannel = null;
             gameChannels.TryGetValue(gameServerId, out gameChannel);
 
-            //如果找不到game channel，新建一个连接
-            if (gameChannel == null)
+            //如果找不到game channel
+            if (gameChannel == null )
             {
-                gameChannel = await gameClient.ConnectGameServerAsync(gameServerId);
-                gameChannels.TryAdd(gameServerId, gameChannel);
+                //如果还没有创建出该连接，开始创建连接
+                if (!gameCreating.Contains(gameServerId))
+                {
+                    gameCreating.Add(gameServerId);
+                    gameChannel = await gameClient.ConnectGameServerAsync(gameServerId);
+                    gameChannels.TryAdd(gameServerId, gameChannel);
+                    gameCreating.Remove(gameServerId);
+                }
+                //如果已经在创建连接，开始不停尝试获取该连接
+                else
+                {
+                    var time = 0;
+                    do
+                    {
+                        gameChannels.TryGetValue(gameServerId, out gameChannel);
+                        await Task.Delay(10);
+                        time++;
+                    }
+                    while (gameChannel == null && time < 10);
+                }
             }
             return gameChannel;
         }

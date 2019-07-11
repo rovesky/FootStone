@@ -23,12 +23,13 @@ module FootStone
 
 		interface IZonePush
 		{
-			void ZoneSync(Bytes data);
+			void RecvData(Bytes data);
 		}
    
 		["amd"]interface IZone
 		{ 
-		   
+		    void SendData(Bytes data);
+			
 			EndPointZone BindZone(string zoneId,string playerId);
 			
 			void PlayerEnter( );

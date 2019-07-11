@@ -10,5 +10,7 @@ namespace FootStone.Client
         public Properties Properties;
 
         public List<Ice.Object> PushObjects;
+
+        public bool EnableDispatcher { get;  set; }
     }
 }

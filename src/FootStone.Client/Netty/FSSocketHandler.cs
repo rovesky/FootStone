@@ -6,23 +6,14 @@ using System;
 
 namespace FootStone.Client
 {
-
     class FSSocketHandler : ChannelHandlerAdapter
     {
 
         private static Logger logger = LogManager.GetCurrentClassLogger();
 
-        //public static int playerCount = 0;
-
-        //public static ConcurrentQueue<IByteBuffer> msgQueue = new ConcurrentQueue<IByteBuffer>();
-
-        //public TaskCompletionSource<object> tcsConnected = new TaskCompletionSource<object>();
-        //public TaskCompletionSource<object> tcsBindSiloed = new TaskCompletionSource<object>();
-
         public FSSocketHandler()
         {
-          //  Interlocked.Increment(ref playerCount);
-         //   logger.Debug($"new FSSocketHandler:{playerCount}! ");
+        
         }
 
         public override void ChannelActive(IChannelHandlerContext context)
@@ -36,27 +27,24 @@ namespace FootStone.Client
             var buffer = message as IByteBuffer;
             if (buffer != null)
             {
-                logger.Debug("recevie Data!");
+                //logger.Debug("recevie Data!");
+                FSTcpSocketChannel channel = context.Channel as FSTcpSocketChannel;
                 MessageType type = (MessageType)buffer.ReadUnsignedShort();
                 if (type == MessageType.BindGameServer)
                 {
-                    (context.Channel as IFSChannel).BindGameServerResponse();                 
+                    channel.BindGameServerResponse();                 
                 }
                 else if (type == MessageType.Ping)
                 {
-                  
-               //     var now = DateTime.Now.Ticks;
                     var pingTime = buffer.ReadLong();
-                    (context.Channel as IFSChannel).PingResponse(pingTime);
-                 //   var timer = (now - pingTime) / 10000;
-                 //   logger.Debug($"ping value:{timer}ms");
-                    // tcsBindSiloed.SetResult(null);
+                    channel.PingResponse(pingTime);           
                 }
                 else if (type == MessageType.Data)
                 {
-                    logger.Debug("recevie Data!");
-                 //   msgQueue.Enqueue(buffer);
-                    return;
+                    //   logger.Debug("recevie Data!");
+                    //   msgQueue.Enqueue(buffer);
+                    channel.RecvData(buffer);
+                  //  return;
                 }
 
             }

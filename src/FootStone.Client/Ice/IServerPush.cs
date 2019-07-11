@@ -9,5 +9,6 @@ namespace FootStone.Client
         string GetFacet();
 
         void setSessionPushI(SessionPushI sessionPushI);
+        void setAccount(string account);
     }
 }

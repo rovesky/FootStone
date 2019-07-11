@@ -33,11 +33,11 @@ namespace FootStone.FrontNetty
             {               
                 bootstrap = new ServerBootstrap();
                 bootstrap.Group(bossGroup, workerGroup)
-                         .Channel<TcpServerSocketChannel>()
+                   .Channel<TcpServerSocketChannel>()
                     //  .Option(ChannelOption.SoBacklog, 100)                  
-                        .Option(ChannelOption.TcpNodelay, true)                   
-                        .Option(ChannelOption.SoSndbuf, 512*1024)
-                        .Option(ChannelOption.SoRcvbuf, 512*1024)
+                    .Option(ChannelOption.TcpNodelay, true)
+                    .Option(ChannelOption.SoSndbuf, 1 * 1024 * 1024)
+                    .Option(ChannelOption.SoRcvbuf, 1 * 1024 * 1024)
                     //  .Handler(new LoggingHandler("SRV-LSTN"))
                     .Option(ChannelOption.Allocator, PooledByteBufferAllocator.Default)
                     .ChildHandler(new ActionChannelInitializer<IChannel>(channel =>
@@ -130,7 +130,7 @@ namespace FootStone.FrontNetty
                                 buffer.ResetReaderIndex();
                                 context.Channel.WriteAndFlushAsync(buffer);
 
-                                logger.Debug($"Game Ping:{playerId}!");
+                               // logger.Debug($"Game Ping:{playerId}!");
                                 return;
                             }
                         case MessageType.Data:

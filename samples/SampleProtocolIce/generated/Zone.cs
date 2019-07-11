@@ -231,7 +231,10 @@ namespace FootStone
     namespace GrainInterfaces
     {
         [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-        public delegate void Callback_IZonePush_ZoneSync();
+        public delegate void Callback_IZonePush_RecvData();
+
+        [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
+        public delegate void Callback_IZone_SendData();
 
         [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
         public delegate void Callback_IZone_BindZone(EndPointZone ret);
@@ -251,22 +254,34 @@ namespace FootStone
         [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
         public interface IZonePushPrx : Ice.ObjectPrx
         {
-            void ZoneSync(byte[] data, Ice.OptionalContext context = new Ice.OptionalContext());
+            void RecvData(byte[] data, Ice.OptionalContext context = new Ice.OptionalContext());
 
-            _System.Threading.Tasks.Task ZoneSyncAsync(byte[] data, Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken());
+            _System.Threading.Tasks.Task RecvDataAsync(byte[] data, Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken());
 
-            Ice.AsyncResult<Callback_IZonePush_ZoneSync> begin_ZoneSync(byte[] data, Ice.OptionalContext context = new Ice.OptionalContext());
+            Ice.AsyncResult<Callback_IZonePush_RecvData> begin_RecvData(byte[] data, Ice.OptionalContext context = new Ice.OptionalContext());
 
-            Ice.AsyncResult begin_ZoneSync(byte[] data, Ice.AsyncCallback callback, object cookie);
+            Ice.AsyncResult begin_RecvData(byte[] data, Ice.AsyncCallback callback, object cookie);
 
-            Ice.AsyncResult begin_ZoneSync(byte[] data, Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie);
+            Ice.AsyncResult begin_RecvData(byte[] data, Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie);
 
-            void end_ZoneSync(Ice.AsyncResult asyncResult);
+            void end_RecvData(Ice.AsyncResult asyncResult);
         }
 
         [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
         public interface IZonePrx : Ice.ObjectPrx
         {
+            void SendData(byte[] data, Ice.OptionalContext context = new Ice.OptionalContext());
+
+            _System.Threading.Tasks.Task SendDataAsync(byte[] data, Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken());
+
+            Ice.AsyncResult<Callback_IZone_SendData> begin_SendData(byte[] data, Ice.OptionalContext context = new Ice.OptionalContext());
+
+            Ice.AsyncResult begin_SendData(byte[] data, Ice.AsyncCallback callback, object cookie);
+
+            Ice.AsyncResult begin_SendData(byte[] data, Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie);
+
+            void end_SendData(Ice.AsyncResult asyncResult);
+
             EndPointZone BindZone(string zoneId, string playerId, Ice.OptionalContext context = new Ice.OptionalContext());
 
             _System.Threading.Tasks.Task<EndPointZone> BindZoneAsync(string zoneId, string playerId, Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken());
@@ -314,12 +329,15 @@ namespace FootStone
         public interface IZonePushOperations_
         {
             [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
-            void ZoneSync(byte[] data, Ice.Current current = null);
+            void RecvData(byte[] data, Ice.Current current = null);
         }
 
         [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
         public interface IZoneOperations_
         {
+            [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
+            _System.Threading.Tasks.Task SendDataAsync(byte[] data, Ice.Current current = null);
+
             [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.1")]
             _System.Threading.Tasks.Task<EndPointZone> BindZoneAsync(string zoneId, string playerId, Ice.Current current = null);
 
@@ -367,11 +385,11 @@ namespace FootStone
 
             #region Synchronous operations
 
-            public void ZoneSync(byte[] data, Ice.OptionalContext context = new Ice.OptionalContext())
+            public void RecvData(byte[] data, Ice.OptionalContext context = new Ice.OptionalContext())
             {
                 try
                 {
-                    _iceI_ZoneSyncAsync(data, context, null, _System.Threading.CancellationToken.None, true).Wait();
+                    _iceI_RecvDataAsync(data, context, null, _System.Threading.CancellationToken.None, true).Wait();
                 }
                 catch(_System.AggregateException ex_)
                 {
@@ -383,25 +401,25 @@ namespace FootStone
 
             #region Async Task operations
 
-            public _System.Threading.Tasks.Task ZoneSyncAsync(byte[] data, Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken())
+            public _System.Threading.Tasks.Task RecvDataAsync(byte[] data, Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken())
             {
-                return _iceI_ZoneSyncAsync(data, context, progress, cancel, false);
+                return _iceI_RecvDataAsync(data, context, progress, cancel, false);
             }
 
-            private _System.Threading.Tasks.Task _iceI_ZoneSyncAsync(byte[] iceP_data, Ice.OptionalContext context, _System.IProgress<bool> progress, _System.Threading.CancellationToken cancel, bool synchronous)
+            private _System.Threading.Tasks.Task _iceI_RecvDataAsync(byte[] iceP_data, Ice.OptionalContext context, _System.IProgress<bool> progress, _System.Threading.CancellationToken cancel, bool synchronous)
             {
                 var completed = new IceInternal.OperationTaskCompletionCallback<object>(progress, cancel);
-                _iceI_ZoneSync(iceP_data, context, synchronous, completed);
+                _iceI_RecvData(iceP_data, context, synchronous, completed);
                 return completed.Task;
             }
 
-            private const string _ZoneSync_name = "ZoneSync";
+            private const string _RecvData_name = "RecvData";
 
-            private void _iceI_ZoneSync(byte[] iceP_data, _System.Collections.Generic.Dictionary<string, string> context, bool synchronous, IceInternal.OutgoingAsyncCompletionCallback completed)
+            private void _iceI_RecvData(byte[] iceP_data, _System.Collections.Generic.Dictionary<string, string> context, bool synchronous, IceInternal.OutgoingAsyncCompletionCallback completed)
             {
                 var outAsync = getOutgoingAsync<object>(completed);
                 outAsync.invoke(
-                    _ZoneSync_name,
+                    _RecvData_name,
                     Ice.OperationMode.Normal,
                     Ice.FormatType.DefaultFormat,
                     context,
@@ -416,39 +434,39 @@ namespace FootStone
 
             #region Asynchronous operations
 
-            public Ice.AsyncResult<Callback_IZonePush_ZoneSync> begin_ZoneSync(byte[] data, Ice.OptionalContext context = new Ice.OptionalContext())
+            public Ice.AsyncResult<Callback_IZonePush_RecvData> begin_RecvData(byte[] data, Ice.OptionalContext context = new Ice.OptionalContext())
             {
-                return begin_ZoneSync(data, context, null, null, false);
+                return begin_RecvData(data, context, null, null, false);
             }
 
-            public Ice.AsyncResult begin_ZoneSync(byte[] data, Ice.AsyncCallback callback, object cookie)
+            public Ice.AsyncResult begin_RecvData(byte[] data, Ice.AsyncCallback callback, object cookie)
             {
-                return begin_ZoneSync(data, new Ice.OptionalContext(), callback, cookie, false);
+                return begin_RecvData(data, new Ice.OptionalContext(), callback, cookie, false);
             }
 
-            public Ice.AsyncResult begin_ZoneSync(byte[] data, Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie)
+            public Ice.AsyncResult begin_RecvData(byte[] data, Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie)
             {
-                return begin_ZoneSync(data, context, callback, cookie, false);
+                return begin_RecvData(data, context, callback, cookie, false);
             }
 
-            public void end_ZoneSync(Ice.AsyncResult asyncResult)
+            public void end_RecvData(Ice.AsyncResult asyncResult)
             {
-                var resultI_ = IceInternal.AsyncResultI.check(asyncResult, this, _ZoneSync_name);
+                var resultI_ = IceInternal.AsyncResultI.check(asyncResult, this, _RecvData_name);
                 ((IceInternal.OutgoingAsyncT<object>)resultI_.OutgoingAsync).getResult(resultI_.wait());
             }
 
-            private Ice.AsyncResult<Callback_IZonePush_ZoneSync> begin_ZoneSync(byte[] iceP_data, _System.Collections.Generic.Dictionary<string, string> context, Ice.AsyncCallback completedCallback, object cookie, bool synchronous)
+            private Ice.AsyncResult<Callback_IZonePush_RecvData> begin_RecvData(byte[] iceP_data, _System.Collections.Generic.Dictionary<string, string> context, Ice.AsyncCallback completedCallback, object cookie, bool synchronous)
             {
-                var completed = new IceInternal.OperationAsyncResultCompletionCallback<Callback_IZonePush_ZoneSync, object>(
-                    (Callback_IZonePush_ZoneSync cb, object ret) =>
+                var completed = new IceInternal.OperationAsyncResultCompletionCallback<Callback_IZonePush_RecvData, object>(
+                    (Callback_IZonePush_RecvData cb, object ret) =>
                     {
                         if(cb != null)
                         {
                             cb.Invoke();
                         }
                     },
-                    this, _ZoneSync_name, cookie, completedCallback);
-                _iceI_ZoneSync(iceP_data, context, synchronous, completed);
+                    this, _RecvData_name, cookie, completedCallback);
+                _iceI_RecvData(iceP_data, context, synchronous, completed);
                 return completed;
             }
 
@@ -646,6 +664,18 @@ namespace FootStone
                 }
             }
 
+            public void SendData(byte[] data, Ice.OptionalContext context = new Ice.OptionalContext())
+            {
+                try
+                {
+                    _iceI_SendDataAsync(data, context, null, _System.Threading.CancellationToken.None, true).Wait();
+                }
+                catch(_System.AggregateException ex_)
+                {
+                    throw ex_.InnerException;
+                }
+            }
+
             #endregion
 
             #region Async Task operations
@@ -735,6 +765,35 @@ namespace FootStone
                     Ice.FormatType.DefaultFormat,
                     context,
                     synchronous);
+            }
+
+            public _System.Threading.Tasks.Task SendDataAsync(byte[] data, Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken())
+            {
+                return _iceI_SendDataAsync(data, context, progress, cancel, false);
+            }
+
+            private _System.Threading.Tasks.Task _iceI_SendDataAsync(byte[] iceP_data, Ice.OptionalContext context, _System.IProgress<bool> progress, _System.Threading.CancellationToken cancel, bool synchronous)
+            {
+                var completed = new IceInternal.OperationTaskCompletionCallback<object>(progress, cancel);
+                _iceI_SendData(iceP_data, context, synchronous, completed);
+                return completed.Task;
+            }
+
+            private const string _SendData_name = "SendData";
+
+            private void _iceI_SendData(byte[] iceP_data, _System.Collections.Generic.Dictionary<string, string> context, bool synchronous, IceInternal.OutgoingAsyncCompletionCallback completed)
+            {
+                var outAsync = getOutgoingAsync<object>(completed);
+                outAsync.invoke(
+                    _SendData_name,
+                    Ice.OperationMode.Normal,
+                    Ice.FormatType.DefaultFormat,
+                    context,
+                    synchronous,
+                    write: (Ice.OutputStream ostr) =>
+                    {
+                        BytesHelper.write(ostr, iceP_data);
+                    });
             }
 
             #endregion
@@ -848,6 +907,42 @@ namespace FootStone
                     },
                     this, _PlayerLeave_name, cookie, completedCallback);
                 _iceI_PlayerLeave(context, synchronous, completed);
+                return completed;
+            }
+
+            public Ice.AsyncResult<Callback_IZone_SendData> begin_SendData(byte[] data, Ice.OptionalContext context = new Ice.OptionalContext())
+            {
+                return begin_SendData(data, context, null, null, false);
+            }
+
+            public Ice.AsyncResult begin_SendData(byte[] data, Ice.AsyncCallback callback, object cookie)
+            {
+                return begin_SendData(data, new Ice.OptionalContext(), callback, cookie, false);
+            }
+
+            public Ice.AsyncResult begin_SendData(byte[] data, Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie)
+            {
+                return begin_SendData(data, context, callback, cookie, false);
+            }
+
+            public void end_SendData(Ice.AsyncResult asyncResult)
+            {
+                var resultI_ = IceInternal.AsyncResultI.check(asyncResult, this, _SendData_name);
+                ((IceInternal.OutgoingAsyncT<object>)resultI_.OutgoingAsync).getResult(resultI_.wait());
+            }
+
+            private Ice.AsyncResult<Callback_IZone_SendData> begin_SendData(byte[] iceP_data, _System.Collections.Generic.Dictionary<string, string> context, Ice.AsyncCallback completedCallback, object cookie, bool synchronous)
+            {
+                var completed = new IceInternal.OperationAsyncResultCompletionCallback<Callback_IZone_SendData, object>(
+                    (Callback_IZone_SendData cb, object ret) =>
+                    {
+                        if(cb != null)
+                        {
+                            cb.Invoke();
+                        }
+                    },
+                    this, _SendData_name, cookie, completedCallback);
+                _iceI_SendData(iceP_data, context, synchronous, completed);
                 return completed;
             }
 
@@ -1006,7 +1101,7 @@ namespace FootStone
         {
             #region Slice operations
 
-            public abstract void ZoneSync(byte[] data, Ice.Current current = null);
+            public abstract void RecvData(byte[] data, Ice.Current current = null);
 
             #endregion
 
@@ -1044,20 +1139,20 @@ namespace FootStone
 
             [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011")]
             public static _System.Threading.Tasks.Task<Ice.OutputStream>
-            iceD_ZoneSync(IZonePush obj, IceInternal.Incoming inS, Ice.Current current)
+            iceD_RecvData(IZonePush obj, IceInternal.Incoming inS, Ice.Current current)
             {
                 Ice.ObjectImpl.iceCheckMode(Ice.OperationMode.Normal, current.mode);
                 var istr = inS.startReadParams();
                 byte[] iceP_data;
                 iceP_data = BytesHelper.read(istr);
                 inS.endReadParams();
-                obj.ZoneSync(iceP_data, current);
+                obj.RecvData(iceP_data, current);
                 return inS.setResult(inS.writeEmptyParams());
             }
 
             private static readonly string[] _all =
             {
-                "ZoneSync",
+                "RecvData",
                 "ice_id",
                 "ice_ids",
                 "ice_isA",
@@ -1077,7 +1172,7 @@ namespace FootStone
                 {
                     case 0:
                     {
-                        return iceD_ZoneSync(this, inS, current);
+                        return iceD_RecvData(this, inS, current);
                     }
                     case 1:
                     {
@@ -1109,6 +1204,8 @@ namespace FootStone
         public abstract class IZoneDisp_ : Ice.ObjectImpl, IZone
         {
             #region Slice operations
+
+            public abstract _System.Threading.Tasks.Task SendDataAsync(byte[] data, Ice.Current current = null);
 
             public abstract _System.Threading.Tasks.Task<EndPointZone> BindZoneAsync(string zoneId, string playerId, Ice.Current current = null);
 
@@ -1152,6 +1249,18 @@ namespace FootStone
 
             [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011")]
             public static _System.Threading.Tasks.Task<Ice.OutputStream>
+            iceD_SendData(IZone obj, IceInternal.Incoming inS, Ice.Current current)
+            {
+                Ice.ObjectImpl.iceCheckMode(Ice.OperationMode.Normal, current.mode);
+                var istr = inS.startReadParams();
+                byte[] iceP_data;
+                iceP_data = BytesHelper.read(istr);
+                inS.endReadParams();
+                return inS.setResultTask(obj.SendDataAsync(iceP_data, current));
+            }
+
+            [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011")]
+            public static _System.Threading.Tasks.Task<Ice.OutputStream>
             iceD_BindZone(IZone obj, IceInternal.Incoming inS, Ice.Current current)
             {
                 Ice.ObjectImpl.iceCheckMode(Ice.OperationMode.Normal, current.mode);
@@ -1191,6 +1300,7 @@ namespace FootStone
                 "BindZone",
                 "PlayerEnter",
                 "PlayerLeave",
+                "SendData",
                 "ice_id",
                 "ice_ids",
                 "ice_isA",
@@ -1222,17 +1332,21 @@ namespace FootStone
                     }
                     case 3:
                     {
-                        return Ice.ObjectImpl.iceD_ice_id(this, inS, current);
+                        return iceD_SendData(this, inS, current);
                     }
                     case 4:
                     {
-                        return Ice.ObjectImpl.iceD_ice_ids(this, inS, current);
+                        return Ice.ObjectImpl.iceD_ice_id(this, inS, current);
                     }
                     case 5:
                     {
-                        return Ice.ObjectImpl.iceD_ice_isA(this, inS, current);
+                        return Ice.ObjectImpl.iceD_ice_ids(this, inS, current);
                     }
                     case 6:
+                    {
+                        return Ice.ObjectImpl.iceD_ice_isA(this, inS, current);
+                    }
+                    case 7:
                     {
                         return Ice.ObjectImpl.iceD_ice_ping(this, inS, current);
                     }

@@ -18,20 +18,22 @@ namespace SampleClient
     internal class ZonePushI : IZonePushDisp_,IServerPush
     {      
         private int count = 0;
+
         public ZonePushI()
         {
            
         }
         private NLog.Logger logger = LogManager.GetCurrentClassLogger();
         private SessionPushI sessionPushI;
+        private string account;
 
-        public override void ZoneSync(byte[] data, Current current = null)
+        public override void RecvData(byte[] data, Current current = null)
         {
-            //count++;
-            //if (count % 330 == 0)
-            //{
-            //    logger.Info(name + " zone sync:" + count);
-            //}
+            count++;
+            if (count % 33 == 0)
+            {
+                logger.Debug($"{account} RecvData:" + count);
+            }
         }
 
         public string GetFacet()
@@ -43,12 +45,18 @@ namespace SampleClient
         {
             this.sessionPushI = sessionPushI;
         }
+
+        public void setAccount(string account)
+        {
+            this.account = account;
+        }
     }
 
     internal class PlayerPushI : IPlayerPushDisp_, IServerPush
     {    
         private NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
         private SessionPushI sessionPushI;
+        private string account;
 
         public PlayerPushI()
         {
@@ -67,19 +75,33 @@ namespace SampleClient
 
         public override void hpChanged(int hp, Current current = null)
         {
-            logger.Info(sessionPushI.Account + " hp changed !");
-            //Test.HpChangeCount++;
-            //if (Test.HpChangeCount % 1000 == 0)
-            //{
-            //    logger.Info(name + " hp changed::" + Test.HpChangeCount);
-            //}
+           // logger.Info(account + "begin hp changed::" + NetworkNew.HpChangeCount);
+            Interlocked.Add(ref NetworkNew.HpChangeCount,1);
+            if ((NetworkNew.HpChangeCount / NetworkNew.playerCount) > NetworkNew.lastHpChange)
+            {
+                Interlocked.Add(ref NetworkNew.lastHpChange, 1);
+                logger.Info(account + " hp changed::" + NetworkNew.HpChangeCount);
+            }
+        }
 
-            //      logger.Info(name+" hp changed:" + hp);
-        }      
+        public void setAccount(string account)
+        {
+            this.account = account;
+        }
     }
+
+ 
 
     public class NetworkNew
     {
+        public  static int HpChangeCount = 0;
+        public static int lastHpChange = 0;
+
+        public static int recvDataCount = 0;
+        public static int lastRecvData = 0;
+
+        public static int playerCount = 0;
+
         private static NLog.Logger logger = LogManager.GetCurrentClassLogger();
 
         public async Task Test(string ip, int port, int count, ushort startIndex, bool needNetty)
@@ -89,6 +111,7 @@ namespace SampleClient
             var client = new FSClientBuilder()
                 .IceOptions(iceOptions =>
                 {
+                    iceOptions.EnableDispatcher = false;
                     iceOptions.PushObjects = new List<Ice.Object>();
                     iceOptions.PushObjects.Add(new PlayerPushI());
                     iceOptions.PushObjects.Add(new ZonePushI());
@@ -100,17 +123,19 @@ namespace SampleClient
                 .Build();
 
             //启动主线程
-            Thread thread = new Thread(new ThreadStart(  () =>
-            {
-                do
-                {
-                    client.Update();   
+            //Thread thread = new Thread(new ThreadStart(async () =>
+            //{
+            //    do
+            //    {
+            //        client.Update();
 
-                    Thread.Sleep(33);
+            //        await Task.Delay(33);
+
+            //     //   Thread.Sleep(33);
       
-                } while (true);
-            }));
-            thread.Start();
+            //    } while (true);
+            //}));
+            //thread.Start();
 
 
             await client.StartAsync();
@@ -118,10 +143,10 @@ namespace SampleClient
             for (ushort i = startIndex; i < startIndex + count; ++i)
             {
                 var sessionId = "session" + i;
-                var session = await client.CreateSession(ip, port, sessionId);
-             
+                var session = await client.CreateSession(ip, port, sessionId);             
                 RunSession(session, i, 20, needNetty);
-                await Task.Delay(20);
+                playerCount++;
+                await Task.Delay(10);
             }
             logger.Info("all session created:" + count);
         }
@@ -135,12 +160,10 @@ namespace SampleClient
             try
             {
                 session.OnDestroyed += (sender, e) =>
-                { 
+                {
                     logger.Info($"session:{session.GetId()} destroyed!");
                 };
 
-                //获取SessionPrx
-                //    var sessionPrx = session.GetSessionPrx();
 
                 //注册账号           
                 var accountPrx = session.UncheckedCast(IAccountPrxHelper.uncheckedCast);
@@ -174,6 +197,7 @@ namespace SampleClient
                 //获取角色列表
                 List<PlayerShortInfo> players = await worldPrx.GetPlayerListRequestAsync(serverId);
                 var playerPrx = session.UncheckedCast(IPlayerPrxHelper.uncheckedCast);
+
                 //如果角色列表为0，创建新角色
                 if (players.Count == 0)
                 {
@@ -182,10 +206,7 @@ namespace SampleClient
                 }
                 //选择第一个角色
                 await playerPrx.SelectPlayerRequestAsync(players[0].playerId);
-          
-                var roleMasterPrx = session.UncheckedCast(IRoleMasterPrxHelper.uncheckedCast);
 
-                var zonePrx = session.UncheckedCast(IZonePrxHelper.uncheckedCast);
 
                 //获取角色信息
                 var playerInfo = await playerPrx.GetPlayerInfoAsync();
@@ -193,9 +214,11 @@ namespace SampleClient
 
                 if (needNetty)
                 {
-                    await RunNetty(session,zonePrx,playerInfo,index);
+                    await RunNetty(session, playerInfo, index);
+                  //  await RunZone(session, playerInfo, index);
                 }
 
+                var roleMasterPrx = session.UncheckedCast(IRoleMasterPrxHelper.uncheckedCast);
                 logger.Info($"{account} playerPrx begin!");
                 MasterProperty property;
                 for (int i = 0; i < count; ++i)
@@ -211,27 +234,40 @@ namespace SampleClient
                 logger.Info($"{account} playerInfo:" + JsonConvert.SerializeObject(playerInfo));
 
                 logger.Info($"{account} playerPrx end!");
-                session.Destory();
-
             }
             catch (System.Exception e)
             {
                 logger.Error(account + ":" + e.ToString());
             }
+            finally
+            {
+                session.Destory();
+            }
         }
 
-        private async Task RunNetty(IFSSession session,IZonePrx zonePrx,PlayerInfo playerInfo,int index)
+        private async Task RunNetty(IFSSession session,PlayerInfo playerInfo,int index)
         {
-           
+            var zonePrx = session.UncheckedCast(IZonePrxHelper.uncheckedCast);
+
             System.Timers.Timer moveTimer = null;
             System.Timers.Timer pingTimer = null;
-
-
+            
             //绑定Zone
             var endPoint = await zonePrx.BindZoneAsync(playerInfo.zoneId, playerInfo.playerId);
             var gameServerId = ProtocolNettyUtility.Endpoint2GameServerId(endPoint.ip, endPoint.port);
 
-            var channel = await session.createStreamChannel();
+            var channel = await session.CreateStreamChannel();
+            channel.eventRecvData += (data) =>
+            {
+
+                Interlocked.Add(ref recvDataCount, 1);
+                if ((recvDataCount / playerCount) > lastRecvData)
+                {
+                    Interlocked.Add(ref lastRecvData, 10);
+                    logger.Info($"session{index} recv data,size:{data.Length},count:{recvDataCount}");
+                }
+             
+            };
             await channel.BindGameServer(playerInfo.playerId, gameServerId);
 
             //进入Zone
@@ -257,18 +293,18 @@ namespace SampleClient
                 move.Encoder(data);
                 channel.WriteAndFlushAsync(data);
 
-              //  logger.Debug($"send move!");
+                //  logger.Debug($"send move!");
             };
             moveTimer.Start();
 
             //发送ping消息
             pingTimer = new System.Timers.Timer();
             pingTimer.AutoReset = true;
-            pingTimer.Interval = 2000;
+            pingTimer.Interval = 10000;
             pingTimer.Enabled = true;
             pingTimer.Elapsed += async (_1, _2) =>
             {
-              //  logger.Debug($"send ping!");
+                logger.Debug($"send ping!");
                 var pingTime = await channel.Ping(DateTime.Now.Ticks);
                 var now = DateTime.Now.Ticks;
                 var value = (now - pingTime) / 10000;
@@ -276,6 +312,29 @@ namespace SampleClient
             };
             pingTimer.Start();
 
+        }
+
+        private async Task RunZone(IFSSession session, PlayerInfo playerInfo, int index)
+        {
+            var zonePrx = session.UncheckedCast(IZonePrxHelper.uncheckedCast);
+
+            System.Timers.Timer moveTimer = null;
+
+            //进入Zone
+            var endPoint = await zonePrx.BindZoneAsync(playerInfo.zoneId, playerInfo.playerId);
+            //  await zonePrx.PlayerEnterAsync();
+
+            //发送move消息
+            moveTimer = new System.Timers.Timer();
+            moveTimer.AutoReset = true;
+            moveTimer.Interval = 500;
+            moveTimer.Enabled = true;
+            moveTimer.Elapsed += (_1, _2) =>
+            {
+                byte[] data = new byte[14];
+                zonePrx.SendData(data);
+            };
+            moveTimer.Start();        
         }
     }
 }

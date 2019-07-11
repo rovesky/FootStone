@@ -1,5 +1,6 @@
 ﻿using DotNetty.Buffers;
 using DotNetty.Codecs;
+using DotNetty.Common.Utilities;
 using DotNetty.Transport.Bootstrapping;
 using DotNetty.Transport.Channels;
 using DotNetty.Transport.Channels.Sockets;
@@ -33,26 +34,33 @@ namespace FootStone.FrontNetty
                 if (buffer != null)
                 {
                     ushort type = buffer.ReadUnsignedShort();
-                    var playerId = buffer.ReadStringShortUtf8();
-                    IChannel channel = playerChannels.GetClientChannel(playerId);
-
-                    if (channel != null)
+                    string playerId;
+                    IChannel channel;
+                    switch ((MessageType)type)
                     {
-                        buffer.DiscardReadBytes();
+                        case MessageType.Data:
+                            playerId = buffer.ReadStringShortUtf8();
+                            channel = playerChannels.GetClientChannel(playerId);
 
-                        switch ((MessageType)type)
-                        {
-                            case MessageType.Data:
-                                //   ReferenceCountUtil.Release(buffer);
+                            if (channel != null)
+                            {
+                                buffer.DiscardReadBytes();
                                 channel.WriteAndFlushAsync(buffer);
-                                break;
-                            default:
+                            }
+                          //  ReferenceCountUtil.Release(buffer);
+                            break;
+                        default:
+                            playerId = buffer.ReadStringShortUtf8();
+                            channel = playerChannels.GetClientChannel(playerId);
+
+                            if (channel != null)
+                            {
+                                buffer.DiscardReadBytes();                            
                                 channel.WriteAndFlushAsync(buffer);
-                                break;
-                        }
-                      //  logger.Debug($"Send Data to client:{playerId},type:{type}");
-                        return;
+                            }
+                            break;
                     }
+                    return;
                 }
             }
             catch (Exception e)

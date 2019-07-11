@@ -1,4 +1,5 @@
-﻿using DotNetty.Transport.Channels.Sockets;
+﻿using DotNetty.Buffers;
+using DotNetty.Transport.Channels.Sockets;
 using FootStone.ProtocolNetty;
 using System;
 using System.Collections.Generic;
@@ -9,25 +10,12 @@ namespace FootStone.Client
 {
     public class FSTcpSocketChannel : TcpSocketChannel, IFSChannel
     {
-        public TaskCompletionSource<object> tcsHandshake = new TaskCompletionSource<object>();
-        public TaskCompletionSource<object> tcsBindGameServer = new TaskCompletionSource<object>();
-        public TaskCompletionSource<object> tcsPing;// =   
+        private TaskCompletionSource<object> tcsBindGameServer = new TaskCompletionSource<object>();
+        private TaskCompletionSource<object> tcsPing;// =   
 
-        public async Task Handshake(string id)
-        {          
-            var message = Allocator.DirectBuffer();
-         //   message.WriteUnsignedShort((ushort)MessageType.PlayerHandshake);
-            message.WriteStringShortUtf8(id);
-            await WriteAndFlushAsync(message);
-            
-            await tcsHandshake.Task;
-        }
+        public event EventRecvData eventRecvData;
 
-        public void HandshakeResponse()
-        {
-            tcsHandshake.SetResult(null);
-        }
-
+       
         public void BindGameServerResponse()
         {
             tcsBindGameServer.SetResult(null);
@@ -63,8 +51,7 @@ namespace FootStone.Client
         {
             tcsPing.SetResult(pingTime);
         }
-        
-       
+               
 
         public void SendData(byte[] bytes)
         {
@@ -72,8 +59,14 @@ namespace FootStone.Client
             data.WriteUnsignedShort((ushort)MessageType.Data);
             data.WriteUnsignedShort((ushort)bytes.Length);
             data.WriteBytes(bytes);
-
             WriteAndFlushAsync(data);
+        }
+
+        public void RecvData(IByteBuffer byteBuffer)
+        {       
+            byte[] data = new byte[byteBuffer.ReadableBytes];
+            byteBuffer.ReadBytes(data);
+            eventRecvData(data);
         }
     }
 }
