@@ -17,9 +17,6 @@
   </ItemDefinitionGroup>
 
   <ItemGroup>
-    <Compile Update="generated\SampleAccount.cs">
-      <SliceCompileSource>slice\SampleAccount.ice</SliceCompileSource>
-    </Compile>
     <Compile Update="generated\Account.cs">
       <SliceCompileSource>slice\Account.ice</SliceCompileSource>
     </Compile>

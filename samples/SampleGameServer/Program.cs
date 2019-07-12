@@ -1,7 +1,10 @@
+using FootStone.Core;
 using FootStone.Core.GrainInterfaces;
 using FootStone.FrontIce;
 using FootStone.FrontNetty;
+using FootStone.Grains;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using NLog;
 using Orleans;
@@ -13,10 +16,10 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace FootStone.Core.GameServer
+namespace SampleGameServer
 {
 
-    class Program
+    public class Program
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
 
@@ -26,10 +29,6 @@ namespace FootStone.Core.GameServer
 
         // static string mysqlConnectCluster = "server=192.168.0.128;user id=root;password=198292;database=footstone_cluster;MaximumPoolsize=50";
         // static string mysqlConnectStorage = "server=192.168.1.128;user id=root;password=654321#;database=footstonestorage;MaximumPoolsize=50";
-
-        static readonly ManualResetEvent _siloStopped = new ManualResetEvent(false);      
-        static bool siloStopping = false;
-        static readonly object syncLock = new object();
 
         public static string GetLocalIP()
         {
@@ -50,121 +49,98 @@ namespace FootStone.Core.GameServer
             return IPAddress.Loopback.ToString();
         }
 
-        static int Main(string[] args)
+        public static int Main(string[] args)
+        {
+            Startup(args).Wait();      
+            return 0;
+        }
+
+        private static Task Startup(string[] args)
         {
             try
             {
+                return new HostBuilder()
 
-                Console.CancelKeyPress += (s, a) =>
-                {
-                    a.Cancel = true;
-                    /// Don't allow the following code to repeat if the user presses Ctrl+C repeatedly.
-                    lock (syncLock)
-                    {
-                        if (!siloStopping)
-                        {
-                            siloStopping = true;
-                            Task.Run(StopAsync).Ignore();
-                        }
-                    }
-                };
+                   //配置orlean的Silo
+                   .UseOrleans(silo =>
+                   {
+                       //    .UseLocalhostClustering()
+                       //    .UseDevelopmentClustering(primarySiloEndpoint)
+                       silo.UseAdoNetClustering(options =>
+                       {
+                           options.ConnectionString = mysqlConnectCluster;
+                           options.Invariant = "MySql.Data.MySqlClient";
+                       })
+                       .Configure<ClusterOptions>(options =>
+                       {
+                           options.ClusterId = "lsj";
+                           options.ServiceId = "FootStone";
+                       })
+                       .ConfigureEndpoints(IPAddress.Parse(GetLocalIP()), 11111, 30000)
+                       //.Configure<StatisticsOptions>(options =>
+                       //{
+                       //    options.LogWriteInterval = TimeSpan.FromSeconds(10);
+                       //    options.CollectionLevel = Orleans.Runtime.Configuration.StatisticsLevel.Critical;
+                       //})
+                       .AddStartupTask(async (IServiceProvider services, CancellationToken cancellation) =>
+                       {
+                           var grainFactory = services.GetRequiredService<IGrainFactory>();
+                           var grain = grainFactory.GetGrain<IWorldGrain>("1");
+                           await grain.Init();
 
+                       })
+                       .ConfigureApplicationParts(parts => parts.AddApplicationPart(typeof(WorldGrain).Assembly).WithReferences())
+                       .AddMemoryGrainStorage("memory1")
+                       .AddAdoNetGrainStorage("ado1", options =>
+                       {
 
-                var footStone = new FSHostBuilder()
-
-                    //配置orlean的Silo
-                    .ConfigureSilo(silo =>
-                    {
-                        //    .UseLocalhostClustering()
-                        //    .UseDevelopmentClustering(primarySiloEndpoint)
-                        silo.UseAdoNetClustering(options =>
-                        {
-                            options.ConnectionString = mysqlConnectCluster;
-                            options.Invariant = "MySql.Data.MySqlClient";
-                        })
-                        .Configure<ClusterOptions>(options =>
-                        {
-                            options.ClusterId = "lsj";
-                            options.ServiceId = "FootStone";
-                        })
-                        .ConfigureEndpoints(IPAddress.Parse(GetLocalIP()), 11111, 30000)
-                        //.Configure<StatisticsOptions>(options =>
-                        //{
-                        //    options.LogWriteInterval = TimeSpan.FromSeconds(10);
-                        //    options.CollectionLevel = Orleans.Runtime.Configuration.StatisticsLevel.Critical;
-                        //})
-                        .AddStartupTask(async (IServiceProvider services, CancellationToken cancellation) =>
-                        {
-                            var grainFactory = services.GetRequiredService<IGrainFactory>();
-                            var grain = grainFactory.GetGrain<IWorldGrain>("1");
-                            await grain.Init();
-
-                        })              
-                        //  .ConfigureApplicationParts(parts => parts.AddApplicationPart(typeof(IAccountGrain).Assembly).WithReferences())
-                        .ConfigureLogging(logging =>
-                        {
-                            //logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Warning);
-                            logging.AddProvider(new NLogLoggerProvider());
-                        })
-                        .AddMemoryGrainStorage("memory1")
-                        .AddAdoNetGrainStorage("ado1", options =>
-                         {
-
-                             options.UseJsonFormat = true;
-                             options.ConnectionString = mysqlConnectStorage;
-                             options.Invariant = "MySql.Data.MySqlClient";
-                         })                   
-                        //.AddMemoryGrainStorage("PubSubStore")
-                        //.AddSimpleMessageStreamProvider("Zone", cfg =>
-                        //{
-                        //    cfg.FireAndForgetDelivery = true;
-                        //})
-                        .EnableDirectClient();
-                    })
-                    //添加Netty Game支持
-                    .AddGameNetty(options =>
-                    {
-                        options.Port = 8017;
-                        options.Recv = ZoneNetttyData.Instance;
-                    })
-                    ////添加ICE Front支持
-                    //.AddFrontIce()
-                    ////添加Netty Front支持
-                    //.AddFrontNetty(options =>
-                    //{
-                    //    options.FrontPort = 8007;
-                    //    options.GamePort = 8017;
-                    //})
-                    .Build();
-
-                logger.Info("FSHost builded!");
-
-                Global.FSHost = footStone;
-
-                RunAsync(footStone).Wait();
-
-                _siloStopped.WaitOne();
+                           options.UseJsonFormat = true;
+                           options.ConnectionString = mysqlConnectStorage;
+                           options.Invariant = "MySql.Data.MySqlClient";
+                       })
+                       //.AddMemoryGrainStorage("PubSubStore")
+                       //.AddSimpleMessageStreamProvider("Zone", cfg =>
+                       //{
+                       //    cfg.FireAndForgetDelivery = true;
+                       //})     
+                       ;
+                   })
+                   .ConfigureLogging(builder =>
+                   {
+                       builder.AddProvider(new NLogLoggerProvider());
+                   })
+                   .ConfigureServices(services =>
+                   {
+                       services.Configure<ConsoleLifetimeOptions>(options =>
+                       {
+                           options.SuppressStatusMessages = true;
+                       });
+                   })
+                   //添加Netty Game支持
+                   .UseGameNetty(options =>
+                   {
+                       options.Port = 8017;
+                       options.Recv = ZoneNetttyData.Instance;
+                   })
+                   ////添加ICE Front支持
+                   //.AddFrontIce()
+                   ////添加Netty Front支持
+                   //.AddFrontNetty(options =>
+                   //{
+                   //    options.FrontPort = 8007;
+                   //    options.GamePort = 8017;
+                   //})
+                   .RunConsoleAsync();
 
             }
             catch (Exception ex)
             {
                 logger.Error(ex);
                 Console.ReadLine();
+                return Task.CompletedTask;
             }
-            return 0;
-        }
-
-        static async Task RunAsync(IFSHost fs)
-        {
-            await fs.StartAsync();      
-            logger.Info("FSHost start completed!");
-        }
-
-        static async Task StopAsync()
-        {
-            await Global.FSHost.StopAsync();
-            _siloStopped.Set();
-        }
+         
+        }     
 
     }
 }
