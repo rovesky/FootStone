@@ -1,16 +1,13 @@
-﻿using DotNetty.Transport.Channels;
-using FootStone.Client;
+﻿using FootStone.Client;
 using FootStone.GrainInterfaces;
 using FootStone.ProtocolNetty;
+using Ice;
 using Newtonsoft.Json;
 using NLog;
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using System.Timers;
-using Ice;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace SampleClient
 {

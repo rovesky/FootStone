@@ -27,16 +27,17 @@
   <ItemGroup>
     <PackageReference Include="DotNetty.Handlers" Version="0.6.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="2.2.0" />
-    <PackageReference Include="Microsoft.Orleans.Clustering.AdoNet" Version="2.2.4" />
-    <PackageReference Include="Microsoft.Orleans.Core.Abstractions" Version="2.2.0" />
-    <PackageReference Include="Microsoft.Orleans.Core.Legacy" Version="2.2.4" />
-    <PackageReference Include="Microsoft.Orleans.OrleansCodeGenerator.Build" Version="2.2.4">
+    <PackageReference Include="Microsoft.Orleans.Clustering.AdoNet" Version="2.3.5" />
+    <PackageReference Include="Microsoft.Orleans.Core.Abstractions" Version="2.3.5" />
+    <PackageReference Include="Microsoft.Orleans.Core.Legacy" Version="2.3.5" />
+    <PackageReference Include="Microsoft.Orleans.OrleansCodeGenerator.Build" Version="2.3.5">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Orleans.Persistence.AdoNet" Version="2.2.4" />
-    <PackageReference Include="Microsoft.Orleans.Server" Version="2.2.4" />
-    <PackageReference Include="MySql.Data" Version="8.0.15" />
+    <PackageReference Include="Microsoft.Orleans.OrleansSQLUtils" Version="2.3.5" />
+    <PackageReference Include="Microsoft.Orleans.Persistence.AdoNet" Version="2.3.5" />
+    <PackageReference Include="Microsoft.Orleans.Server" Version="2.3.5" />
+    <PackageReference Include="MySql.Data" Version="8.0.16" />
     <PackageReference Include="NLog" Version="4.6.5" />
     <PackageReference Include="NLog.Config" Version="4.6.4" />
     <PackageReference Include="sqlSugarCore" Version="5.0.0.3" />
