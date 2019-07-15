@@ -16,32 +16,23 @@ namespace FootStone.Core
         {
             if (configureDelegate == null) throw new ArgumentNullException(nameof(configureDelegate));
 
-            const string clientBuilderKey = "ClientBuilder";
-            ClientBuilder clientBuilder;
-            if (!hostBuilder.Properties.ContainsKey(clientBuilderKey))
-            {
-                clientBuilder = new ClientBuilder();
-                hostBuilder.Properties.Add(clientBuilderKey, clientBuilder);
+            const string clientBuilderKey = "ClientBuilder";        
+            if (hostBuilder.Properties.ContainsKey(clientBuilderKey))
+                return hostBuilder;
+            hostBuilder.Properties.Add(clientBuilderKey, true);
 
-                hostBuilder.ConfigureServices(services => services
-                        .AddSingleton<IClientBuilder>(clientBuilder)
-                        //.AddSingleton<IHostedService, ClusterClientHostedService>()
-                         .AddSingleton<ClusterClientHostedService>()
-                         .AddSingleton<IHostedService>(_ => _.GetService<ClusterClientHostedService>())
-                        .AddSingleton(_ =>
-                        {
-                            Console.WriteLine("_.GetService<ClusterClientHostedService>().Client");
-                           return _.GetService<ClusterClientHostedService>().Client;
-                            })                     
-                    );
-                //    hostBuilder.Configure(configureDelegate);
-            }
-            else
-            {
-                clientBuilder = (ClientBuilder)hostBuilder.Properties[clientBuilderKey];
-            }
+
+            var clientBuilder = new ClientBuilder();
             configureDelegate(clientBuilder);
-            //  clientBuilder.ConfigureSilo(configureDelegate);
+
+            hostBuilder.ConfigureServices(services => services
+                     .AddSingleton<IClientBuilder>(clientBuilder)
+                     //.AddSingleton<IHostedService, ClusterClientHostedService>()
+                     .AddSingleton<ClusterClientHostedService>()
+                     .AddSingleton<IHostedService>(_ => _.GetService<ClusterClientHostedService>())
+                     .AddSingleton(_ => _.GetService<ClusterClientHostedService>().Client)
+                );
+
             return hostBuilder;
         }
     }

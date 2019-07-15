@@ -12,6 +12,13 @@ namespace FootStone.FrontIce
        
         public static IHostBuilder UseFrontIce(this IHostBuilder builder, Action<IceOptions> config)
         {
+            if (config == null) throw new ArgumentNullException(nameof(config));
+
+            var key = "IsUseFrontIce";
+            if (builder.Properties.ContainsKey(key))
+                return builder;
+            builder.Properties.Add(key, true);
+
             builder
                 .ConfigureServices(services =>
                 {

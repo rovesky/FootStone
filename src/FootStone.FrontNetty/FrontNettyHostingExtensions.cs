@@ -11,6 +11,13 @@ namespace FootStone.FrontNetty
       
         public static IHostBuilder UseFrontNetty(this IHostBuilder builder, Action<NettyFrontOptions> config)
         {
+            if (config == null) throw new ArgumentNullException(nameof(config));
+
+            var key = "IsUseFrontNetty";
+            if (builder.Properties.ContainsKey(key))
+                return builder;
+            builder.Properties.Add(key, true);
+
             builder           
                .ConfigureServices(services =>
                {
@@ -24,7 +31,14 @@ namespace FootStone.FrontNetty
 
         public static IHostBuilder UseGameNetty(this IHostBuilder builder, Action<NettyGameOptions> config)
         {
-            builder           
+            if (config == null) throw new ArgumentNullException(nameof(config));
+
+            var key = "IsUseGameNetty";
+            if (builder.Properties.ContainsKey(key))
+                return builder;
+            builder.Properties.Add(key, true);
+
+            builder
                 .ConfigureServices(services =>
                 {
                     // this hosted service runs the sample logic
