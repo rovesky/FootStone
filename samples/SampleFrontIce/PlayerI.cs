@@ -4,6 +4,7 @@ using FootStone.FrontIce;
 using FootStone.GrainInterfaces;
 using Ice;
 using NLog;
+using Orleans;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,51 +41,51 @@ namespace SampleFrontIce
 
     public class PlayerI : IPlayerDisp_, IServantBase
     {
-        private SessionI sessionI;
+        private Session session;
+        private IClusterClient orleansClient;
 
-        private ObserverClient<IPlayerObserver> observer = new ObserverClient<IPlayerObserver>(Global.OrleansClient);
+        public PlayerI(Session session, IClusterClient orleansClient)
+        {
+            this.session = session;
+            this.orleansClient = orleansClient;
+            observer = new ObserverClient<IPlayerObserver>(orleansClient);
+        }
+        
+
+        private ObserverClient<IPlayerObserver> observer ;
         private IPlayerGrain playerGrain;
         private NLog.Logger logger = LogManager.GetCurrentClassLogger();
         private Timer pingTimer;
-
-        public PlayerI()
-        {
-           
-        }
+             
 
         public string GetFacet()
         {
-            return typeof(IPlayerPrx).Name;
-        }
-
-        public void setSessionI(SessionI sessionI)
-        {
-            this.sessionI = sessionI;
-        }
+            return nameof(IPlayerPrx);
+        }            
              
 
         public async override Task<string> CreatePlayerRequestAsync(int gameId, PlayerCreateInfo info,Current current = null)
         {
             var playerId = Guid.NewGuid();
-            var playerGrain = Global.OrleansClient.GetGrain<IPlayerGrain>(playerId);
-            await playerGrain.CreatePlayer(sessionI.Account, gameId, info);
+            var playerGrain = orleansClient.GetGrain<IPlayerGrain>(playerId);
+            await playerGrain.CreatePlayer(session.Account, gameId, info);
             return playerId.ToString();
         }
 
         public async override Task SelectPlayerRequestAsync(string playerId, Current current = null)
         {
             var gpid = Guid.Parse(playerId);
-            playerGrain = Global.OrleansClient.GetGrain<IPlayerGrain>(gpid);
+            playerGrain = orleansClient.GetGrain<IPlayerGrain>(gpid);
 
             await observer.Subscribe(playerGrain, new PlayerObserver(
-                sessionI.UncheckedCastPush(IPlayerPushPrxHelper.uncheckedCast)));
-            //    IPlayerPushPrxHelper.uncheckedCast(session.SessionPushPrx, typeof(IPlayerPush).Name)));
+                session.UncheckedCastPush(IPlayerPushPrxHelper.uncheckedCast)));
+
 
             await playerGrain.PlayerOnline();
 
             try
             {
-                sessionI.PlayerId = gpid;
+                session.PlayerId = gpid;
             }
             catch(System.Exception e)
             {
@@ -99,7 +100,7 @@ namespace SampleFrontIce
             pingTimer.Elapsed += Timer_Elapsed;
             pingTimer.Start();
 
-            logger.Debug($"Session Bind {sessionI.Account}:{sessionI.PlayerId}");
+            logger.Debug($"Session Bind {session.Account}:{session.PlayerId}");
         }
 
         private void Timer_Elapsed(object sender, ElapsedEventArgs e)

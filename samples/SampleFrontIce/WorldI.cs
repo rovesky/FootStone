@@ -4,6 +4,7 @@ using FootStone.FrontIce;
 using FootStone.GrainInterfaces;
 using Ice;
 using NLog;
+using Orleans;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -13,18 +14,20 @@ namespace SampleFrontIce
 
     public class WorldI :IWorldDisp_, IServantBase
     {
-        private SessionI session;
-       
-        private NLog.Logger logger = LogManager.GetCurrentClassLogger();      
+        private NLog.Logger logger = LogManager.GetCurrentClassLogger();
+        
+        private Session session;
+        private IClusterClient orleansClient;
 
+        public WorldI(Session session, IClusterClient orleansClient)
+        {
+            this.session = session;
+            this.orleansClient = orleansClient;
+        }
+             
         public string GetFacet()
         {
-            return typeof(IWorldPrx).Name;
-        }
-
-        public void setSessionI(SessionI sessionI)
-        {
-            this.session = sessionI;
+            return nameof(IWorldPrx);
         }
 
 
@@ -36,14 +39,14 @@ namespace SampleFrontIce
 
         public async override Task<List<ServerInfo>> GetServerListRequestAsync(Current current = null)
         {
-            var worldGrain = Global.OrleansClient.GetGrain<IWorldGrain>("1");
+            var worldGrain = orleansClient.GetGrain<IWorldGrain>("1");
             return await worldGrain.GetServerList();
         }    
 
 
         public async override Task<List<PlayerShortInfo>> GetPlayerListRequestAsync(int serverId, Current current = null)
         {
-            var worldGrain = Global.OrleansClient.GetGrain<IWorldGrain>("1");     
+            var worldGrain = orleansClient.GetGrain<IWorldGrain>("1");     
             return await worldGrain.GetPlayerInfoShortList(session.Account,serverId);
         }     
     }

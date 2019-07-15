@@ -5,6 +5,7 @@
 // **********************************************************************
 using FootStone.GrainInterfaces;
 using Ice;
+using Orleans;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -12,35 +13,41 @@ using System.Threading;
 namespace FootStone.FrontIce
 {
 
-    public class SessionFactoryI : ISessionFactoryDisp_
+    class SessionFactoryI : ISessionFactoryDisp_
     {
         private string serverName;
         private List<Type> facets;
 
-        private Dictionary<string, SessionI> sessions = new Dictionary<string, SessionI>();
-        
+        private Dictionary<string, Session> sessions = new Dictionary<string, Session>();
+        private IClusterClient orleansClient;
 
-        public SessionFactoryI(string name, List<Type> facets)
+        public SessionFactoryI(string name, List<Type> facets, IClusterClient orleansClient)
         {
             this.serverName = name;
-            this.facets = facets;          
+            this.facets = facets;
+            this.orleansClient = orleansClient;
         }
 
         public override ISessionPrx CreateSession(string account, string password, Current current = null)
         {
             var logger = current.adapter.getCommunicator().getLogger();
 
-            var sessionI = new SessionI(account);
+            var sessionI = new Session(account);
             var proxy = ISessionPrxHelper.uncheckedCast(current.adapter.addWithUUID(sessionI));
 
          //   var proxy = ISessionPrxHelper.uncheckedCast(current.adapter.addWithUUID(new FSInterceptor(sessionI, logger)));
             //Ìí¼Ófacet
             foreach (var facetType in facets)
             {
-                var servant = (IServantBase)Activator.CreateInstance(facetType);
-                servant.setSessionI(sessionI);
+                object[] args = new object[2];
+                args[0] = sessionI;
+                args[1] = orleansClient;
+                var servant = (IServantBase)Activator.CreateInstance(facetType, args);
+             //   servant.setSessionI(sessionI);
                 //  current.adapter.addFacet((Ice.Object)servant, proxy.ice_getIdentity(), servant.GetFacet());
-                current.adapter.addFacet(new FSInterceptor((Ice.Object)servant,logger), proxy.ice_getIdentity(), servant.GetFacet());
+                current.adapter.addFacet(new FSInterceptor((Ice.Object)servant,logger),
+                    proxy.ice_getIdentity()
+                    , servant.GetFacet());
             }
 
             // Never close this connection from the client and turn on heartbeats with a timeout of 30s

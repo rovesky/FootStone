@@ -5,9 +5,9 @@ using System.Collections.Generic;
 
 namespace FootStone.FrontIce
 {
-    public class SessionI : ISessionDisp_,IDisposable
+    public class Session : ISessionDisp_,IDisposable
     {
-        public SessionI(string account)
+        public Session(string account)
         {
             this.Account = account;  
         }

@@ -1,14 +1,11 @@
 ﻿using Ice;
 using NLog;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading;
+using Orleans;
 using System.Threading.Tasks;
 
 namespace FootStone.FrontIce
 {
-  
+
     class FrontServer
     {
         public FrontServer()
@@ -18,7 +15,7 @@ namespace FootStone.FrontIce
      
         private Communicator communicator;
 
-        public void Init(IceOptions options)
+        public void Init(IceOptions options, IClusterClient orleansClient)
         {         
             try
             {
@@ -42,7 +39,7 @@ namespace FootStone.FrontIce
 
                 var serverName = properties.getProperty("Ice.ProgramName");
               
-                adapter.add(new SessionFactoryI(serverName, options.FacetTypes), id);
+                adapter.add(new SessionFactoryI(serverName, options.FacetTypes,orleansClient), id);
 
                 adapter.activate();
          

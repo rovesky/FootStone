@@ -40,7 +40,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FootStone.FrontNetty", "src
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FootStone.ProtocolNetty", "src\FootStone.ProtocolNetty\FootStone.ProtocolNetty.csproj", "{8D5583AA-ED85-4D4B-80A8-5601271924E9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FootStone.Client", "src\FootStone.Client\FootStone.Client.csproj", "{69608522-569F-4EB9-8652-76CE722276AA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FootStone.Client", "src\FootStone.Client\FootStone.Client.csproj", "{69608522-569F-4EB9-8652-76CE722276AA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -140,8 +140,8 @@ Global
 		{69608522-569F-4EB9-8652-76CE722276AA} = {1063D54A-B4A7-4237-BA0A-7C4C05309FD5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		EnterpriseLibraryConfigurationToolBinariesPathV6 = packages\EnterpriseLibrary.Common.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.Logging.6.0.1304.0\lib\NET45
 		SolutionGuid = {B32E5387-0FE4-4BD1-96BD-856703792BA1}
+		EnterpriseLibraryConfigurationToolBinariesPathV6 = packages\EnterpriseLibrary.Common.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.Logging.6.0.1304.0\lib\NET45
 	EndGlobalSection
 	GlobalSection(Performance) = preSolution
 		HasPerformanceSessions = true

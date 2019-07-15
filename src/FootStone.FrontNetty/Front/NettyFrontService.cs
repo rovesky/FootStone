@@ -1,16 +1,12 @@
 ﻿using DotNetty.Transport.Channels;
-using FootStone.Core;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using NLog;
-using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace FootStone.FrontNetty
 {
-    public class NettyFrontService : IFrontService
+    public class NettyFrontService //: IFrontService
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
 
@@ -22,14 +18,13 @@ namespace FootStone.FrontNetty
         private IChannelManager playerChannels = new ChannelManager();    
 
         private ConcurrentDictionary<string, IChannel> gameChannels = new ConcurrentDictionary<string, IChannel>();
-
         private HashSet<string> gameCreating = new HashSet<string>();
 
-
-        public Task Init(IServiceProvider serviceProvider)
+        public Task Init(NettyFrontOptions frontOptions)
         {
-            frontOptions = serviceProvider.GetService<IOptions<NettyFrontOptions>>().Value;
-    
+            //  frontOptions = serviceProvider.GetService<IOptions<NettyFrontOptions>>().Value;
+
+            this.frontOptions = frontOptions;
             frontServer.Init(this, playerChannels);
             gameClient.Init(this,playerChannels);
     

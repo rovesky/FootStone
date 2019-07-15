@@ -1,6 +1,7 @@
 ﻿using FootStone.Core;
 using FootStone.FrontIce;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Orleans;
 using Orleans.Hosting;
 using System;
@@ -19,25 +20,32 @@ namespace SampleFrontIce
             iceOptions.FacetTypes.Add(typeof(ZoneI));
         }        
 
-        public static IFSHostBuilder AddFrontIce(this IFSHostBuilder builder)
+        //public static IFSHostBuilder AddFrontIce(this IFSHostBuilder builder)
+        //{
+        //    builder.AddFrontIce(iceOptions =>
+        //    {
+        //        InitIceOptions(iceOptions);
+        //    });
+        //    return builder;
+        //}
+
+        //public static IFSFrontBuilder AddFrontIce(this IFSFrontBuilder builder)
+        //{
+        //    builder.AddFrontIce(iceOptions =>
+        //    {
+        //        InitIceOptions(iceOptions);
+        //    });          
+        //    return builder;
+        //}
+
+
+        public static IHostBuilder UseFrontIce(this IHostBuilder builder)
         {
-            builder.AddFrontIce(iceOptions =>
+            builder.UseFrontIce(iceOptions =>
             {
                 InitIceOptions(iceOptions);
             });
             return builder;
         }
-
-        public static IFSFrontBuilder AddFrontIce(this IFSFrontBuilder builder)
-        {
-            builder.AddFrontIce(iceOptions =>
-            {
-                InitIceOptions(iceOptions);
-            });          
-            return builder;
-        }
-
-
-
     }
 }

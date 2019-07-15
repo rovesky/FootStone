@@ -1,5 +1,6 @@
 ﻿using FootStone.Core;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Orleans;
 using Orleans.Hosting;
 using System;
@@ -8,28 +9,17 @@ namespace FootStone.FrontIce
 {
     public static class FrontIceHostingExtensions
     {
-        public static IFSHostBuilder AddFrontIce(this IFSHostBuilder builder, Action<IceOptions> config)
+       
+        public static IHostBuilder UseFrontIce(this IHostBuilder builder, Action<IceOptions> config)
         {
-            builder.ConfigureSilo(silo =>
-            {
-                silo
-                .Configure(config)
-                .AddGrainService<IceFrontGrainService>();
-            });
-            return builder;
-        }
-
-        public static IFSFrontBuilder AddFrontIce(this IFSFrontBuilder builder, Action<IceOptions> config)
-        {
-            builder.ConfigureOrleans(client =>
-            {
-                client
-                .Configure(config)
-                .ConfigureServices(s =>
+            builder
+                .ConfigureServices(services =>
                 {
-                    s.AddSingleton<IFrontService, IceFrontService>();
+                    // this hosted service runs the sample logic
+                    services.AddSingleton<IHostedService, IceFrontHostedService>();
+                    // this configures the test running on this particular client
+                    services.Configure(config);
                 });
-            });
             return builder;
         }
     }

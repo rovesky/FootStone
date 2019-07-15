@@ -3,6 +3,7 @@ using FootStone.FrontIce;
 using FootStone.GrainInterfaces;
 using Ice;
 using NLog;
+using Orleans;
 using System;
 using System.Threading.Tasks;
 
@@ -14,11 +15,11 @@ namespace SampleFrontIce
     /// </summary>
     class AccountObserver : IAccountObserver
     {
-        private SessionI sessionI;
+        private Session sessionI;
 
         private NLog.Logger logger = LogManager.GetCurrentClassLogger();
 
-        public AccountObserver(SessionI sessionI)
+        public AccountObserver(Session sessionI)
         {
             this.sessionI = sessionI;
         }
@@ -37,25 +38,26 @@ namespace SampleFrontIce
 
     public class AccountI : IAccountDisp_, IServantBase
     {
-        private SessionI session;
-        private ObserverClient<IAccountObserver> observer = new ObserverClient<IAccountObserver>(Global.OrleansClient);
+        private Session session;
+        private IClusterClient orleansClient;      
+
+        private ObserverClient<IAccountObserver> observer ;
         private IAccountGrain accountGrain;
         private NLog.Logger logger = LogManager.GetCurrentClassLogger();
 
-        public AccountI()
+        public AccountI(Session session, IClusterClient orleansClient)
         {
+            this.session = session;
+            this.orleansClient = orleansClient;
 
+            observer = new ObserverClient<IAccountObserver>(orleansClient);
         }
+
 
         public string GetFacet()
         {
-            return typeof(IAccountPrx).Name;
-        }
-
-        public void setSessionI(SessionI sessionI)
-        {
-            this.session = sessionI;
-        }
+            return nameof(IAccountPrx);
+        }      
 
 
         public  void Dispose()
@@ -67,7 +69,7 @@ namespace SampleFrontIce
         public async override Task LoginRequestAsync(string account, string pwd, Current current = null)
         {
             //获取accountGrain
-            accountGrain = Global.OrleansClient.GetGrain<IAccountGrain>(account);
+            accountGrain = orleansClient.GetGrain<IAccountGrain>(account);
 
             await observer.Subscribe(accountGrain, new AccountObserver(session));
 
@@ -78,7 +80,7 @@ namespace SampleFrontIce
 
         public async override Task RegisterRequestAsync(string account, RegisterInfo info, Current current = null)
         {
-            var accountGrain = Global.OrleansClient.GetGrain<IAccountGrain>(account);
+            var accountGrain = orleansClient.GetGrain<IAccountGrain>(account);
 
             await accountGrain.Register(info);
         }

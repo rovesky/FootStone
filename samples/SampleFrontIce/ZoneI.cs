@@ -1,12 +1,9 @@
-﻿using FootStone.Core;
-using FootStone.Core.GrainInterfaces;
+﻿using FootStone.Core.GrainInterfaces;
 using FootStone.FrontIce;
 using FootStone.GrainInterfaces;
 using Ice;
-using Orleans.Streams;
+using Orleans;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
 
@@ -40,7 +37,7 @@ namespace SampleFrontIce
     //    public Task OnNextAsync(byte[] item, StreamSequenceToken token = null)
     //    {
 
-           
+
     //        //if (Global.ZoneMsgCount % 330000 == 0)
     //        //{
     //        //   Console.Out.WriteLine("zone msg count:" + Global.ZoneMsgCount);
@@ -48,7 +45,7 @@ namespace SampleFrontIce
     //        //  count++;
     //     //   Global.ZoneMsgCount++;
 
-           
+
     //        //Console.Out.WriteLine(" receive bytes:" + item.Length);
     //        //   push.begin_ZoneSync(item);
     //        return Task.CompletedTask;
@@ -59,7 +56,9 @@ namespace SampleFrontIce
     {
         private NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
-        private SessionI sessionI;
+        private Session session;
+        private IClusterClient orleansClient;      
+
         private IZonePushPrx zonePushPrx;
         private Timer moveTimer;
 
@@ -68,17 +67,17 @@ namespace SampleFrontIce
         private IZoneGrain zoneGrain;
         private byte[] data;
 
+        public ZoneI(Session session, IClusterClient orleansClient)
+        {
+            this.session = session;
+            this.orleansClient = orleansClient;
+        }
+
         public string GetFacet()
         {
-            return typeof(IZonePrx).Name;
+            return nameof(IZonePrx);
         }
-
-        public void setSessionI(SessionI sessionI)
-        {
-            this.sessionI = sessionI;
-
-       
-        }
+      
         public void Dispose()
         {
             if(moveTimer != null)
@@ -88,7 +87,7 @@ namespace SampleFrontIce
 
             if (zoneGrain != null)
             {
-                zoneGrain.PlayerLeave(this.sessionI.PlayerId);
+                zoneGrain.PlayerLeave(this.session.PlayerId);
             }
         }
       
@@ -96,13 +95,13 @@ namespace SampleFrontIce
         public async override Task<EndPointZone> BindZoneAsync(string zoneId, string playerId, Current current = null)
         {
             var zoneGuid = Guid.Parse(zoneId);
-            zoneGrain = Global.OrleansClient.GetGrain<IZoneGrain>(zoneGuid);
+            zoneGrain = orleansClient.GetGrain<IZoneGrain>(zoneGuid);
 
             var ret = await zoneGrain.GetEndPoint();
 
-            sessionI.Bind("zoneId", zoneId);
+            session.Bind("zoneId", zoneId);
 
-            zonePushPrx = sessionI.UncheckedCastPush(IZonePushPrxHelper.uncheckedCast);
+            zonePushPrx = session.UncheckedCastPush(IZonePushPrxHelper.uncheckedCast);
                        
             moveTimer = new System.Timers.Timer();
             moveTimer.AutoReset = true;
@@ -122,12 +121,12 @@ namespace SampleFrontIce
 
         public async override Task PlayerEnterAsync(Current current = null)
         {          
-            await zoneGrain.PlayerEnter(sessionI.PlayerId, current.adapter.GetHashCode().ToString());
+            await zoneGrain.PlayerEnter(session.PlayerId, current.adapter.GetHashCode().ToString());
         }
 
         public async override Task PlayerLeaveAsync(Current current = null)
         {
-            await zoneGrain.PlayerLeave(sessionI.PlayerId);
+            await zoneGrain.PlayerLeave(session.PlayerId);
         }
 
         public override Task SendDataAsync(byte[] data, Current current = null)

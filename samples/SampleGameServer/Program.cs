@@ -49,98 +49,92 @@ namespace SampleGameServer
             return IPAddress.Loopback.ToString();
         }
 
-        public static int Main(string[] args)
-        {
-            Startup(args).Wait();      
-            return 0;
-        }
-
-        private static Task Startup(string[] args)
+        public static void Main(string[] args)
         {
             try
             {
-                return new HostBuilder()
-
-                   //配置orlean的Silo
-                   .UseOrleans(silo =>
-                   {
-                       //    .UseLocalhostClustering()
-                       //    .UseDevelopmentClustering(primarySiloEndpoint)
-                       silo.UseAdoNetClustering(options =>
-                       {
-                           options.ConnectionString = mysqlConnectCluster;
-                           options.Invariant = "MySql.Data.MySqlClient";
-                       })
-                       .Configure<ClusterOptions>(options =>
-                       {
-                           options.ClusterId = "lsj";
-                           options.ServiceId = "FootStone";
-                       })
-                       .ConfigureEndpoints(IPAddress.Parse(GetLocalIP()), 11111, 30000)
-                       //.Configure<StatisticsOptions>(options =>
-                       //{
-                       //    options.LogWriteInterval = TimeSpan.FromSeconds(10);
-                       //    options.CollectionLevel = Orleans.Runtime.Configuration.StatisticsLevel.Critical;
-                       //})
-                       .AddStartupTask(async (IServiceProvider services, CancellationToken cancellation) =>
-                       {
-                           var grainFactory = services.GetRequiredService<IGrainFactory>();
-                           var grain = grainFactory.GetGrain<IWorldGrain>("1");
-                           await grain.Init();
-
-                       })
-                       .ConfigureApplicationParts(parts => parts.AddApplicationPart(typeof(WorldGrain).Assembly).WithReferences())
-                       .AddMemoryGrainStorage("memory1")
-                       .AddAdoNetGrainStorage("ado1", options =>
-                       {
-
-                           options.UseJsonFormat = true;
-                           options.ConnectionString = mysqlConnectStorage;
-                           options.Invariant = "MySql.Data.MySqlClient";
-                       })
-                       //.AddMemoryGrainStorage("PubSubStore")
-                       //.AddSimpleMessageStreamProvider("Zone", cfg =>
-                       //{
-                       //    cfg.FireAndForgetDelivery = true;
-                       //})     
-                       ;
-                   })
-                   .ConfigureLogging(builder =>
-                   {
-                       builder.AddProvider(new NLogLoggerProvider());
-                   })
-                   .ConfigureServices(services =>
-                   {
-                       services.Configure<ConsoleLifetimeOptions>(options =>
-                       {
-                           options.SuppressStatusMessages = true;
-                       });
-                   })
-                   //添加Netty Game支持
-                   .UseGameNetty(options =>
-                   {
-                       options.Port = 8017;
-                       options.Recv = ZoneNetttyData.Instance;
-                   })
-                   ////添加ICE Front支持
-                   //.AddFrontIce()
-                   ////添加Netty Front支持
-                   //.AddFrontNetty(options =>
-                   //{
-                   //    options.FrontPort = 8007;
-                   //    options.GamePort = 8017;
-                   //})
-                   .RunConsoleAsync();
-
+                Startup(args).Wait();
             }
             catch (Exception ex)
             {
                 logger.Error(ex);
-                Console.ReadLine();
-                return Task.CompletedTask;
+                Console.ReadLine();            
             }
-         
-        }     
+        }
 
+        private static Task Startup(string[] args)
+        {
+
+            return new HostBuilder()
+
+               //配置orlean的Silo
+               .UseOrleans(silo =>
+               {                  
+                   silo.UseAdoNetClustering(options =>
+                   {
+                       options.ConnectionString = mysqlConnectCluster;
+                       options.Invariant = "MySql.Data.MySqlClient";
+                   })
+                   .Configure<ClusterOptions>(options =>
+                   {
+                       options.ClusterId = "lsj";
+                       options.ServiceId = "FootStone";
+                   })
+                   .ConfigureEndpoints(IPAddress.Parse(GetLocalIP()), 11111, 30000)
+                   //.Configure<StatisticsOptions>(options =>
+                   //{
+                   //    options.LogWriteInterval = TimeSpan.FromSeconds(10);
+                   //    options.CollectionLevel = Orleans.Runtime.Configuration.StatisticsLevel.Critical;
+                   //})
+                   .AddStartupTask(async (IServiceProvider services, CancellationToken cancellation) =>
+                   {
+                       var grainFactory = services.GetRequiredService<IGrainFactory>();
+                       var grain = grainFactory.GetGrain<IWorldGrain>("1");
+                       await grain.Init();
+
+                   })
+                   .ConfigureApplicationParts(parts => parts.AddApplicationPart(typeof(WorldGrain).Assembly).WithReferences())
+                   .AddMemoryGrainStorage("memory1")
+                   .AddAdoNetGrainStorage("ado1", options =>
+                   {
+
+                       options.UseJsonFormat = true;
+                       options.ConnectionString = mysqlConnectStorage;
+                       options.Invariant = "MySql.Data.MySqlClient";
+                   })
+                   //.AddMemoryGrainStorage("PubSubStore")
+                   //.AddSimpleMessageStreamProvider("Zone", cfg =>
+                   //{
+                   //    cfg.FireAndForgetDelivery = true;
+                   //})     
+                   ;
+               })
+               .ConfigureLogging(builder =>
+               {
+                   builder.AddProvider(new NLogLoggerProvider());
+               })
+               .ConfigureServices(services =>
+               {
+                   services.Configure<ConsoleLifetimeOptions>(options =>
+                   {
+                       options.SuppressStatusMessages = true;
+                   });
+               })
+               //添加Netty Game支持
+               .UseGameNetty(options =>
+               {
+                   options.Port = 8017;
+                   options.Recv = ZoneNetttyData.Instance;
+               })
+               ////添加ICE Front支持
+               .UseFrontIce()
+               ////添加Netty Front支持
+               .UseFrontNetty(options =>
+               {
+                   options.FrontPort = 8007;
+                   options.GamePort = 8017;
+               })
+               .RunConsoleAsync();
+        }  
     }
 }
