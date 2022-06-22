@@ -11,7 +11,7 @@
 
   <ItemGroup>
     <PackageReference Include="DotNetty.Handlers" Version="0.6.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="NLog" Version="4.6.5" />
     <PackageReference Include="zeroc.ice.net" Version="3.7.1" />
   </ItemGroup>
